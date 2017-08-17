@@ -50,7 +50,9 @@ class FileFragmentation {
                 fragments.add(s);
             } while (true);
             System.out.println(restore(fragments));
-            System.out.println();
+            if (i < n - 1) {
+                System.out.println();
+            }
         }
     }
 }

@@ -49,12 +49,15 @@ class AustralianVoting {
             List<String> candidates = reader.lines().limit(count).collect(toList());
             List<Deque<Integer>> ballots = new ArrayList<Deque<Integer>>();
             String currentLine = EMPTY;
-            while (!(currentLine = reader.readLine()).equalsIgnoreCase(EMPTY) && currentLine != null) {
+            while ((currentLine = reader.readLine()) != null && !currentLine.equalsIgnoreCase(EMPTY)) {
                 ballots.add(new ArrayDeque<Integer>(stream(currentLine.trim().split(" "))
-                    .map(Integer::parseInt).map(x -> x - 1).collect(toList())));
+                        .filter(x -> !x.equals(EMPTY))
+                        .map(Integer::parseInt).map(x -> x - 1).collect(toList())));
             }
             elect(candidates, ballots).forEach(System.out::println);
-            System.out.println();
+            if (i < n - 1) {
+                System.out.println();
+            }
         }
     }
 }

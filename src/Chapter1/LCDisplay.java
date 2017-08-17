@@ -50,9 +50,12 @@ class LCDisplay {
 
     public static void main(String[] args) throws IOException {
         String currentLine = INPUT_END;
-        while (!(currentLine = reader.readLine().trim()).equalsIgnoreCase(INPUT_END)) {
-            String[] input = currentLine.split(SPACE);
-            segments(input[1], Integer.valueOf(input[0])).stream().forEach(System.out::println);
+        while ((currentLine = reader.readLine()) != null && 
+                !currentLine.trim().equalsIgnoreCase(INPUT_END)) {
+            List<String> input = Arrays.stream(currentLine.trim().split(SPACE))
+                .filter(x -> !x.equals("")).collect(Collectors.toList());
+            segments(input.get(1), Integer.valueOf(input.get(0))).stream()
+                .forEach(System.out::println);
             System.out.println();
         }
     }

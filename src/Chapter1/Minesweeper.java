@@ -14,7 +14,6 @@ import java.util.function.IntUnaryOperator;
 class Minesweeper {
     private static final BufferedReader reader = 
         new BufferedReader(new InputStreamReader(System.in));
-    private static final String INPUT_END = "0 0";
     private static final String SPACE = " ";
     private static final int[][] p = new int[][] {
             { -1, -1 }, { 0, -1 }, { 1, -1 }, { -1, 0 }, 
@@ -24,12 +23,19 @@ class Minesweeper {
     public static void main(String[] args) throws IOException {
         int lineNum = 0;
         String currentLine = INPUT_END;
-        while (!(currentLine = reader.readLine().trim()).equalsIgnoreCase(INPUT_END)) {
-            List<Integer> nm = stream(currentLine.split(SPACE)).map(Integer::parseInt).collect(toList());
+        while ((currentLine = reader.readLine()) != null) {
+            if (currentLine.equalsIgnoreCase("")) {
+                continue;
+            }
+            List<Integer> nm = stream(currentLine.split(SPACE))
+                    .filter(x -> !x.equals("")).map(Integer::parseInt).collect(toList());;
             int n = nm.get(0);
             int m = nm.get(1);
+            if (n == 0 && m == 0) {
+                break;
+            }
 
-            final int[] field = reader.lines().limit(m)
+            final int[] field = reader.lines().limit(n)
                 .collect(joining()).chars().map(x -> x == '*' ? -1 : 0).toArray();
 
             final IntBinaryOperator mine = 
@@ -40,6 +46,10 @@ class Minesweeper {
 
             int[] result = range(0, field.length)
                 .map(x -> field[x] >= 0 ? count.applyAsInt(x) : field[x]).toArray();
+
+            if (lineNum > 0) {
+                System.out.println();
+            }
 
             System.out.println("Field #" + (++lineNum) + ":");
             for (int i = 0; i < n; ++i) {

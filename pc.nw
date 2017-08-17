@@ -22,7 +22,10 @@ This is a collection of literate programs. If you are unfamiliar with the idea
 of literate programming please refer \cite{Knuth1984}. These programs are my
 solutions to the programming tasks from the "Programming Challenges"
 book\cite{PC} which in turn is a collection of problems from the UVa Online
-Judge hosted by University of Valladolid. 
+Judge hosted by University of Valladolid\footnote{If you are going to submit
+any of these programs to the UVa Online Judge make sure the class name is Main
+and that it's not in any package; For the class names I use problem names, and
+I put everything into my package com.rvprg.pc)}.  
 \end{abstract}
 
 
@@ -35,7 +38,13 @@ Judge hosted by University of Valladolid.
 This task is not difficult if you notice that all the lengths of the sequences
 can easily be calculated up front. Then all that is needed is to lookup
 the pre-calculated table to find out the maximum lengths for the given input
-numbers.
+numbers. 
+
+(I noticed though that I could have simply calculated the values on the file
+without any tricks. The reason why I have done a more sophisticated algorithm
+is that at first I though the input number may go up to 1M, but in reality,
+according to the problem statement, they won't exceed 10000.  So I solved a more
+tricky problem.)
 
 So let's start with the definitions of the array that will hold all the
 [[lengths]] and the [[reader]] that will be used to read the input data.
@@ -111,6 +120,7 @@ import java.util.Deque;
 <<1.1 Constructor>>=
 Collatz() {
     final HashMap<Long, Integer> surplus = new HashMap<Long, Integer>();
+    lengths[1] = 1;
     for (long i = 2; i < MAX; ++i) {
         final Deque<Long> stack = new ArrayDeque<Long>();
         long n = i;
@@ -132,7 +142,12 @@ Collatz() {
 
 @
 
-Processing the input is easy:
+Processing the input is easy but cumbersome\footnote{It turns out that the UVa
+Judge tends to give some extra spaces here and there in the input, so we need
+to make sure we account for some sporadic spaces in the input. This was my
+first submission and it took me seven attempts before I got past that super
+annoying "Runtime Error", because the judge was giving some extra spaces
+between the values which my program was not taking into account.}:
 
 <<1.1 Imports>>=
 import java.util.stream.IntStream;
@@ -141,14 +156,17 @@ import java.util.stream.IntStream;
 <<1.1 Input/Output>>=
 public static void main(String[] args) {
     Collatz s = new Collatz();
-    reader.lines()
-            .map(x -> x.split(" "))
-            .map(x -> new int[] { Integer.parseInt(x[0]), Integer.parseInt(x[1]) })
-            .map(x -> new int[] { x[0], x[1], Math.min(x[0], x[1]), Math.max(x[0], x[1]) })
-            .forEach(x -> {
-                System.out.println(x[0] + " " + x[1] + " " +
-                        IntStream.range(x[2], x[3]).map(v -> s.lengths[v]).max().getAsInt());
-            });
+     String input;
+     while ((input = reader.readLine()) != null &&
+             !input.trim().equalsIgnoreCase("")) {
+         List<String> str = Arrays.stream(input.trim().split(" "))
+            .filter(x -> !x.equals("")).collect(Collectors.toList());
+         int x[] = new int[] { Integer.parseInt(str.get(0)),
+                 Integer.parseInt(str.get(1)) };
+         System.out.println(x[0] + " " + x[1] + " " +
+                 IntStream.rangeClosed(Math.min(x[0], x[1]), Math.max(x[0],
+                         x[1])).map(v -> s.lengths[v]).max().getAsInt());
+     }
 }
 @
 
@@ -173,10 +191,9 @@ class Minesweeper {
 @
 
 Of course, we need a reader, so we define it next. Then we need to define the
-constants. We know that the input end is two zeroes, so we define such a
-constant. We are going to split the lines by spaces, so let's have that too.
-Finally, we define an array of the offsets [[p]] to determine the cells around
-a given cell.
+constants. We are going to split the lines by spaces, so let's have it as a
+constant. We also define an array of the offsets [[p]] to determine the
+cells around a given cell.
 
 <<1.2 Imports>>=
 import java.io.BufferedReader;
@@ -187,7 +204,6 @@ import java.io.InputStreamReader;
 <<1.2 Constants>>=
 private static final BufferedReader reader = 
     new BufferedReader(new InputStreamReader(System.in));
-private static final String INPUT_END = "0 0";
 private static final String SPACE = " ";
 private static final int[][] p = new int[][] {
         { -1, -1 }, { 0, -1 }, { 1, -1 }, { -1, 0 }, 
@@ -215,12 +231,19 @@ import java.util.function.IntUnaryOperator;
 public static void main(String[] args) throws IOException {
     int lineNum = 0;
     String currentLine = INPUT_END;
-    while (!(currentLine = reader.readLine().trim()).equalsIgnoreCase(INPUT_END)) {
-        List<Integer> nm = stream(currentLine.split(SPACE)).map(Integer::parseInt).collect(toList());
+    while ((currentLine = reader.readLine()) != null) {
+        if (currentLine.equalsIgnoreCase("")) {
+            continue;
+        }
+        List<Integer> nm = stream(currentLine.split(SPACE))
+                .filter(x -> !x.equals("")).map(Integer::parseInt).collect(toList());;
         int n = nm.get(0);
         int m = nm.get(1);
+        if (n == 0 && m == 0) {
+            break;
+        }
 
-        final int[] field = reader.lines().limit(m)
+        final int[] field = reader.lines().limit(n)
             .collect(joining()).chars().map(x -> x == '*' ? -1 : 0).toArray();
 
         final IntBinaryOperator mine = 
@@ -231,6 +254,10 @@ public static void main(String[] args) throws IOException {
 
         int[] result = range(0, field.length)
             .map(x -> field[x] >= 0 ? count.applyAsInt(x) : field[x]).toArray();
+
+        if (lineNum > 0) {
+            System.out.println();
+        }
 
         System.out.println("Field #" + (++lineNum) + ":");
         for (int i = 0; i < n; ++i) {
@@ -411,9 +438,12 @@ Let's assume it returns list of strings which we can simply output to the consol
 <<1.4 Input/Output>>=
 public static void main(String[] args) throws IOException {
     String currentLine = INPUT_END;
-    while (!(currentLine = reader.readLine().trim()).equalsIgnoreCase(INPUT_END)) {
-        String[] input = currentLine.split(SPACE);
-        segments(input[1], Integer.valueOf(input[0])).stream().forEach(System.out::println);
+    while ((currentLine = reader.readLine()) != null && 
+            !currentLine.trim().equalsIgnoreCase(INPUT_END)) {
+        List<String> input = Arrays.stream(currentLine.trim().split(SPACE))
+            .filter(x -> !x.equals("")).collect(Collectors.toList());
+        segments(input.get(1), Integer.valueOf(input.get(0))).stream()
+            .forEach(System.out::println);
         System.out.println();
     }
 }
@@ -608,12 +638,15 @@ class AustralianVoting {
             List<String> candidates = reader.lines().limit(count).collect(toList());
             List<Deque<Integer>> ballots = new ArrayList<Deque<Integer>>();
             String currentLine = EMPTY;
-            while (!(currentLine = reader.readLine()).equalsIgnoreCase(EMPTY) && currentLine != null) {
+            while ((currentLine = reader.readLine()) != null && !currentLine.equalsIgnoreCase(EMPTY)) {
                 ballots.add(new ArrayDeque<Integer>(stream(currentLine.trim().split(" "))
-                    .map(Integer::parseInt).map(x -> x - 1).collect(toList())));
+                        .filter(x -> !x.equals(EMPTY))
+                        .map(Integer::parseInt).map(x -> x - 1).collect(toList())));
             }
             elect(candidates, ballots).forEach(System.out::println);
-            System.out.println();
+            if (i < n - 1) {
+                System.out.println();
+            }
         }
     }
 }
@@ -673,7 +706,7 @@ int max = result.keySet().stream().max(Integer::compareTo).get();
 int min = result.keySet().stream().min(Integer::compareTo).get();
 @
 
-It's easy to see that if $max \leq majority$ or $max = min$, then we know the
+It's easy to see that if $max \geq majority$ or $max = min$, then we know the
 winner:
 
 <<1.8 Election loop>>=
@@ -693,8 +726,8 @@ eliminated.forEach(x -> counter[x] = -1);
 
 Now we need to remove the eliminated candidates from the ballots. However it
 needs to be done carefully. We make note of who is currently the first in
-the ballot. If after elimination process the first in the rank has changed, we
-need to take that into account. This is captured in the following chunk:
+the ballot. If after the elimination process the first in the rank has changed,
+we need to take that into account. This is captured in the following chunk:
 
 <<1.8 Election loop>>=
 ballots.forEach(b -> {
@@ -746,7 +779,9 @@ class FileFragmentation {
                 fragments.add(s);
             } while (true);
             System.out.println(restore(fragments));
-            System.out.println();
+            if (i < n - 1) {
+                System.out.println();
+            }
         }
     }
 }
@@ -827,7 +862,7 @@ unless the input is malformed for any reason.
 
 \subsection{Ones}
 
-This is a little cute problem but it may take some time to come up with a proper
+This is a little nice problem but it may take some time to come up with a proper
 solution. Obviously these "minimum multiples" of [[n]] can quickly become too
 large, and so we can't use the standard types of the language to do the
 calculations. The next natural idea would be to try to use [[BigInteger]] and

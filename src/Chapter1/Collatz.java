@@ -27,6 +27,7 @@ class Collatz {
 
     Collatz() {
         final HashMap<Long, Integer> surplus = new HashMap<Long, Integer>();
+        lengths[1] = 1;
         for (long i = 2; i < MAX; ++i) {
             final Deque<Long> stack = new ArrayDeque<Long>();
             long n = i;
@@ -48,13 +49,16 @@ class Collatz {
 
     public static void main(String[] args) {
         Collatz s = new Collatz();
-        reader.lines()
-                .map(x -> x.split(" "))
-                .map(x -> new int[] { Integer.parseInt(x[0]), Integer.parseInt(x[1]) })
-                .map(x -> new int[] { x[0], x[1], Math.min(x[0], x[1]), Math.max(x[0], x[1]) })
-                .forEach(x -> {
-                    System.out.println(x[0] + " " + x[1] + " " +
-                            IntStream.range(x[2], x[3]).map(v -> s.lengths[v]).max().getAsInt());
-                });
+         String input;
+         while ((input = reader.readLine()) != null &&
+                 !input.trim().equalsIgnoreCase("")) {
+             List<String> str = Arrays.stream(input.trim().split(" "))
+                .filter(x -> !x.equals("")).collect(Collectors.toList());
+             int x[] = new int[] { Integer.parseInt(str.get(0)),
+                     Integer.parseInt(str.get(1)) };
+             System.out.println(x[0] + " " + x[1] + " " +
+                     IntStream.rangeClosed(Math.min(x[0], x[1]), Math.max(x[0],
+                             x[1])).map(v -> s.lengths[v]).max().getAsInt());
+         }
     }
 }
