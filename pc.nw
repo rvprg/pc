@@ -65,7 +65,7 @@ class Collatz {
 }
 @
 
-We need necessary imports:
+We need the necessary imports:
 
 <<1.1 Imports>>=
 import java.io.BufferedReader;
@@ -78,7 +78,7 @@ them somewhere temporarily. For that a [[surplus]] hash map will be used. Its
 contents will be thrown away once the sequence lengths were computed. 
 
 So we write two helper methods: [[set]] and [[get]]. Both take an [[index]] and
-a [[surplus]] hash map and depending on the index value either use the array or
+[[surplus]] hash map and depending on the index value either use the array or
 the hash map to set or get a value.
 
 <<1.1 Imports>>=
@@ -106,7 +106,7 @@ and [[get]], but we must not re-calculate the lengths for the indexes that we
 have calculated already. 
 
 We calculate a member of the sequence at each step using the definition. Each
-time we calculated a new member of the sequence we push it onto the [[stack]].
+time we calculate a new member of the sequence we push it onto the [[stack]].
 We stop if we notice that we already have the length calculated for that
 specific value or when we reach 1. Now all the values that are on the stack are
 potential inputs, that is they are all potential initial [[n]]s. We use this
@@ -272,7 +272,7 @@ public static void main(String[] args) throws IOException {
 
 \subsection{The Trip}
 
-This task is much more fun that the previous two. The first thing that we
+This task is much more fun that the previous two. The important thing that we
 should note for ourselves is that we are not going to use the floating point
 types to do the calculations.
 
