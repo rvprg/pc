@@ -1030,9 +1030,9 @@ for $n=91$. We start with $s=11$ and $r=11$. But clearly because $s < n$ we
 need to append one more 1, $s=r \times 10+1$, so now $s=111$, and $r=s-(n *
 \lfloor s / n \rfloor)$, so $r=20$; and since $r \neq 0$ we continue by
 extending $s=r \times 10+1$ and then repeat the steps until $r=0$. But note
-though that $r=s-(n * \lfloor s / n \rfloor)$ is equivalent to $r = r \% n$. 
+though that $r=s-(n * \lfloor s / n \rfloor)$ is equivalent to [[r = s % n]].
 
-So now we can implement it:
+OK, now we can capture that in code:
 
 <<5.4 Calculation>>=
 int l = 0;
