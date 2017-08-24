@@ -775,6 +775,37 @@ class JollyJumpers {
 }
 @
 
+\subsection{Crypt Kicker}
+
+This task is a lot of fun! To solve it we are going to need a very good
+bookkeeping discipline.
+
+Let's outline the general strategy. First thing to do is to to group the words
+by length. Then we need to come up with a method to compare a dictionary word
+and an encrypted word by looking at their patterns. So we somehow need to tell
+if the words "abbc" has a similar pattern as "xyyz". But this is very easy: we
+scan a word from left to right and output an index of the first occurance of
+the character, or current index if it's the first occurance. So for example
+"abbc" and "xyyz" would both have a pattern 1 2 2 3. Using a pattern and the
+word length we can find words from the dictionary that could be the potential
+matches for an encrypted word. 
+
+We start with the longest word (if multiple words of the same length, then any
+words of such length) and we find all the words from the dictionary that have the
+same length, the same pattern, and agree with the mapping found so far. By the
+mapping found so far we mean the following: if some previous word has been
+matched with a candidate, we note the mapping. So if we matched "abbc" with
+"xyyz" we now know that a maps to x, b maps to y, and c maps to z. This means
+that if we are now trying to match another word, say "zy", we can eliminate
+candidates such as "bc", because we now assume that z maps to c, not b. Once we
+filtered all the potential candidates we try to match the first candidate from
+the list and move on to the next word. If at any step we fail to find any
+candidate word, we return one step back, and try another word in the list, if
+the list is exhausted, we move one step back again. If we exhausted all the
+lists, then the decryption is impossible. For simplicity of implementation we
+will implement it as a recursion.
+
+OK, now we just need to write code.
 
 \section{Chapter 3}
 
