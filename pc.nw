@@ -807,6 +807,99 @@ will implement it as a recursion.
 
 OK, now we just need to write code.
 
+First input/output. The main class will be initalized by a dictionary and will
+have just one method [[decrypt]] that will take a string and return either a
+decrypted text or stars, as per problem statement.
+
+<<Crypt Kicker>>=
+package com.rvprg.pc;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+<<2.3 Imports>>
+
+class CryptKicker {
+    private static final BufferedReader reader = 
+        new BufferedReader(new InputStreamReader(System.in));
+
+    <<2.3 Variables>>
+
+    <<2.3 Constructor>>
+
+    <<2.3 Methods>>
+
+    public static void main(String[] args) throws IOException {
+        String currentLine;
+        final int size = Integer.parseInt(reader.readLine().trim());
+        final List<String> dictionary = reader.lines().limit(size).collect(toList());
+        CryptKicker cryptKicker = new CryptKicker(dictionary);
+        while ((currentLine = reader.readLine()) != null &&
+                !currentLine.trim().equals("")) {
+            System.out.println(cryptKicker.decrypt(currentLine));
+        }
+    }
+}
+@
+
+Let's write the method that gives us the pattern of a given word. This method
+does exactly the thing we've described above.
+
+<<2.3 Imports>>=
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.IntStream.range;
+@
+
+<<2.3 Methods>>=
+private static List<Integer> getPattern(String word) {
+    return range(0, word.length()).map(i -> word.indexOf(word.charAt(i)))
+        .boxed().collect(toList());
+}
+@
+
+And let's add a helper method that for a given list of words gives a map. (Note
+that we take distinct words as the words in the input dictionary aren't
+necessarily unique.)
+
+<<2.3 Imports>>=
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Deque;
+@
+
+<<2.3 Methods>>=
+private static Map<String, List<Integer>> getPatterns(Deque<String> words) {
+    return words.stream().distinct().collect(
+        toMap(identity(), CryptKicker::getPattern));
+}
+@
+
+Now we can do the contructor. In the constructor we will group the words by
+length and get their patterns.
+
+<<2.3 Imports>>=
+import static java.util.stream.Collectors.groupingBy;
+import java.util.ArrayDeque;
+@
+
+<<2.3 Variables>>=
+private final Map<Integer, List<String>> dictionary;
+private final Map<String, List<Integer>> patterns;
+@
+
+<<2.3 Constructor>>=
+public CryptKicker(List<String> inputDictionary) {
+    dictionary = inputDictionary.stream()
+        .collect(groupingBy(String::length));
+    patterns = getPatterns(new ArrayDeque<>(inputDictionary));
+}
+@
+
+
+
 \section{Chapter 3}
 
 \subsection{File Fragmentation}
