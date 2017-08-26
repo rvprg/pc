@@ -784,8 +784,8 @@ Let's outline the general strategy. First thing to do is to to group the words
 by length. Then we need to come up with a method to compare a dictionary word
 and an encrypted word by looking at their patterns. So we somehow need to tell
 if the words "abbc" has a similar pattern as "xyyz". But this is very easy: we
-scan a word from left to right and output an index of the first occurance of
-the character, or current index if it's the first occurance. So for example
+scan a word from left to right and output an index of the first occurrence of
+the character, or current index if it's the first occurrence. So for example
 "abbc" and "xyyz" would both have a pattern 1 2 2 3. Using a pattern and the
 word length we can find words from the dictionary that could be the potential
 matches for an encrypted word. 
@@ -807,7 +807,7 @@ will implement it as a recursion.
 
 OK, now we just need to write code.
 
-First input/output. The main class will be initalized by a dictionary and will
+First input/output. The main class will be initialized by a dictionary and will
 have just one method [[decrypt]] that will take a string and return either a
 decrypted text or stars, as per problem statement.
 
@@ -818,17 +818,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-<<2.3 Imports>>
+<<2.4 Imports>>
 
 class CryptKicker {
     private static final BufferedReader reader = 
         new BufferedReader(new InputStreamReader(System.in));
 
-    <<2.3 Variables>>
+    <<2.4 Variables>>
 
-    <<2.3 Constructor>>
+    <<2.4 Constructor>>
 
-    <<2.3 Methods>>
+    <<2.4 Methods>>
 
     public static void main(String[] args) throws IOException {
         String currentLine;
@@ -846,23 +846,24 @@ class CryptKicker {
 Let's write the method that gives us the pattern of a given word. This method
 does exactly the thing we've described above.
 
-<<2.3 Imports>>=
+<<2.4 Imports>>=
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 @
 
-<<2.3 Methods>>=
+<<2.4 Methods>>=
 private static List<Integer> getPattern(String word) {
     return range(0, word.length()).map(i -> word.indexOf(word.charAt(i)))
         .boxed().collect(toList());
 }
+
 @
 
 And let's add a helper method that for a given list of words gives a map. (Note
 that we take distinct words as the words in the input dictionary aren't
 necessarily unique.)
 
-<<2.3 Imports>>=
+<<2.4 Imports>>=
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import java.util.List;
@@ -870,35 +871,228 @@ import java.util.Map;
 import java.util.Deque;
 @
 
-<<2.3 Methods>>=
+<<2.4 Methods>>=
 private static Map<String, List<Integer>> getPatterns(Deque<String> words) {
     return words.stream().distinct().collect(
         toMap(identity(), CryptKicker::getPattern));
 }
+
 @
 
-Now we can do the contructor. In the constructor we will group the words by
+Now we can do the constructor. In the constructor we will group the words by
 length and get their patterns.
 
-<<2.3 Imports>>=
+<<2.4 Imports>>=
 import static java.util.stream.Collectors.groupingBy;
 import java.util.ArrayDeque;
 @
 
-<<2.3 Variables>>=
+<<2.4 Variables>>=
 private final Map<Integer, List<String>> dictionary;
 private final Map<String, List<Integer>> patterns;
 @
 
-<<2.3 Constructor>>=
+<<2.4 Constructor>>=
 public CryptKicker(List<String> inputDictionary) {
     dictionary = inputDictionary.stream()
         .collect(groupingBy(String::length));
     patterns = getPatterns(new ArrayDeque<>(inputDictionary));
 }
+
 @
 
+We will also need a function to compare two given patterns. This is easy:
 
+<<2.4 Imports>>=
+import static java.lang.Math.abs;
+@
+
+<<2.4 Methods>>=
+private static boolean compare(List<Integer> a, List<Integer> b) {
+    return a.size() == b.size() && 
+        range(0, a.size()).map(i -> abs(a.get(i) - b.get(i))).sum() == 0;
+}
+
+@
+
+Let's sort out the variables that we are going to need. We will need a map that
+will hold patterns of the encrypted words for the given input string.
+
+<<2.4 Variables>>=
+private Map<String, List<Integer>> encryptedPatterns;
+@
+
+This variable could have been passed around via argument to the methods,
+because this variable's contents depend on each encrypted input line. But I have
+chosen to just have this as a private member.
+
+We will also need to keep track of the words that have been mapped.
+
+<<2.4 Imports>>=
+import java.util.HashSet;
+import java.util.Set;
+@
+
+<<2.4 Variables>>=
+private final Set<String> mappedWords = new HashSet<>();
+@
+
+And we will need the mappings themselves. We will keep both the direct mapping
+and the reversed mappings in the arrays, where an index is the ASCII character
+code and the value is another ASCII character code. Because ASCII characters
+for the lower case letters go from 97 to 122 it should be enough to just create
+an array of no more than 128 bytes. We could have created a smaller array, but
+in that case we would need to adjust the indexes which would clutter the code
+unnecessarily. 
+
+The [[counter]] array will keep track of how many words have used this
+character mapping so far. This is needed because we will be mapping and
+unmapping the words multiple times during the search. An empty array will
+denote unsuccessful mapping.
+
+<<2.4 Variables>>=
+private static final int MAX_SIZE = 128;
+private static final int[] NOT_FOUND = new int[0];
+private final int[] dirMapping = new int[MAX_SIZE];
+private final int[] revMapping = new int[MAX_SIZE];
+private final int[] counter = new int[MAX_SIZE];
+@
+
+Let's implement [[mapWord]] and [[unmapWord]] methods. Note that they keep
+track (with help of [[counter]]) of how many words have used a specific
+character mapping.
+
+<<2.4 Methods>>=
+private void mapWord(String e, String c) {
+    mappedWords.add(c);
+    for (int i = 0; i < e.length(); ++i) {
+        dirMapping[e.charAt(i)] = c.charAt(i);
+        counter[e.charAt(i)]++;
+        revMapping[c.charAt(i)] = e.charAt(i);
+    }
+}
+
+private void unmapWord(String e, String c) {
+    mappedWords.remove(c);
+    for (int i = 0; i < e.length(); ++i) {
+        counter[e.charAt(i)]--;
+        if (counter[e.charAt(i)] == 0) {
+            revMapping[dirMapping[e.charAt(i)]] = 0;
+            dirMapping[e.charAt(i)] = 0;
+        }
+    }
+}
+
+@
+
+We need to keep track of these mapping and [[counter]] because of the
+filtering. For example, if we mapped the word "abc" to "xyz" and the word "ab"
+to "xy", we now know that a maps to x, b maps to y, and c maps to z. So we can
+find that the word's "ab" mapping to "xy" is a valid mapping and so we can map
+that too. If for some reason we unmap the word "abc", our mapping arrays should
+still keep the mapping of a to x, and b to y, because we haven't unmapped the
+word "ab".
+
+Now let's implement the filtering. This function take an encrypted word and
+does the following filtering. First, it gets all the words from the dictionary
+of the same length. Then it filters out the words that have been mapped already
+and the words that don't have the same pattern. Next, it checks if this word
+agrees with the mapping (may be partial) of the mappings found so far. If the
+word passes all this filtering, it is add to the list, which then returned as
+the result.
+
+<<2.4 Imports>>=
+import java.util.ArrayList;
+@
+
+<<2.4 Methods>>=
+private List<String> filter(String encrypted) {
+    List<String> matchedWords = new ArrayList<String>();
+    for (String word : dictionary.get(encrypted.length())) {
+        if (mappedWords.contains(word) || 
+            !compare(encryptedPatterns.get(encrypted), patterns.get(word))) {
+            continue;
+        }
+
+        boolean matched = true;
+        for (int i = 0; i < word.length() && matched; ++i) {
+            boolean unmapped = dirMapping[encrypted.charAt(i)] == 0;
+            boolean mapped = dirMapping[encrypted.charAt(i)] == word.charAt(i);
+            boolean unused = revMapping[word.charAt(i)] == 0;
+            matched = (unmapped && unused) || mapped;
+        }
+        if (matched) {
+            matchedWords.add(word);
+        }
+    }
+    return matchedWords;
+}
+
+@
+
+We can now implement the recursive search method. It takes a deque of
+encrypted words and then tries to map them to the dictionary. (A deque because
+it has convenient methods such as [[pop]] and [[push]].) This method assumes
+that the words in the deque are sorted by length in descending order.
+
+<<2.4 Methods>>=
+private boolean map(Deque<String> encryptedWords) {
+    if (encryptedWords.isEmpty()) {
+        return true;
+    }
+    String encryptedWord = encryptedWords.pop();
+    List<String> words = filter(encryptedWord);
+    for (String candidate : words) {
+        mapWord(encryptedWord, candidate);
+        if (map(encryptedWords)) {
+            return true;
+        }
+        unmapWord(encryptedWord, candidate);
+    }
+    encryptedWords.push(encryptedWord);
+    return false;
+}
+
+@
+
+Let's add another helper method that will do the clearing up and initialization
+of the data structures:
+
+<<2.4 Imports>>=
+import java.util.Arrays;
+@
+
+<<2.4 Methods>>=
+private int[] findMapping(Deque<String> encryptedWords) {
+    encryptedPatterns = getPatterns(encryptedWords);
+    mappedWords.clear();
+    Arrays.fill(dirMapping, 0);
+    Arrays.fill(revMapping, 0);
+    Arrays.fill(counter, 0);
+    return map(encryptedWords) ? dirMapping : NOT_FOUND;
+}
+
+@
+
+Finally, we can now implement [[decrypt]] method:
+
+<<2.4 Imports>>=
+import static java.util.Comparator.comparing;
+@
+
+<<2.4 Methods>>=
+public String decrypt(String input) {
+    StringBuilder result = new StringBuilder();
+    int[] mapping = findMapping(
+            new ArrayDeque<>(Arrays.stream(input.trim().split(" "))
+                .filter(x -> !x.equals("")).distinct()
+                .sorted(comparing(String::length).reversed()).collect(toList())));
+    input.chars().map(c -> c != ' ' ? (mapping != NOT_FOUND ? mapping[c] : '*') : c)
+        .forEachOrdered(x -> result.append((char) x));
+    return result.toString();
+}
+
+@
 
 \section{Chapter 3}
 
