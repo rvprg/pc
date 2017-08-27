@@ -1217,6 +1217,55 @@ unless the input is malformed for any reason.
 
 \section{Chapter 4}
 
+\subsection{Bridge}
+
+This task is quite tricky. But before trying to solve it, let's just sort out
+input/output to get it out of the way. 
+
+We will assume that the we have a method [[getStrategy]] that takes a list of
+integers (crossing times) and returns two lists. The first list holds crossing
+times going from left to right, and the second list holds crossing times from
+right to left. (We assume the group of people starts on the left side of the
+bridge.) Let's assume there's a [[printResult]] method that takes that output
+of [[getStrategy]] and prints it out in the format specified in the problem
+statement.
+
+<<Bridge>>=
+package com.rvprg.pc;
+
+<<4.3 Imports>>
+import static java.util.stream.Collectors.toList;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
+
+class Bridge {
+    private static final BufferedReader reader = 
+        new BufferedReader(new InputStreamReader(System.in));
+    private static final int LEFT_RIGHT = 0;
+    private static final int RIGHT_LEFT = 1;
+    <<4.3 Variables>>
+
+    <<4.3 Methods>>
+
+    public static void main(String[] args) throws IOException {
+        int n = Integer.valueOf(reader.readLine().trim());
+        reader.readLine();
+        for (int i = 0; i < n; ++i) {
+            int count = Integer.valueOf(reader.readLine().trim());
+            List<Integer> input = reader.lines().map(String::trim).limit(count).map(Integer::parseInt).collect(toList());
+            printResult(getStrategy(input));
+            if (i < n - 1) {
+                reader.readLine();
+                System.out.println();
+            }
+        }
+    }
+}
+@
+
+
 \subsection{ShellSort}
 
 The key to this problem answer is to note that all the items in the stack
