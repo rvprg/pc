@@ -596,7 +596,7 @@ And that completes the program.
 
 \subsection{Interpreter}
 
-This task is disappointing straightforward.
+This task is disappointingly straightforward.
 
 <<Interpreter>>=
 package com.rvprg.pc;
