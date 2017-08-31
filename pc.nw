@@ -1591,7 +1591,8 @@ class Bridge {
         reader.readLine();
         for (int i = 0; i < n; ++i) {
             int count = Integer.valueOf(reader.readLine().trim());
-            List<Integer> input = reader.lines().map(String::trim).limit(count).map(Integer::parseInt).collect(toList());
+            List<Integer> input = reader.lines().map(String::trim)
+                .limit(count).map(Integer::parseInt).collect(toList());
             printResult(getStrategy(input));
             if (i < n - 1) {
                 reader.readLine();
@@ -1797,6 +1798,82 @@ class ReverseAndAdd {
     }
 }
 @
+
+\subsection{The Archeologists' Dilemma}
+
+Unlike the previous two tasks, this tasks is quite challenging. 
+
+Let's paraphrase this task in mathematical terms. For a given number $v$ find
+positive integers $m$ and $n$ such that 
+
+$$ v \cdot 10^n \leq 2^m < (v+1) \cdot 10^n $$
+
+where $n \geq l(v) + 1$, and $l(v)$ is the number of digits in $v$.
+
+Let's take common logarithms on that inequality
+
+$$ log(v \cdot 10^n) \leq log(2^m) < log((v+1) \cdot 10^n) $$
+
+which is the same as
+
+$$ log(v) + log(10^n) \leq log(2^m) < log(v+1) + log(10^n) $$
+
+and
+
+$$ log(v) + n \cdot log(10) \leq m \cdot log(2) < log(v+1) + n \cdot log(10) $$
+
+which is the same as
+
+$$ log(v) + n \leq m \cdot log(2) < log(v+1) + n.$$
+
+This solves the task, because all we need to do now is to iterate on $n$
+starting with $n=l(v)+1$. For a given $n$ we find an initial $m$ by using the
+left part of the inequality, so
+
+$$m = \lfloor{\frac{log(v) + n}{log(2)}}\rfloor$$
+
+Then we increment $m$ while $log(v) + n \geq m \cdot log(2)$. Once this loop
+stops, we check if $m \cdot log(2) < log(v+1) + n$, and if so, $m$ is the
+answer. Otherwise, we increment $n$ and start everything all over again.
+
+<<The Archeologists Dilemma>>=
+package com.rvprg.pc;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.BigDecimal;
+
+public class TheArcheologistsDilemma {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    private static long calculate(long v) {
+        long n = BigDecimal.valueOf(v).precision() + 1;
+        final double left = Math.log10(v);
+        final double right = Math.log10(v + 1);
+        final double log10_2 = Math.log10(2);
+        while (true) {
+            long m = (long) Math.floor((left / log10_2) + n / log10_2);
+            while (left + n > (log10_2 * m)) {
+                m++;
+            }
+            if (right + n > (log10_2 * m)) {
+                return m;
+            }
+            n++;
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        String currentLine;
+        while ((currentLine = reader.readLine()) != null) {
+            System.out.println(calculate(Long.parseLong(currentLine.trim())));
+        }
+    }
+}
+@
+
 
 \subsection{Ones}
 
