@@ -1603,6 +1603,8 @@ class Bridge {
 }
 @
 
+TBD.
+
 
 \subsection{ShellSort}
 
@@ -1950,7 +1952,137 @@ return l;
 
 Brilliant.
 
+\section{Chapter 7}
 
+\subsection{Light, More Light}
+
+With this tasks we are basically asked to find the number of divisors of the
+given number. Once we know the number of divisors, we can figure out the last
+bulb state by checking if the number of the divisors is even or odd.
+
+Let's sort out the input/output first as usual. We assume that we have
+[[calculate]] method that returns the number of divisors for a given number.
+
+<<Light, More Light>>=
+package com.rvprg.pc;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+<<7.1 Imports>>
+
+class LightMoreLight {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+    <<7.1 Variables>>
+
+    LightMoreLight() {
+        <<7.1 Constructor>>
+    }
+
+    public long calculate(long value) {
+        <<7.1 Implementation>>
+    }
+
+    public static void main(String[] args) throws IOException {
+        LightMoreLight l = new LightMoreLight();
+        String currentLine;
+        while ((currentLine = reader.readLine()) != null &&
+                !currentLine.trim().equals("0")) {
+            long value = Long.parseLong(currentLine.trim());
+            System.out.println(l.calculate(value) % 2 == 0 ? "no" : "yes");
+        }
+    }
+}
+@
+
+OK, to figure out the number of divisors we will use the fundamental theorem of
+arithmetic. This theorem states that: Every integer greater than one either is
+prime itself or is the product of prime numbers, and that this product is
+unique, up to the order of the factors. To find the prime factorization we can
+use a straightforward algorithm: simply by dividing a number by the primes
+less that the number itself, trying them one by one.
+
+Since we need to know the prime numbers, let's pre-calculate them first in the
+constructor. We won't need primes larger than $\sqrt{2^{32}-1}$, but we'll define
+a constant [[MAX_PRIMES]] a bit larger than that. We will use a classic algorithm
+for finding prime numbers, the sieve of Eratosthenes algorithm. 
+
+<<7.1 Imports>>=
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.List;
+@
+
+<<7.1 Variables>>=
+private final List<Long> primes;
+private final static int MAX_PRIMES = 70000;
+@
+
+<<7.1 Constructor>>=
+BitSet bits = new BitSet(MAX_PRIMES);
+for (int i = 2; i < Math.sqrt(MAX_PRIMES); ++i) {
+    if (!bits.get(i)) {
+        int k = 0;
+        int ii = i * i;
+        int j = ii + k * i;
+        while (j < MAX_PRIMES) {
+            bits.set(j);
+            k++;
+            j = ii + k * i;
+        }
+    }
+}
+primes = new ArrayList<Long>();
+for (int i = 2; i < bits.length(); ++i) {
+    if (!bits.get(i)) {
+        primes.add((long) i);
+    }
+}
+@
+
+Now the interesting part: In fact we don't need the prime numbers of the
+factorization, we only need their exponents to find out the number of divisors.
+
+To see why, consider a number of the form $v = p_1^n$. The divisors of this
+number are $1, p_1, p_1^2, p_1^3, \ldots, p_1^n$; therefore the number of the
+divisors is $n+1$.  
+
+Consider a number of the form $v = p_1^np_2^m$, its divisors are:
+
+\begin{tabular}{lllll}
+1     & $p_1$     & $p_1^2$      & ... & $p_1^n$  \\
+$p_2$ & $p_1p_2$  & $p_1^2p_2$   & ... & $p_1^np_2$   \\
+$p_2^2$ & $p_1p_2^2$  & $p_1^2p_2^2$ & ... & $p_1^np_2^2$   \\
+...   & ...       &     ...    & ... & ...   \\
+$p_2^m$ & $p_1p_2^m$  &     ...      &  ... & $p_1^np_2^m$
+\end{tabular}
+
+Therefore the number of its divisors is $(n+1)(m+1)$.
+
+Generally the number of the divisors for a number $v = p_1^np_2^m \cdots
+p_k^l$ is $(n+1)(m+1)\cdots(l+1)$.
+
+<<7.1 Implementation>>=
+List<Long> factors = new ArrayList<Long>();
+for (int i = 0; i < primes.size() && value > 1 &&
+        (primes.get(i) * primes.get(i)) <= value; ++i) {
+    long p = 0;
+    while (value % primes.get(i) == 0) {
+        value /= primes.get(i);
+        p++;
+    }
+    if (p > 0) {
+        factors.add(p);
+    }
+}
+if (value > 1) {
+    factors.add(1L);
+}
+return factors.stream().map(x -> x + 1).reduce(1L, (a, b) -> a * b);
+@
+
+This concludes the program.
 
 \section{License}
 
