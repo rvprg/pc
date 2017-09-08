@@ -2172,7 +2172,147 @@ class MultiplicationGame {
 }
 @
 
+\subsection{Polynomial Coefficients}
 
+This task is very straightforward, we just use the Newton's generalized
+binomial theorem.
+
+The formula is:
+
+$$\frac{n!}{k_1!k_2! \ldots k_m!}$$
+
+We won't calculate it as is, but first simplify the fraction whenever possible.
+
+<<Polynomial Coefficients>>=
+package com.rvprg.pc;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+public class PolynomialCoefficients {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    private static List<Integer> expand(int n) {
+        List<Integer> res = new ArrayList<Integer>();
+        for (int i = n; i > 0; --i) {
+            res.add(i);
+        }
+        return res;
+    }
+
+    private static long calculate(int n, List<Integer> v) {
+        List<Integer> numerator = expand(n);
+        List<Integer> denominator = new ArrayList<>();
+        v.stream().filter(x -> x > 0)
+                .forEach(x -> denominator.addAll(expand(x)));
+        Iterator<Integer> it = denominator.iterator();
+        while (it.hasNext()) {
+            if (numerator.remove(it.next())) {
+                it.remove();
+            }
+        }
+        return numerator.stream().reduce(1, Math::multiplyExact).intValue() /
+                denominator.stream().reduce(1, Math::multiplyExact).intValue();
+    }
+
+    private static List<Integer> readList(String input) {
+        return stream(input.trim().split(" "))
+                .filter(x -> !x.equals("")).map(Integer::parseInt)
+                .collect(toList());
+    }
+
+    public static void main(String[] args) throws IOException {
+        String currentLine;
+        while ((currentLine = reader.readLine()) != null) {
+            List<Integer> nk = readList(currentLine);
+            List<Integer> v = readList(reader.readLine());
+            System.out.println(calculate(nk.get(0), v));
+        }
+    }
+}
+@
+
+\subsection{The Stern-Brocot Number System}
+
+This taks is just about traversing the tree, which is trivial.
+
+<<The Stern-Brocot Number System>>=
+package com.rvprg.pc;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
+
+public class TheSternBrocotNumberSystem {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    private static int gcd(int a, int b) {
+        while (b != 0) {
+            int t = b;
+            b = a % b;
+            a = t;
+        }
+        return a;
+    }
+
+    private static String get(int a, int b) {
+        int gcd = gcd(a, b);
+        a = a / gcd;
+        b = b / gcd;
+
+        int[] l = new int[] { 0, 1 };
+        int[] m = new int[] { 1, 1 };
+        int[] r = new int[] { 1, 0 };
+
+        StringBuilder result = new StringBuilder();
+        while (true) {
+            int cmp = Integer.compare(a * m[1], b * m[0]);
+            if (cmp == -1) {
+                r = new int[] { m[0], m[1] };
+                m = new int[] { l[0] + m[0], l[1] + m[1] };
+                result.append("L");
+            } else if (cmp == 1) {
+                l = new int[] { m[0], m[1] };
+                m = new int[] { r[0] + m[0], r[1] + m[1] };
+                result.append("R");
+            } else {
+                break;
+            }
+        }
+        return result.toString();
+    }
+
+    private static List<Integer> readList(String input) {
+        return stream(input.trim().split(" "))
+                .filter(x -> !x.equals("")).map(Integer::parseInt)
+                .collect(toList());
+    }
+
+    public static void main(String[] args) throws IOException {
+        String currentLine;
+        while ((currentLine = reader.readLine()) != null) {
+            List<Integer> ab = readList(currentLine);
+            if (ab.get(0) == 1 && ab.get(1) == 1) {
+                break;
+            }
+            System.out.println(get(ab.get(0), ab.get(1)));
+        }
+    }
+}
+@
 
 \section{Chapter 7}
 
