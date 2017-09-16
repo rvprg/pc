@@ -1724,21 +1724,33 @@ statement.
 <<Bridge>>=
 package com.rvprg.pc;
 
-<<4.3 Imports>>
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.IntStream.range;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.function.BiConsumer;
+import java.util.stream.Stream;
+
 
 class Bridge {
     private static final BufferedReader reader = 
         new BufferedReader(new InputStreamReader(System.in));
     private static final int LEFT_RIGHT = 0;
     private static final int RIGHT_LEFT = 1;
-    <<4.3 Variables>>
 
-    <<4.3 Methods>>
+    private static void printResult(final List<List<Integer>> result) {
+        <<4.3 Print Result>>
+    }
+
+    private static List<List<Integer>> getStrategy(List<Integer> input) {
+        <<4.3 Get Strategy>>
+    }
 
     public static void main(String[] args) throws IOException {
         int n = Integer.valueOf(reader.readLine().trim());
@@ -1757,8 +1769,140 @@ class Bridge {
 }
 @
 
-TBD.
+Let's implement the [[printResult]] method. Like we said, the list contains two
+lists of integers, one list denoting crossing times from left to right, and the
+other from right to left. The first list will always contain pairs, as
+people are crossing from left to right (as we agreed).
 
+The simplest case of all is when there's just one person. In that case we
+simply print total time, which will equals to the crossing time of this person,
+and then the same number again, denoting that person crossing the bridge.
+
+<<4.3 Print Result>>=
+List<Integer> lr = result.get(LEFT_RIGHT);
+List<Integer> rl = result.get(RIGHT_LEFT);
+if (lr.size() == 1) {
+    System.out.println(lr.get(0));
+    System.out.println(lr.get(0));
+    return;
+}
+
+@
+
+Otherwise, we need to sum the crossing times. For the list that holds crossing
+times from right to left is easy, we just sum those numbers. For the list that
+holds crossing times from left to right we need to sum the second number in
+each pair (i.e. the slowest person).
+
+<<4.3 Print Result>>=
+int totalTime = range(0, lr.size()).filter(x -> (x + 1) % 2 == 0)
+        .map(x -> lr.get(x)).sum() +
+        rl.stream().mapToInt(Integer::intValue).sum();
+@
+
+Finally, we just output the [[totalTime]] and print the strategy.
+
+<<4.3 Print Result>>=
+System.out.println(totalTime);
+Stream.iterate(0, i -> i + 2).limit(lr.size() / 2).forEachOrdered(i -> {
+    System.out.println(lr.get(i) + " " + lr.get(i + 1));
+    if (i / 2 < rl.size()) {
+        System.out.println(rl.get(i / 2));
+    }
+});
+@
+
+OK, now let's figure out the strategy. If there's just one person that's easy:
+
+<<4.3 Get Strategy>>=
+final List<List<Integer>> output = Arrays
+                .asList(new ArrayList<Integer>(), new ArrayList<Integer>());
+
+if (input.size() == 1) {
+    output.get(LEFT_RIGHT).add(input.get(0));
+    return output;
+}
+
+@
+
+Obviously the time of crossing the bridge depends on the slowest in a pair.
+Let's assume we have four people and their crossing speeds are $x_1 <= x_2 <=
+x_3 <= x_4$. One way to transfer them is this: $x_1$ and $x_2$ cross, $x_1$
+returns, then $x_3$ and $x_4$ cross, and $x_2$ returns, finally $x_1$ and $x_2$
+cross. This amounts to total time $x_1 + 3x_2 + x_4$. Another way to transfer
+is $x_1$ and $x_2$ cross, $x_1$ returns, then $x_1$ and $x_3$ cross, and $x_1$
+returns, finally $x_1$ and $x_4$ cross. This amounts to total time $2x_1 + x_2
++ x_3 + x_4$. This essentially solves the task, because we simply choose the
+strategy that leads to the smallest time. So we simply check if $x_1 + 3x_2 +
+x_4 \leq  2x_1 + x_2 + x_3 + x_4$, or, equivalently, $2x_2 \leq x_1 + x_3$.
+
+These two strategies still work event if there are more than four people. We
+assign to $x_1$ the fastest and to $x_4$ the slowest, to $x_2$ the second
+fastest, and to $x_3$ the second slowest.
+
+We will be dealing with the fastest and the slowest so having priority queues
+will be convenient, so let's have them:
+
+<<4.3 Get Strategy>>=
+final PriorityQueue<Integer> left = new PriorityQueue<>();
+final PriorityQueue<Integer> right = new PriorityQueue<>();
+@
+
+And we are going to move data from left to right quite a lot, so let's have a 
+helper:
+
+<<4.3 Get Strategy>>=
+final BiConsumer<PriorityQueue<Integer>, PriorityQueue<Integer>> move = (
+        from, to) -> {
+    if (!from.isEmpty()) {
+        Integer v = from.remove();
+        to.add(v);
+        output.get(from == left ? LEFT_RIGHT : RIGHT_LEFT).add(v);
+    }
+};
+
+@
+
+Note that this helper also puts the corresponding values to the [[output]].
+
+Now let's implement the main loop:
+
+<<4.3 Get Strategy>>=
+left.addAll(input);
+
+while (!left.isEmpty()) {
+    move.accept(right, left);
+    move.andThen(move).accept(left, right);
+    if (left.isEmpty()) {
+        break;
+    }
+
+    move.accept(right, left);
+    if (left.size() == 2) {
+        move.andThen(move).accept(left, right);
+        break;
+    }
+
+    Integer x1 = left.remove();
+    Integer x2 = right.peek();
+    Integer x4 = left.stream().max(Integer::compareTo).get();
+    left.remove(x4);
+    Integer x3 = left.stream().max(Integer::compareTo).get();
+    left.remove(x3);
+    int[] x = (2 * x2 <= x1 + x3) ? new int[] { x1, x3, x4 }
+            : new int[] { x4, x1, x3 };
+
+    left.add(x[0]);
+    output.get(LEFT_RIGHT).add(x[1]);
+    output.get(LEFT_RIGHT).add(x[2]);
+    right.add(x[1]);
+    right.add(x[2]);
+}
+
+return output;
+@
+
+This concludes the program.
 
 \subsection{ShellSort}
 
