@@ -1769,13 +1769,13 @@ class Bridge {
 }
 @
 
-Let's implement the [[printResult]] method. Like we said, the list contains two
-lists of integers, one list denoting crossing times from left to right, and the
-other from right to left. The first list will always contain pairs, as
-people are crossing from left to right (as we agreed).
+Let's implement the [[printResult]] method. Like we said, the [[result]] list
+contains two lists of integers, one list denoting crossing times from left to
+right, and the other from right to left. The first list will always contain
+pairs, as people are crossing from left to right (as we agreed).
 
 The simplest case of all is when there's just one person. In that case we
-simply print total time, which will equals to the crossing time of this person,
+simply print the total time, which will equal to the crossing time of this person,
 and then the same number again, denoting that person crossing the bridge.
 
 <<4.3 Print Result>>=
@@ -1825,7 +1825,7 @@ if (input.size() == 1) {
 
 @
 
-Obviously the time of crossing the bridge depends on the slowest in a pair.
+Obviously the time of crossing the bridge equals to the slowest in a pair.
 Let's assume we have four people and their crossing speeds are $x_1 <= x_2 <=
 x_3 <= x_4$. One way to transfer them is this: $x_1$ and $x_2$ cross, $x_1$
 returns, then $x_3$ and $x_4$ cross, and $x_2$ returns, finally $x_1$ and $x_2$
@@ -1833,7 +1833,7 @@ cross. This amounts to total time $x_1 + 3x_2 + x_4$. Another way to transfer
 is $x_1$ and $x_2$ cross, $x_1$ returns, then $x_1$ and $x_3$ cross, and $x_1$
 returns, finally $x_1$ and $x_4$ cross. This amounts to total time $2x_1 + x_2
 + x_3 + x_4$. This essentially solves the task, because we simply choose the
-strategy that leads to the smallest time. So we simply check if $x_1 + 3x_2 +
+strategy that leads to the smallest time. That is we simply check if $x_1 + 3x_2 +
 x_4 \leq  2x_1 + x_2 + x_3 + x_4$, or, equivalently, $2x_2 \leq x_1 + x_3$.
 
 These two strategies still work event if there are more than four people. We
@@ -1865,7 +1865,9 @@ final BiConsumer<PriorityQueue<Integer>, PriorityQueue<Integer>> move = (
 
 Note that this helper also puts the corresponding values to the [[output]].
 
-Now let's implement the main loop:
+Now let's implement the main loop. Note that whenever returning from right to
+left, always the fastest from the group on the right should go. Who goes from
+left to right will depend on the inequality that we discussed above.
 
 <<4.3 Get Strategy>>=
 left.addAll(input);
@@ -2386,7 +2388,7 @@ public class PolynomialCoefficients {
 
 \subsection{The Stern-Brocot Number System}
 
-This taks is just about traversing the tree, which is trivial.
+This task is just about searching the binary tree, which is trivial.
 
 <<The Stern-Brocot Number System>>=
 package com.rvprg.pc;
@@ -2457,6 +2459,10 @@ public class TheSternBrocotNumberSystem {
     }
 }
 @
+
+\subsection{Pairsumonious Numbers}
+
+TBD.
 
 \section{Chapter 7}
 
