@@ -1870,6 +1870,17 @@ public class ContestScoreboard {
 
 @
 
+\subsection{Yahtzee}
+
+This task's solution is going to be a bit lengthy due to necessary coding. The
+solution itself though is not so complicated. Notice that for the five of a
+kind category, for example, we simply find the round that has the smallest sum
+of all dice. In a similarly way we should find rounds to fit into other three
+categories: short straight, long straight, and full house. The rest of the
+categories should be searched exhaustively.
+
+TBD.
+
 \section{Chapter 3}
 
 \subsection{Crypt Kicker II}
