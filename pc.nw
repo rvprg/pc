@@ -1875,11 +1875,402 @@ public class ContestScoreboard {
 This task's solution is going to be a bit lengthy due to necessary coding. The
 solution itself though is not so complicated. Notice that for the five of a
 kind category, for example, we simply find the round that has the smallest sum
-of all dice. In a similarly way we should find rounds to fit into other three
+of all dice. In a similar way we should find rounds to fit into other three
 categories: short straight, long straight, and full house. The rest of the
 categories should be searched exhaustively.
 
-TBD.
+As usual, let's sort out input/output first. Let's assume there's a constructor
+for our [[Yahtzee]] class that takes as input a list of lists of integers.
+These interes are going to be our 13 rounds as defined in the task's
+description. [[getSolutionString]] method returns the answer in the format
+required by the task. Note that dice will be sorted in ascending order. This
+will be useful later on.
+
+<<Yahtzee>>=
+package com.rvprg.pc;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+public class Yahtzee {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    <<2.8 Constants>>
+
+    <<2.8 Helpers>>
+
+    <<2.8 Constructor>>
+
+    <<2.8 Methods>>
+
+    public static void main(String[] args) throws IOException {
+        String currentLine = null;
+        List<List<Integer>> input = new ArrayList<>();
+        while ((currentLine = reader.readLine()) != null &&
+                !currentLine.trim().equals("")) {
+            List<Integer> inputLine = stream(currentLine.trim().split(" "))
+                    .filter(x -> !x.equals(""))
+                    .map(Integer::parseInt).sorted()
+                    .collect(toList());
+            input.add(inputLine);
+            if (input.size() == 13) {
+                Yahtzee yahtzee = new Yahtzee(input);
+                System.out.println(yahtzee.getSolutionString());
+                input.clear();
+            }
+        }
+    }
+}
+@
+
+Since there are going to be 13 categories, it's convenient to reference them by
+indexes in an array of 13 elements. Let's define some constants:
+
+<<2.8 Constants>>=
+private final static int fullhouse = 12;
+private final static int longstraight = 11;
+private final static int shortstraight = 10;
+private final static int fiveofakind = 9;
+private final static int fourofakind = 8;
+private final static int threeofakind = 7;
+private final static int chance = 6;
+
+@
+
+And let's define arrays that will hold the best solution and the sum and a
+bonus of that solution:
+
+<<2.8 Constants>>=
+private final int[] bestSolutionResult = new int[2];
+private final int[] bestSolution = new int[13];
+
+@
+
+Before doing any computations we need to categorize our input data. So let's
+determine up front whether a given round belongs to a specific category or not.
+To represent a round we are going to define a class [[Round]] that will hold
+information about which categories this round can be used for and also the sum
+of dice (or points) if this round is chosen to be used in a specific category.
+
+So an instance of this class will have the dice values, the sum of these dice,
+points depending on categories, and a set of categories this round belongs to.
+
+<<2.8 Helpers>>=
+public static class Round {
+    private final List<Integer> dice;
+    private final int allDiceSum;
+    private final int[] points = new int[13];
+    private final Set<Integer> category;
+
+    <<2.8 Round Constructor>>
+
+    <<2.8 Round Methods>>
+}
+@
+
+The constructor assigns [[allDiceSum]] and [[dice]] and determines which
+categories this round belongs to by filling out [[points]] and [[category]].
+
+<<2.8 Round Constructor>>=
+public Round(List<Integer> dice) {
+    this.allDiceSum = dice.stream().reduce(0, Integer::sum);
+    this.dice = dice;
+    this.category = new HashSet<>();
+
+    <<2.8 Categorize>>
+}
+@
+
+To determine which categories this specific round belongs to we will need to
+write some helper methods.
+
+Let's start with the full house. It's pretty self-explanatory:
+
+<<2.8 Round Methods>>=
+private boolean isFullhouse() {
+    boolean halfsDifferent = dice.get(0) != dice.get(4);
+    boolean twoThree = dice.subList(0, 2).stream().distinct()
+            .count() == 1 &&
+            dice.subList(2, 5).stream().distinct().count() == 1;
+    boolean threeTwo = dice.subList(0, 3).stream().distinct()
+            .count() == 1 &&
+            dice.subList(3, 5).stream().distinct().count() == 1;
+    return halfsDifferent && (twoThree || threeTwo);
+}
+
+@
+
+For the long straight and short straights we are going to need to determine the
+longest sequence, so let's have a helper for that:
+
+<<2.8 Round Methods>>=
+private int getLongestSequence(List<Integer> list) {
+    int longest = 1;
+    int currLen = 1;
+    for (int i = 0; i < list.size(); ++i) {
+        if (i > 0 && list.get(i) - list.get(i - 1) == 1) {
+            currLen += 1;
+        } else if (i > 0 && list.get(i) == list.get(i - 1)) {
+            continue;
+        } else {
+            longest = Math.max(currLen, longest);
+            currLen = 1;
+        }
+    }
+    return Math.max(currLen, longest);
+}
+
+@
+
+Now we can write our long and short straights:
+
+<<2.8 Round Methods>>=
+private boolean isLongStraight() {
+    return getLongestSequence(dice) >= 5;
+}
+
+private boolean isShortStraight() {
+    return getLongestSequence(dice) >= 4;
+}
+
+@
+
+Five, four and three of a kind are simple too:
+
+<<2.8 Round Methods>>=
+private boolean isFiveOfAKind() {
+    return (dice.stream().distinct().count() == 1);
+}
+
+private boolean isFourOfAKind() {
+    List<Integer> v1 = dice.subList(0, 4);
+    List<Integer> v2 = dice.subList(1, 5);
+    return (v1.stream().distinct().count() == 1 ||
+            v2.stream().distinct().count() == 1);
+}
+
+private boolean isThreeOfAKind() {
+    List<Integer> v1 = dice.subList(0, 3);
+    List<Integer> v2 = dice.subList(1, 4);
+    List<Integer> v3 = dice.subList(2, 5);
+    return (v1.stream().distinct().count() == 1 ||
+            v2.stream().distinct().count() == 1 ||
+            v3.stream().distinct().count() == 1);
+}
+@
+
+OK, now we can assign some points depending on whether this round belong to a category or not:
+
+<<2.8 Categorize>>=
+if (isFullhouse()) {
+    category.add(fullhouse);
+    points[fullhouse] = 40;
+}
+if (isLongStraight()) {
+    category.add(longstraight);
+    points[longstraight] = 35;
+}
+if (isShortStraight()) {
+    category.add(shortstraight);
+    points[shortstraight] = 25;
+}
+if (isFiveOfAKind()) {
+    category.add(fiveofakind);
+    points[fiveofakind] = 50;
+}
+if (isFourOfAKind()) {
+    category.add(fourofakind);
+    points[fourofakind] = allDiceSum;
+}
+if (isThreeOfAKind()) {
+    category.add(threeofakind);
+    points[threeofakind] = allDiceSum;
+}
+
+@
+
+Every round can be used in the chance category:
+
+<<2.8 Categorize>>=
+category.add(chance);
+points[chance] = allDiceSum;
+
+@
+
+First six categories can be determined by simple check if the dice have a
+specific value (1 to 6) or not. Points are assinged accordingly.
+
+<<2.8 Categorize>>=
+for (int i = 0; i < 6; ++i) {
+    final int v = i + 1;
+    if (dice.contains(Integer.valueOf(v))) {
+        category.add(i);
+        points[i] = (int) (dice.stream().filter(x -> x == v)
+                .count() * v);
+    }
+}
+@
+
+An important method that we should implement too is [[equals]], let's do that:
+
+<<2.8 Round Methods>>=
+@Override
+public boolean equals(Object obj) {
+    return dice.equals(((Round) obj).dice);
+}
+@
+
+That's it for the [[Round]] class. 
+
+Now let's implement [[Yahtzee]] constructor. Let's assume it calls [[solve]]
+method with a list of [[Round]]s:
+
+<<2.8 Constructor>>=
+Yahtzee(List<List<Integer>> input) {
+    solve(input.stream().map(x -> new Round(x)).collect(toList()));
+}
+
+@
+
+Now let's write [[solve]]. First we create an array [[candidateSolution]] that will hold points for the categories and we try to fit in the last four categories by finding rounds with the smallest sums of the dice:
+
+<<2.8 Methods>>=
+private void solve(List<Round> input) {
+    int[] candidateSolution = new int[13];
+    for (int category = 12; category > 8; --category) {
+        Round dice = filter(category, input).stream()
+                .min((x, y) -> Integer.compare(x.allDiceSum, y.allDiceSum))
+                .orElse(null);
+        if (dice != null) {
+            input.remove(dice);
+            candidateSolution[category] = dice.points[category];
+        }
+    }
+    search(8, input, candidateSolution);
+}
+
+@
+
+The [[filter]] method is quite straightforward:
+
+<<2.8 Methods>>=
+private static List<Round> filter(final int category, List<Round> input) {
+    List<Round> res = new ArrayList<>();
+    Integer categoryInteger = Integer.valueOf(category);
+    for (Round d : input) {
+        if (d.category.contains(categoryInteger)) {
+            res.add(d);
+        }
+    }
+    return res;
+}
+
+@
+
+Let's add one more method that we will need, the method that calculates the sum
+of all points. It'll return an array where the first element is the bonus (if
+present) and the second element is the total sum (including the bonus):
+
+<<2.8 Methods>>=
+private static int[] total(int[] solution) {
+    int[] res = new int[2];
+    int sixSum = 0;
+    for (int i = 0; i < solution.length; ++i) {
+        if (i < 6) {
+            sixSum += solution[i];
+        }
+        res[1] += solution[i];
+    }
+    if (sixSum >= 63) {
+        res[1] += 35;
+        res[0] = 35;
+    }
+    return res;
+}
+
+@
+
+OK, now let's get to the [[search]] method. This method is going to be a
+classic backtracking method.
+
+The first parameter is the position in the array of categories that we are
+trying. We will work out our way in a methodic way down to the first category.
+Once we reach that we check what result this categorization gives us, and if
+it's better than the one we've found so far, we update our found solution to
+the better one. The second argument is a candidate solution.
+
+So first thing we do in this method is to check if [[pos]] is -1, which means
+we have a candidate categorization in the [[solution]], and we check if it's any
+better than the one we've found so far. Otherwise we get all the candidate
+rounds for the given category and start trying them one by one while recursively
+calling the [[search]] method. 
+
+<<2.8 Methods>>=
+private void search(int pos, List<Round> input, int[] solution) {
+    if (pos == -1) {
+        int[] solutionResult = total(solution);
+        if (bestSolutionResult[1] < solutionResult[1]) {
+            System.arraycopy(solution, 0, bestSolution, 0,
+                    solution.length);
+            System.arraycopy(solutionResult, 0, bestSolutionResult, 0,
+                    solutionResult.length);
+        }
+        return;
+    }
+
+    List<Round> candidates = filter(pos, input);
+    Set<Round> checked = new HashSet<Round>();
+    for (Round round : candidates) {
+        if (checked.contains(round)) {
+            continue;
+        }
+        solution[pos] = round.points[pos];
+        input.remove(round);
+        search(pos - 1, input, solution);
+        solution[pos] = 0;
+        input.add(round);
+        checked.add(round);
+    }
+    if (pos >= 7 || candidates.size() == 0) {
+        solution[pos] = 0;
+        search(pos - 1, input, solution);
+    }
+}
+
+@
+
+Finally, all we need to do now is to output the result:
+
+<<2.8 Methods>>=
+private String getSolutionString() {
+    return Arrays.stream(getSolution()).mapToObj(String::valueOf)
+            .collect(Collectors.joining(" "));
+}
+
+public int[] getSolution() {
+    int[] solution = new int[bestSolution.length +
+            bestSolutionResult.length];
+    System.arraycopy(bestSolution, 0, solution, 0, bestSolution.length);
+    System.arraycopy(bestSolutionResult, 0, solution,
+            bestSolution.length,
+            bestSolutionResult.length);
+    return solution;
+}
+@
+
+This concludes this program.
 
 \section{Chapter 3}
 
