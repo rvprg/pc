@@ -2274,6 +2274,50 @@ This concludes this program.
 
 \section{Chapter 3}
 
+\subsection{WERTYU}
+
+Trivial.
+
+<<WERTYU>>=
+package com.rvprg.pc;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class WERTYU {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    private final static String KEYS = "`1234567890-=QWERTYUIOP[]\\ASDFGHJKL;'ZXCVBNM,./";
+    private final static int[] map = new int[256];
+
+    static {
+        for (int i = 0; i < KEYS.length(); ++i) {
+            map[KEYS.charAt(i)] = i;
+        }
+    }
+
+    private static String shift(String currentLine) {
+        StringBuilder output = new StringBuilder();
+        for (int i = 0; i < currentLine.length(); ++i) {
+            output.append(map[currentLine.charAt(i)] != 0
+                    ? KEYS.charAt(map[currentLine.charAt(i)] - 1)
+                    : currentLine.charAt(i));
+        }
+        return output.toString();
+    }
+
+    public static void main(String[] args) throws IOException {
+        String currentLine;
+        while ((currentLine = reader.readLine()) != null) {
+            System.out.println(shift(currentLine));
+        }
+    }
+
+}
+@
+
 \subsection{Crypt Kicker II}
 
 This task is much easier than Crypt Kicker. Here we have a very well known
@@ -3238,7 +3282,42 @@ public class TheSternBrocotNumberSystem {
 
 \subsection{Pairsumonious Numbers}
 
+Let's have a look at a small example. Let's suppose our numbers 
+$a_1, a_2, a_3, a_4$ are all positive and in ascending order then their sums are
+$a_1+a_2, a_1+a_3, a_1+a_4, a_2+a_3,a_2+a_4,a_3+a_4$ and are also in ascending order.
+Let's suppose now we only have $b_1, \ldots, b_6$, where one of the possible
+assignments for $b_1, \ldots, b_6$ can be, for example, $b_1=a_1+a_2,
+b_2=a_1+a_3, b_3=a_1+a_4, b_4=a_2+a_3,b_5=a_2+a_4,b_6=a_3+a_4$.  How can we
+restore $a_1, \ldots, a_4$ without knowing which of such assignments was used
+initially? 
+
+We can start with some value $x$ by assuming that $a_1=x$ (let's suppose any
+number for now). Then $a_2$ is determined by one of the values $b_1, \ldots,
+b_6$. Let's choose $b_1$, then the second number is obviously $a_2=b_1
+- x$. Similarly, we can work out $a_3$ and $a_4$. Of course, there are multiple
+ choices at each step, so we exhaustively try all possible
+combinations by using a backtracking technique.
+
+But straightforward backtracking won't work. First, we don't know which
+range to select the initial $x$ from. Second, trying all the combinations
+without eliminating some dead end combinations will be too slow. So we need to
+narrow the range for the $x$, and also not to proceed with some combinations
+that don't lead to a solution.
+
+We assumed that the values were all positive, however it's easy to see that 
+our backtracking would still work if the number weren't positive.
+
+Let's see how can we eliminate the dead end combinations. Let's suppose we have
+$a_1, a_2$ and the other two values are undetermined yet. If $a_1 + a_2$ is a
+value that is larger than any of the values $b_1, \ldots, b_6$, then we don't
+need to look for the other two undetermined values. This is because values in $a_1,
+\ldots, a_4$ and in $b_1, \ldots, b_6$ are in ascending order, and
+any other combination will lead to even larger values.
+
+Now let's have a look at what is the range for our initial value $x$.
+
 TBD.
+
 
 \section{Chapter 7}
 
