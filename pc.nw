@@ -1028,7 +1028,8 @@ class AustralianVoting {
     private static final BufferedReader reader = 
         new BufferedReader(new InputStreamReader(System.in));
 
-    private static List<String> elect(List<String> candidates, List<Deque<Integer>> ballots) {
+    private static List<String> elect(List<String> candidates, 
+            List<Deque<Integer>> ballots) {
         <<1.8 Implementation>>
     }
 
@@ -1040,7 +1041,8 @@ class AustralianVoting {
             List<String> candidates = reader.lines().limit(count).collect(toList());
             List<Deque<Integer>> ballots = new ArrayList<Deque<Integer>>();
             String currentLine = EMPTY;
-            while ((currentLine = reader.readLine()) != null && !currentLine.equalsIgnoreCase(EMPTY)) {
+            while ((currentLine = reader.readLine()) != null && 
+                    !currentLine.equalsIgnoreCase(EMPTY)) {
                 ballots.add(new ArrayDeque<Integer>(stream(currentLine.trim().split(" "))
                         .filter(x -> !x.equals(EMPTY))
                         .map(Integer::parseInt).map(x -> x - 1).collect(toList())));
@@ -2477,12 +2479,10 @@ public class CommonPermutation {
 }
 @
 
-
-
 \subsection{Crypt Kicker II}
 
 This task is much easier than Crypt Kicker. Here we have a very well known
-pangram "the quick brown fox jumps over the lazy dog". A pangram is a sentence
+pangram ``the quick brown fox jumps over the lazy dog.'' A pangram is a sentence
 that uses every letter of the alphabet at least once. So all we need to do is
 to locate the pangram in the input lines. We will use exactly the same technique
 as we used while solving the original Crypt Kicker problem.
@@ -2566,6 +2566,69 @@ class CryptKickerII {
         }
     }
 }
+@
+
+\subsection{Automated Judge Script}
+
+This task looks so trivial, but it took me a few attempts before the online
+judge accepted it. The reason was that it was wrong to use the [[readLine()]]
+method, because it strips characters; the contract says that ``line is
+considered to be terminated by any one of a line feed ('\textbackslash n'), a
+carriage return ('\textbackslash r'), or a carriage return followed immediately
+by a line feed.'' So the input, when read by [[readLine()]], would apparently
+miss some characters. Other than this caveat, the task is trivial.
+
+<<Automated Judge Script>>=
+package com.rvprg.pc;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+
+public class AutomatedJudgeScript {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    private static String read(int n) throws IOException {
+        StringBuilder input = new StringBuilder();
+        int newlines = 0;
+        while (newlines < n) {
+            int c = reader.read();
+            if (c == '\n') {
+                newlines++;
+            }
+            input.append((char) c);
+        }
+        return input.toString();
+    }
+
+    public static void main(String[] args) throws IOException {
+        int i = 0;
+        while (true) {
+            int n = Integer.parseInt(reader.readLine().trim());
+            if (n == 0) {
+                break;
+            }
+            String src = read(n);
+            String dst = read(Integer.parseInt(reader.readLine().trim()));
+
+            System.out.print("Run #" + (++i) + ": ");
+            if (src.equals(dst)) {
+                System.out.println("Accepted");
+            } else {
+                if (Arrays.equals(
+                        src.chars().filter(Character::isDigit).toArray(),
+                        dst.chars().filter(Character::isDigit).toArray())) {
+                    System.out.println("Presentation Error");
+                } else {
+                    System.out.println("Wrong Answer");
+                }
+            }
+        }
+    }
+}
+
 @
 
 \subsection{File Fragmentation}
@@ -2686,6 +2749,10 @@ return "Impossible";
 
 In accordance to the problem statement "Impossible" should never be returned,
 unless the input is malformed for any reason.
+
+\subsection{Doublets}
+
+TBD.
 
 \section{Chapter 4}
 

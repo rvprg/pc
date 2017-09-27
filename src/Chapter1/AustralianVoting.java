@@ -19,7 +19,8 @@ class AustralianVoting {
     private static final BufferedReader reader = 
         new BufferedReader(new InputStreamReader(System.in));
 
-    private static List<String> elect(List<String> candidates, List<Deque<Integer>> ballots) {
+    private static List<String> elect(List<String> candidates, 
+            List<Deque<Integer>> ballots) {
         final int majority = ballots.size() / 2 + 1;
         final int[] counter = new int[candidates.size()];
         ballots.stream().map(Deque::peek).forEach(x -> counter[x]++);
@@ -49,7 +50,8 @@ class AustralianVoting {
             List<String> candidates = reader.lines().limit(count).collect(toList());
             List<Deque<Integer>> ballots = new ArrayList<Deque<Integer>>();
             String currentLine = EMPTY;
-            while ((currentLine = reader.readLine()) != null && !currentLine.equalsIgnoreCase(EMPTY)) {
+            while ((currentLine = reader.readLine()) != null && 
+                    !currentLine.equalsIgnoreCase(EMPTY)) {
                 ballots.add(new ArrayDeque<Integer>(stream(currentLine.trim().split(" "))
                         .filter(x -> !x.equals(EMPTY))
                         .map(Integer::parseInt).map(x -> x - 1).collect(toList())));
