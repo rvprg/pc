@@ -1143,7 +1143,7 @@ ballots.forEach(b -> {
 
 \section{Chapter 2}
 
-\subsection{Jolly Jumper}
+\subsection{Jolly Jumpers}
 
 This task must be a joke.
 
@@ -1177,6 +1177,292 @@ class JollyJumpers {
         }
     }
 }
+@
+
+\subsection{Poker Hands}
+
+The task isn't particularly difficult in any way, but requires some lengthy
+coding. Anyway, here's the whole program without comment as the code
+self-explanatory.
+
+<<Poker Hands>>=
+package com.rvprg.pc;
+
+import static java.util.stream.Collectors.toList;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class PokerHands {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    private static class Card {
+        final int value;
+        final int suit;
+        private final static Map<Character, Integer> map = initialize();
+
+        private static Map<Character, Integer> initialize() {
+            Map<Character, Integer> map = new HashMap<Character, Integer>();
+            for (char c = '2'; c <= '9'; ++c) {
+                map.put(c, c - '0');
+            }
+            map.put('T', 10);
+            map.put('J', 11);
+            map.put('Q', 12);
+            map.put('K', 13);
+            map.put('A', 14);
+            map.put('C', 1);
+            map.put('D', 2);
+            map.put('H', 3);
+            map.put('S', 4);
+            return map;
+        }
+
+        public Card(char value, char suit) {
+            this.value = map.get(value);
+            this.suit = map.get(suit);
+        }
+    }
+
+    private static class Hand {
+        private List<Card> hand;
+        private int category = 0;
+        private int rank = 0;
+
+        public Hand(List<Card> hand) {
+            this.hand = hand;
+            Collections.sort(hand, (x, y) -> Integer.compare(x.value, y.value));
+            straightFlush();
+            fourOfAKind();
+            fullHouse();
+            flush();
+            straight();
+            threeOfAKind();
+            twoPairs();
+            pair();
+            highCard();
+        }
+
+        private void highCard() {
+            if (category != 0) {
+                return;
+            }
+
+            category = 1;
+            for (int i = hand.size() - 1; i >= 0; --i) {
+                rank = (rank * 100) + hand.get(i).value;
+            }
+        }
+
+        private void pair() {
+            if (category != 0) {
+                return;
+            }
+
+            Map<Integer, Integer> count = groups();
+            List<Integer> pairs = new ArrayList<Integer>();
+            for (Integer c : count.keySet()) {
+                if (count.get(c) == 2) {
+                    pairs.add(c);
+                }
+            }
+
+            if (pairs.size() == 1) {
+                category = 2;
+                rank = pairs.get(0);
+                for (int i = hand.size() - 1; i >= 0; --i) {
+                    if (hand.get(i).value != pairs.get(0)) {
+                        rank = (rank * 100) + hand.get(i).value;
+                    }
+                }
+            }
+        }
+
+        private void twoPairs() {
+            if (category != 0) {
+                return;
+            }
+
+            Map<Integer, Integer> count = groups();
+            List<Integer> pairs = new ArrayList<Integer>();
+            int singleton = 0;
+            for (Integer c : count.keySet()) {
+                if (count.get(c) == 2) {
+                    pairs.add(c);
+                } else if (count.get(c) == 1) {
+                    singleton = c;
+                }
+            }
+
+            if (pairs.size() == 2) {
+                category = 3;
+                Collections.sort(pairs);
+                for (int i = pairs.size() - 1; i >= 0; --i) {
+                    rank = (rank * 100) + pairs.get(i);
+                }
+                rank = (rank * 100) + singleton;
+            }
+        }
+
+        private void threeOfAKind() {
+            if (category != 0) {
+                return;
+            }
+
+            Map<Integer, Integer> count = groups();
+            for (Integer c : count.keySet()) {
+                if (count.get(c) == 3) {
+                    category = 4;
+                    rank = c;
+                    for (int i = hand.size() - 1; i >= 0; --i) {
+                        if (hand.get(i).value != c) {
+                            rank = (rank * 100) + hand.get(i).value;
+                        }
+                    }
+                    return;
+                }
+            }
+        }
+
+        private void straight() {
+            if (category != 0) {
+                return;
+            }
+            int value = hand.get(0).value;
+            for (int i = 1; i < hand.size(); ++i) {
+                if (hand.get(i).value - value == 1) {
+                    value = hand.get(i).value;
+                    continue;
+                } else {
+                    return;
+                }
+            }
+            category = 5;
+            rank = hand.get(hand.size() - 1).value;
+        }
+
+        private void flush() {
+            if (category != 0) {
+                return;
+            }
+
+            int suit = hand.get(0).suit;
+            for (int i = 1; i < hand.size(); ++i) {
+                if (hand.get(i).suit == suit) {
+                    continue;
+                } else {
+                    return;
+                }
+            }
+
+            category = 6;
+            for (int i = hand.size() - 1; i >= 0; --i) {
+                rank = (rank * 100) + hand.get(i).value;
+            }
+        }
+
+        private void fourOfAKind() {
+            fourOfAKindFullHouse(4, 8);
+        }
+
+        private void fullHouse() {
+            fourOfAKindFullHouse(3, 7);
+        }
+
+        private void fourOfAKindFullHouse(int n, int cat) {
+            if (category != 0) {
+                return;
+            }
+
+            Map<Integer, Integer> count = groups();
+            if (count.size() != 2) {
+                return;
+            }
+
+            List<Integer> keys = new ArrayList<>(count.keySet());
+            if (count.get(keys.get(0)) == n) {
+                category = cat;
+                rank = keys.get(0);
+            } else if (count.get(keys.get(1)) == n) {
+                category = cat;
+                rank = keys.get(1);
+            }
+        }
+
+        private void straightFlush() {
+            if (category != 0) {
+                return;
+            }
+
+            int suit = hand.get(0).suit;
+            int value = hand.get(0).value;
+            for (int i = 1; i < hand.size(); ++i) {
+                if (hand.get(i).suit == suit &&
+                        hand.get(i).value - value == 1) {
+                    value = hand.get(i).value;
+                    continue;
+                } else {
+                    return;
+                }
+            }
+
+            category = 9;
+            rank = hand.get(hand.size() - 1).value;
+        }
+
+        private Map<Integer, Integer> groups() {
+            Map<Integer, Integer> count = new HashMap<Integer, Integer>();
+            for (Card c : hand) {
+                count.putIfAbsent(c.value, 0);
+                count.put(c.value, count.get(c.value) + 1);
+            }
+            return count;
+        }
+
+    }
+
+    private static int compare(Hand black, Hand white) {
+        int compareCategory = Integer.compare(black.category, white.category);
+        if (compareCategory == 0) {
+            return Integer.compare(black.rank, white.rank);
+        }
+        return compareCategory;
+    }
+
+    private static int compare(String currentLine) {
+        List<String> hands = Arrays.stream(currentLine.split(" "))
+                .filter(x -> !x.equals("")).collect(toList());
+        return compare(getHand(hands.subList(0, 5)),
+                getHand(hands.subList(5, 10)));
+    }
+
+    private static Hand getHand(List<String> h) {
+        return new Hand(h.stream().map(x -> new Card(x.charAt(0), x.charAt(1)))
+                .collect(toList()));
+    }
+
+    public static void main(String[] args) throws IOException {
+        String currentLine;
+        while ((currentLine = reader.readLine()) != null) {
+            int cmp = compare(currentLine);
+            if (cmp == 0) {
+                System.out.println("Tie.");
+            } else {
+                System.out.println(cmp > 0 ? "Black wins." : "White wins.");
+            }
+        }
+    }
+
+}
+
 @
 
 \subsection{Hartals}
@@ -2885,11 +3171,147 @@ public class Doublets {
 
 @
 
+\subsection{Fmt}
+
+This task may look simple to do at first sight, but actually it's quite
+involved.  The task becomes much easier if the whole text is read before
+trying to format it. We will read the whole text and break it into three type
+of tokens: words, new line breaks and spaces. Continuous spaces would be
+represented as one token in this list of tokens. Then, we read this list of
+tokens and simply follow the rules of formatting outlines in the problem
+statement.
+
+<<Fmt>>=
+package com.rvprg.pc;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Fmt {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+    private static final int LINE_WIDTH = 72;
+
+    private static List<String> tokenize(String input) {
+        List<String> output = new ArrayList<>();
+        StringBuilder block = new StringBuilder();
+        int pos = 0;
+        while (pos < input.length()) {
+            if (input.charAt(pos) == ' ') {
+                while (pos < input.length() && input.charAt(pos) == ' ') {
+                    block.append(input.charAt(pos));
+                    pos++;
+                }
+                output.add(block.toString());
+                block = new StringBuilder();
+            } else if (input.charAt(pos) == '\n') {
+                output.add(new String("\n"));
+                pos++;
+            } else {
+                while (pos < input.length() && input.charAt(pos) != ' ' &&
+                        input.charAt(pos) != '\n') {
+                    block.append(input.charAt(pos));
+                    pos++;
+                }
+                output.add(block.toString());
+                block = new StringBuilder();
+            }
+        }
+        if (block.length() > 0) {
+            output.add(block.toString());
+        }
+        return output;
+    }
+
+    private static void flush(List<String> line, StringBuilder output,
+            boolean newline) {
+        if (line.size() > 1 && line.get(line.size() - 1).startsWith(" ")) {
+            line.remove(line.size() - 1);
+        }
+
+        StringBuilder lineStr = new StringBuilder();
+        for (String x : line) {
+            lineStr.append(x);
+        }
+
+        output.append(lineStr).append(newline ? "\n" : "");
+        line.clear();
+    }
+
+    private static String format(List<String> tokens) {
+        StringBuilder output = new StringBuilder();
+        List<String> line = new ArrayList<>();
+
+        int i = 0;
+        while (i < tokens.size()) {
+            int currLength = line.stream().map(String::length)
+                    .reduce(0, Integer::sum).intValue();
+            String token = tokens.get(i);
+
+            if (token.startsWith(" ")) {
+                line.add(token);
+            } else if (token.equals("\n")) {
+                if (i + 1 < tokens.size()) {
+                    String next = tokens.get(i + 1);
+                    if (next.equals("\n") || next.startsWith(" ") ||
+                            line.size() == 0 || (line.size() == 1 &&
+                                    line.get(0).startsWith(" "))) {
+                        flush(line, output, true);
+                    } else if (currLength + next.length() <= LINE_WIDTH) {
+                        line.add(" ");
+                        line.add(next);
+                        ++i;
+                    } else {
+                        flush(line, output, true);
+                    }
+                } else {
+                    line.add(token);
+                }
+            } else if (currLength == 0 && token.length() > LINE_WIDTH) {
+                line.add(token);
+                if (i + 1 < tokens.size()) {
+                    flush(line, output, true);
+                    i++;
+                }
+            } else {
+                if (currLength + token.length() > LINE_WIDTH) {
+                    flush(line, output, true);
+                }
+                line.add(token);
+            }
+            ++i;
+        }
+
+        if (line.size() > 0) {
+            flush(line, output, false);
+        }
+
+        return output.toString();
+    }
+
+    public static void main(String[] args) throws IOException {
+        StringBuilder input = new StringBuilder();
+        while (true) {
+            int c = reader.read();
+            if (c == -1) {
+                break;
+            }
+            input.append((char) c);
+        }
+        System.out.print(format(tokenize(input.toString())));
+    }
+}
+
+@
+
 \section{Chapter 4}
 
 \subsection{Vito's Family}
 
-All we need to do is to find median and then sum the distances.
+All we need to do is to find the median and then sum the distances.
 
 <<Vitos Family>>=
 package com.rvprg.pc;
@@ -2946,7 +3368,7 @@ To solve this task all we have to do is the following: Find the next largest
 value in the array that is not already in its correct position and flip it so
 that it appears at the top of the stack, then do another flip so that it
 appears next to the previous largest value; continue until the array
-sorted.
+is sorted.
 
 <<Stacks of Flapjacks>>=
 package com.rvprg.pc;
