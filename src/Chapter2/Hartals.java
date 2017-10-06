@@ -32,7 +32,7 @@ public class Hartals {
 
     public static void main(String[] args) throws IOException {
         int cases = Integer.parseInt(reader.readLine().trim());
-        for (int i = 0; i < cases; i++) {
+        for (int i = 0; i < cases; ++i) {
             int n = Integer.parseInt(reader.readLine().trim());
             int p = Integer.parseInt(reader.readLine().trim());
             int[] h = new int[p];

@@ -1182,7 +1182,7 @@ class JollyJumpers {
 \subsection{Poker Hands}
 
 The task isn't particularly difficult in any way, but requires some lengthy
-coding. Anyway, here's the whole program without comment as the code
+coding. Anyway, here's the whole program without comments as the code is 
 self-explanatory.
 
 <<Poker Hands>>=
@@ -1508,7 +1508,7 @@ public class Hartals {
 
     public static void main(String[] args) throws IOException {
         int cases = Integer.parseInt(reader.readLine().trim());
-        for (int i = 0; i < cases; i++) {
+        for (int i = 0; i < cases; ++i) {
             int n = Integer.parseInt(reader.readLine().trim());
             int p = Integer.parseInt(reader.readLine().trim());
             int[] h = new int[p];
@@ -2026,7 +2026,7 @@ public class ErdosNumbers {
 
     public static void main(String[] args) throws IOException {
         int n = Integer.parseInt(reader.readLine().trim());
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < n; ++i) {
             List<Integer> nm = stream(reader.readLine().trim().split(" "))
                     .filter(x -> !x.equals("")).map(Integer::parseInt)
                     .collect(toList());
@@ -3758,6 +3758,232 @@ public class LongestNap {
 }
 
 @
+
+\subsection{CDVII}
+
+The problem statement is a bit vague. When I first read it I thought I'd need
+to figure out the speed of each car and then using that figure out how many
+kilometers each car went in specific hours. But then I looked at the sample
+input and realized that it only takes into account the rate at the moment of
+entry. So the task becomes much easier.
+
+What's the difficulty then? Well, there is not much difficulty in this task. We
+just need to carefully pair enter and exit times and prepare bills based on
+these pairs.
+
+Let's code input/output first. We are going to have a helper class [[Event]]
+that will encapsulate event information: License number, time of entrance or
+exit, and location. For parsing the input lines we are going to use a regex.
+Notice that for [[getBills]] the return type is [[Entry<String, AtomicInteger>]]. 
+The key of [[Entry]] will be a license plate, and the value
+will be the bill in cents. We are using [[AtomicInteger]] because it has
+convenient update semantics.
+
+<<CDVII>>=
+package com.rvprg.pc;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+public class CDVII {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    private static Pattern pattern = Pattern.compile(
+            "([\\d\\w]+)\\s+(\\d\\d):(\\d\\d):(\\d\\d):(\\d\\d)\\s+(\\w+)\\s+(\\d+)");
+
+    private static class Event {
+        private final String license;
+        private final LocalDateTime timestamp;
+        private final String action;
+        private final int location;
+
+        public LocalDateTime getTimestamp() {
+            return timestamp;
+        }
+
+        public String getAction() {
+            return action;
+        }
+
+        public String getLicense() {
+            return license;
+        }
+
+        public Event(String line) {
+            Matcher matcher = pattern.matcher(line);
+            matcher.find();
+            license = matcher.group(1);
+            timestamp = LocalDateTime.of(LocalDate.now().getYear(),
+                    Integer.parseInt(matcher.group(2)),
+                    Integer.parseInt(matcher.group(3)),
+                    Integer.parseInt(matcher.group(4)),
+                    Integer.parseInt(matcher.group(5)));
+            action = matcher.group(6).toLowerCase();
+            location = Integer.parseInt(matcher.group(7));
+        }
+    }
+
+    private static List<Entry<String, AtomicInteger>> getBills(
+            List<Integer> rate,
+            List<Event> events) {
+        <<4.6 Get Bills>>
+    }
+
+    private static Event[] findInterval(List<Event> enters, List<Event> exits) {
+        <<4.6 Find Interval>>
+    }
+
+    public static void main(String[] args) throws IOException {
+        int n = Integer.parseInt(reader.readLine());
+        reader.readLine();
+        for (int i = 0; i < n; ++i) {
+            List<Integer> rate = stream(reader.readLine().trim().split(" "))
+                    .filter(x -> !x.equals("")).map(Integer::parseInt)
+                    .collect(toList());
+            String currentLine;
+            List<Event> events = new ArrayList<>();
+            while ((currentLine = reader.readLine()) != null &&
+                    !currentLine.trim().equals("")) {
+                events.add(new Event(currentLine));
+            }
+            for (Entry<String, AtomicInteger> e : getBills(rate, events)) {
+                System.out.println(e.getKey() + " $" +
+                        BigDecimal.valueOf(e.getValue().intValue(), 2));
+            }
+            if (i < n - 1) {
+                System.out.println();
+            }
+        }
+
+    }
+}
+
+@
+
+OK, now let's have a look at [[findInterval]]. Obviously the intervals can't
+overlap. If intervals overlap it means there are two or more cars with the same
+license plate. So we assume there aren't. This suggests an idea on how to find
+intervals given the lists of enter and exit times for a license plate. 
+
+We assume the lists [[enters]] and [[exits]] are sorted in chronological
+order. We repeat the search loop until any of [[enters]] or [[exits]] becomes
+empty. We get the first entry [[enter]] from [[enters]] and try to find an
+event from the [[exits]] list such that its timestamp is after the [[start]]
+timestamp. If there's not such an entry, we remove [[enter]] from [[enters]]
+and get another one. If there's a candidate in the [[exits]], then we must
+check if there aren't any other events in [[starts]] that lie in between
+[[start]] and [[exit]]. If there are, we can't use this [[start]], because it
+would mean overlapping. So we skip such [[start]]. If, however, there is no
+overlapping, then we've found a candidate interval and we return it.  When we
+can't find an interval, we return [[null]].
+
+<<4.6 Find Interval>>=
+while (!enters.isEmpty() && !exits.isEmpty()) {
+    final Event enter = enters.remove(0);
+    final Event exit = exits.stream()
+            .filter(x -> x.timestamp.isAfter(enter.timestamp))
+            .findFirst()
+            .orElse(null);
+
+    if (exit == null) {
+        continue;
+    }
+
+    boolean overlap = enters.stream()
+            .anyMatch(x -> x.timestamp.isAfter(enter.timestamp) &&
+                    x.timestamp.isBefore(exit.timestamp));
+
+    if (!overlap) {
+        exits.remove(exit);
+        return new Event[] { enter, exit };
+    }
+}
+return null;
+@
+
+Now let's implement [[getBills]]. We will keep our billing in a map, with the
+key being license plate, and the value being the bill. The [[group]] will group
+events per license plate. Then for each entry in this group we will prepare a
+bill. Finally, we return the entries sorted by license plates in alphabetical
+order.
+
+<<4.6 Get Bills>>=
+Map<String, AtomicInteger> bills = new HashMap<>();
+Map<String, List<Event>> groups = events.stream().collect(
+        Collectors.groupingBy(Event::getLicense, Collectors.toList()));
+
+for (Entry<String, List<Event>> entry : groups.entrySet()) {
+    <<4.6 Billing>>
+}
+
+return bills.entrySet().stream()
+        .sorted((x, y) -> x.getKey().compareTo(y.getKey()))
+        .collect(toList());
+
+@
+
+Bill preparation will be done using these steps: First, we partition the events
+into to groups, [[enters]] and [[exits]]. If either of these arrays is empty,
+we skip and move onto another license plate.
+
+<<4.6 Billing>>=
+String license = entry.getKey();
+Map<String, List<Event>> actions = entry.getValue().stream()
+        .collect(Collectors.groupingBy(Event::getAction,
+                Collectors.toList()));
+List<Event> enters = actions.get("enter");
+List<Event> exits = actions.get("exit");
+if (enters == null || exits == null) {
+    continue;
+}
+@
+
+Now, let's sort them, because our [[findInterval]] method expects them in
+sorted order.
+
+<<4.6 Billing>>=
+exits.sort(Comparator.comparing(Event::getTimestamp));
+enters.sort(Comparator.comparing(Event::getTimestamp));
+@
+
+Then, in a loop, we call [[findInterval]] and calculate the amount to be added
+to the bill. This is achieved by getting the [[enter]]'s timestamp and getting
+the hour value. That will be the index into [[rate]] array, which holds rates
+for specific hours. Then we multiply it by the distance to get the total price
+plus 100, price for each trip.
+
+<<4.6 Billing>>=
+Event[] interval = findInterval(enters, exits);
+while (interval != null) {
+    Event enter = interval[0];
+    Event exit = interval[1];
+    bills.putIfAbsent(license, new AtomicInteger(200));
+    int distance = Math.abs(exit.location - enter.location);
+    bills.get(license).addAndGet(
+            rate.get(enter.timestamp.getHour()) * distance + 100);
+    interval = findInterval(enters, exits);
+}
+@
+
+This concludes the program.
 
 \subsection{ShellSort}
 

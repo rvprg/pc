@@ -74,7 +74,7 @@ public class ErdosNumbers {
 
     public static void main(String[] args) throws IOException {
         int n = Integer.parseInt(reader.readLine().trim());
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < n; ++i) {
             List<Integer> nm = stream(reader.readLine().trim().split(" "))
                     .filter(x -> !x.equals("")).map(Integer::parseInt)
                     .collect(toList());
