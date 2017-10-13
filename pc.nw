@@ -4854,12 +4854,12 @@ $$ F = 2 - n - {n \choose 4} + {n \choose 2} + 2{n \choose 4} + n $$
 
 which is the same as:
 
-$$ F = 2 - {n \choose 2} + {n \choose 4} $$
+$$ F = 2 + {n \choose 2} + {n \choose 4} $$
 
 This formula counts in the outer region too, but in our tasks it's not counted,
 so we just reduce it by one. The final formula is:
 
-$$ F = 1 - {n \choose 2} + {n \choose 4} $$
+$$ F = 1 + {n \choose 2} + {n \choose 4} $$
 
 This translates into Java code extremely easily:
 
