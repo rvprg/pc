@@ -4753,7 +4753,7 @@ TBD.
 
 \section{Chapter 6}
 
-\subsection{How Many Fibs}
+\subsection{How Many Fibs?}
 
 This task is particularly easy in Java because of [[BigInteger]] class.
 
@@ -4796,6 +4796,101 @@ public class HowManyFibs {
                 fn = fn1.add(fn2);
             }
             System.out.println(counter);
+        }
+    }
+}
+
+@
+
+\subsection{How Many Pieces of Land?}
+
+Unlike the previous task this one is much more entertaining.
+
+Let's see if we can consider this task a graph task? Actually yes we can. We
+can consider points on an ellipse and diagonal intersections as vertices of a
+graph, and edges being the connecting segments. We are asked to find the number of
+regions of this graph. Note that the task asks for the maximum number of
+regions, which basically means no more than two segments should cross the
+same point.
+
+There's an important characteristic in the graph theory called Euler's Formula:
+
+$$ V - E + F = 2 $$
+
+$V$ is the number of vertices, $E$ is the number of edges, and $F$ is the
+number of regions bound by the edges (this includes the outer region). This
+characteristic holds for any finite connected planar graph without 
+intersecting edges.
+
+Using the Euler's Formula we can find the number of faces once we know $V$ and
+$E$. That is 
+
+$$ F = 2 - V + E $$
+
+Let's count.  We have $n$ points on the ellipse. How many different
+chords can we have? Well we can have ${n \choose 2}$ different chords.  Now we
+need to find at how many points do these chords intersect. Every intersection
+point is uniquely determined by two lines and every two lines are determined by
+four different points on the ellipse. Simply put, this means that every
+intersection point is uniquely determined by four points on the ellipse.  How
+many such different intersection points are there? It's precisely ${n \choose
+4}$. Because we have additional $n$ points on the ellipse the total number of
+vertices of the graph is $V = n + {n \choose 4}$.
+
+Now we have two quantities: the number of chords and the number of points at
+which they intersect. This allows us to calculate the number of edges in our
+graph. Notice that every intersection point breaks the segment into two peaces.
+So if we take two lines and they intersect, we have four segments. If we
+take three lines that intersect at three points, we get nine different
+segments. Generally, if we have $m$ segments intersecting at $p$ points, then
+we end up with $m + 2p$ segments. (Note that this is only true if no more than
+two lines intersect at each point.) This in turn means that our graph will have
+$E = {n \choose 2} + 2{n \choose 4} + n$ edges; additional $n$ because of the
+ellipse's segments are part of the graph too.
+
+Now we just plug these value into the formula:
+
+$$ F = 2 - n - {n \choose 4} + {n \choose 2} + 2{n \choose 4} + n $$
+
+which is the same as:
+
+$$ F = 2 - {n \choose 2} + {n \choose 4} $$
+
+This formula counts in the outer region too, but in our tasks it's not counted,
+so we just reduce it by one. The final formula is:
+
+$$ F = 1 - {n \choose 2} + {n \choose 4} $$
+
+This translates into Java code extremely easily:
+
+<<How Many Pieces of Land>>=
+package com.rvprg.pc;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.BigInteger;
+
+public class HowManyPiecesOfLand {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    private static BigInteger calculate(BigInteger v) {
+        BigInteger t1 = v.multiply(v.subtract(BigInteger.ONE))
+                .divide(BigInteger.valueOf(2));
+        BigInteger t2 = v.multiply(v.subtract(BigInteger.ONE))
+                .multiply(v.subtract(BigInteger.valueOf(2)))
+                .multiply(v.subtract(BigInteger.valueOf(3)))
+                .divide(BigInteger.valueOf(4 * 3 * 2));
+        return BigInteger.ONE.add(t2).add(t1);
+    }
+
+    public static void main(String[] args)
+            throws NumberFormatException, IOException {
+        int n = Integer.parseInt(reader.readLine().trim());
+        for (int i = 0; i < n; ++i) {
+            System.out.println(
+                    calculate(new BigInteger(reader.readLine().trim())));
         }
     }
 }
