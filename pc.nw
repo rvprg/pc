@@ -4897,6 +4897,77 @@ public class HowManyPiecesOfLand {
 
 @
 
+\subsection{Counting}
+
+There's always one easy case: that's when the number of $1$s matches $n$, so
+their sum matches $n$. But now we can start constructing other cases. If we
+remove three 1s from it and replace by $3$ they would still add up to $n$.
+Similarly, if we remove two $1$s and replace by $2$ they would still add up to
+$n$. Now, once we removed two or three $1$s we end up with strings of ones of
+length $n-2$ or $n-3$ to which we can do the same operation recursively. This
+suggests a recursive formula:
+
+$$ T(n) = T(n-2) + T(n-3) $$
+
+But $4$ and $1$ should be counted as $1$ according to the problem statement. We
+can think about this in a similar manner, if we have $n$ 1s we can take out one
+and replace by 4, so it's an additional $T(n-1)$ term in into the recursive
+formula above. But since $1$ and $4$ are the same we also must take into
+account a symmetric case where the first $n-1$ ones are replaced by $n-1$
+fours, so that's a yet additional $T(n-1)$ term. The final formula is:
+
+$$ T(n) = T(n-2) + T(n-3) + 2T(n-1)$$
+
+This value grows very quickly, so we will be using [[BigInteger]] class. We
+will also implement it in a iterative manner rather than recursive function
+calls.
+
+<<Counting>>=
+package com.rvprg.pc;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.BigInteger;
+
+public class Counting {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    private static BigInteger count(int n) {
+        final BigInteger two = BigInteger.valueOf(2);
+        if (n == 1) {
+            return two;
+        } else if (n == 0) {
+            return BigInteger.ONE;
+        } else if (n < 0) {
+            return BigInteger.ZERO;
+        }
+
+        BigInteger[] prev = new BigInteger[] { BigInteger.ZERO, BigInteger.ONE,
+                two };
+
+        for (int i = 1; i < n; ++i) {
+            BigInteger next = prev[2].multiply(two).add(prev[1]).add(prev[0]);
+            prev[0] = prev[1];
+            prev[1] = prev[2];
+            prev[2] = next;
+        }
+
+        return prev[2];
+    }
+
+    public static void main(String[] args)
+            throws NumberFormatException, IOException {
+        String currentLine;
+        while ((currentLine = reader.readLine()) != null) {
+            System.out.println(count(Integer.parseInt(currentLine.trim())));
+        }
+    }
+}
+
+@
+
 \section{Chapter 7}
 
 \subsection{Light, More Light}
