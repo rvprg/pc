@@ -3759,6 +3759,91 @@ public class LongestNap {
 
 @
 
+\subsection{Shoemaker's Problem}
+
+Let's assume we have four jobs that take $d_1, d_2, d_3, d_4$ days and have
+corresponding fines $f_1, f_2, f_3, f_4$. Let's also assume they are in the
+optimal order, that is $S = 0 \cdot f_1 + (d_1) \cdot f_2 + (d_1 + d_2) \cdot
+f_3 + (d_1 + d_2 + d_3)\cdot f_4$ and $S$ value is minimal. Let's now suppose
+we swap job three and four, so we get another value $\hat{S}=0 \cdot f_1 +
+(d_1) \cdot f_2 + (d_1 + d_2) \cdot f_4 + (d_1 + d_2 + d_3)\cdot f_3$, but
+since $S$ is optimal it means that $S \leq \hat{S}$, or
+
+$$ 0 \cdot f_1 + (d_1) \cdot f_2 + (d_1 + d_2) \cdot f_4 + (d_1 + d_2 +
+d_3)\cdot f_3 - (0 \cdot f_1 + (d_1) \cdot f_2 + (d_1 + d_2) \cdot f_3 + (d_1 +
+d_2 + d_3)\cdot f_4) \geq 0 $$
+
+and so
+
+$$ f_3d_4 - f_4d_3 \geq 0 $$ 
+$$ f_3d_4 \geq f_4d_3 $$
+
+This in turn means that in the optimal order $d_3$ will go before $d_4$ if
+$f_3/d_3 \geq f_4/d_4$. So, generally, $d_i$ will go before $d_j$ if
+$f_i/d_i \geq f_j/d_j$.
+
+<<Shoemakers Problem>>=
+package com.rvprg.pc;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class ShoemakersProblem {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    public static class Job implements Comparable<Job> {
+        int start;
+        int fine;
+        int index;
+
+        public Job(int index, int start, int fine) {
+            this.index = index;
+            this.start = start;
+            this.fine = fine;
+        }
+
+        @Override
+        public int compareTo(Job o) {
+            return Integer.compare(o.fine * start, fine * o.start);
+        }
+    }
+
+    public static void main(String[] args)
+            throws NumberFormatException, IOException {
+        int n = Integer.parseInt(reader.readLine().trim());
+        for (int i = 0; i < n; ++i) {
+            reader.readLine();
+            int count = Integer.parseInt(reader.readLine().trim());
+            Job[] jobs = new Job[count];
+            for (int j = 0; j < count; ++j) {
+                List<Integer> input = stream(
+                        reader.readLine().trim().split(" "))
+                                .filter(x -> !x.equals(""))
+                                .map(Integer::parseInt)
+                                .collect(toList());
+                jobs[j] = new Job(j, input.get(0), input.get(1));
+            }
+            Arrays.sort(jobs);
+            System.out.println(Arrays.stream(jobs).map(x -> x.index + 1)
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(" ")));
+            if (i < n - 1) {
+                System.out.println();
+            }
+        }
+    }
+}
+
+@
+
 \subsection{CDVII}
 
 The problem statement is a bit vague. When I first read it I thought I'd need
