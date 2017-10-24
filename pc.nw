@@ -5202,6 +5202,106 @@ public class Counting {
 
 @
 
+\subsection{Expressions}
+
+It's an interesting task! To solve it let's have a look at the recurrence
+formula of the Catalan numbers. As the textbook explains it's constructed in
+this way: The proper string of parentheses starts with a single left
+parenthesis and is matched by some right parenthesis. This divides the word
+into two parts both of which are properly constructed. In other words any
+properly balanced string of parentheses can always be represented as
+$w=(w_1)w_2$ where both $w_1$ and $w_2$ are proper strings of parentheses,
+possibly of zero length; hence the recursive formula. 
+
+Notice that $w_1$ is in the parenthesis in $w=(w_1)w_2$, so the depth of
+$(w_1)$ is at least 1. We can keep track of the depth of recursion and stop as
+long as we reach the required depth:
+
+$$ C[n,d]=\sum _{i=0}^{n-1}C[i,d-1]C[n-1-i,d] $$ 
+
+and
+
+$$ C[n,d]=1 \quad \textnormal{if}\ n=0\ \textnormal{or}\ d=1 $$
+
+Here $n$ is the number of pairs of parentheses, $d$ is the required depth.
+
+The formula above returns all the strings with the depths of up to $d$. To get
+all the proper strings of parentheses of depth $d$ we simply need to subtract
+all the strings of depth up to $d-1$. So the final formula is 
+
+$$ F[m,d] = C[m/2,d]-C[m/2,d-1] $$
+
+Here $m$ is the length of the string as specified in the problem statement. We
+divide by two as the length should always be an even number because each opening
+parenthesis must have a closing parenthesis. If the number is odd, 
+we will simply return 0.
+
+Of course we need memoization in the implementation which is trivial in this
+case.
+
+<<Expressions>>=
+package com.rvprg.pc;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.List;
+
+public class Expressions {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+    private static final BigInteger[][] memo = new BigInteger[151][151];
+
+    public static BigInteger c(int n, int d) {
+        if (d == 1 || n == 0) {
+            return BigInteger.ONE;
+        }
+
+        if (memo[n][d] != null) {
+            return memo[n][d];
+        }
+
+        BigInteger v = BigInteger.ZERO;
+        for (int i = 0; i <= n - 1; ++i) {
+            BigInteger v1 = c(i, d - 1);
+            BigInteger v2 = c(n - i - 1, d);
+            v = v1.multiply(v2).add(v);
+        }
+
+        memo[n][d] = v;
+        return v;
+    }
+
+    public static BigInteger solve(int n, int d) {
+        if (n % 2 != 0) {
+            return BigInteger.ZERO;
+        }
+        for (int i = 0; i < memo.length; ++i) {
+            Arrays.fill(memo[i], null);
+        }
+        return c(n / 2, d).subtract(c(n / 2, d - 1));
+    }
+
+    public static void main(String[] args) throws IOException {
+        String currentLine;
+        while ((currentLine = reader.readLine()) != null &&
+                !currentLine.trim().isEmpty()) {
+            List<Integer> input = stream(currentLine.trim().split(" "))
+                    .filter(x -> !x.equals("")).map(Integer::parseInt)
+                    .collect(toList());
+            System.out.println(solve(input.get(0), input.get(1)));
+        }
+    }
+}
+
+@
+
+
 \section{Chapter 7}
 
 \subsection{Light, More Light}
