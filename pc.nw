@@ -5231,10 +5231,10 @@ all the strings of depth up to $d-1$. So the final formula is
 
 $$ F[m,d] = C[m/2,d]-C[m/2,d-1] $$
 
-Here $m$ is the length of the string as specified in the problem statement. We
+Here $m$ is the length of a string as specified in the problem statement. We
 divide by two as the length should always be an even number because each opening
 parenthesis must have a closing parenthesis. If the number is odd, 
-we will simply return 0.
+we will return 0.
 
 Of course we need memoization in the implementation which is trivial in this
 case.
@@ -5301,6 +5301,9 @@ public class Expressions {
 
 @
 
+\subsection{Complete Tree Labeling}
+
+TBD.
 
 \section{Chapter 7}
 
