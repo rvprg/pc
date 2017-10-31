@@ -5303,7 +5303,93 @@ public class Expressions {
 
 \subsection{Complete Tree Labeling}
 
-TBD.
+TDB.
+
+\subsection{Self-Describing Sequence}
+
+To solve this task we don't even need to come up with a recursive formula. We
+can simply generate the sequence and then lookup the required value. The trick
+however is to make the sequence compact. Instead of writing out each member of
+the sequence we just generate a list of ranges. Indexes of the elements in 
+this list of ranges are the sequence values. 
+
+For example, instead of having $1, 2, 2, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 6$
+etc we represent it as $(1, 1)_1, (2, 3)_2, (4, 5)_3, (6, 8)_4, (9, 11)_5, (12,
+15)_6$ etc. Then, to get the value of $a(n)$, we use binary search to find the
+range into which $n$ falls. Once we know the range, we simply return its index.
+For instance, $a(5)=3$, because $5 \in (4, 5)_3$, and therefore $a(5)=3$. 
+
+<<Self Describing Sequence>>=
+package com.rvprg.pc;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+class SelfDescribingSequence {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    private List<Tuple> seq = new ArrayList<>();
+    private static final long limit = 2_000_000_000L;
+
+    SelfDescribingSequence() {
+        seq.add(new Tuple(1, 1));
+        seq.add(new Tuple(2, 3));
+        seq.add(new Tuple(4, 5));
+        int tupleIndex = 2;
+        boolean cont = true;
+        do {
+            Tuple currTuple = seq.get(tupleIndex);
+            for (long i = currTuple.v1; i <= currTuple.v2; ++i) {
+                Tuple lastTuple = seq.get(seq.size() - 1);
+                if (lastTuple.v1 >= limit) {
+                    cont = false;
+                    break;
+                }
+                seq.add(new Tuple(lastTuple.v2 + 1, lastTuple.v2 + tupleIndex + 1));
+            }
+            tupleIndex++;
+        } while (cont);
+    }
+
+    static class Tuple {
+        private long v1;
+        private long v2;
+
+        public Tuple(long v1, long v2) {
+            this.v1 = v1;
+            this.v2 = v2;
+        }
+    }
+
+    public long get(long n) {
+        int i = Collections.binarySearch(seq, new Tuple(n + 1, 0),
+                (x, y) -> Long.compare(x.v1, y.v1));
+        if (i < 0) {
+            i = Math.abs(i + 1);
+        }
+        return i;
+    }
+
+    public static void main(String[] args) throws IOException {
+        SelfDescribingSequence g = new SelfDescribingSequence();
+        String currentLine;
+        while ((currentLine = reader.readLine()) != null &&
+                !currentLine.trim().equalsIgnoreCase("")) {
+            long n = Long.parseLong(currentLine.trim());
+            if (n == 0) {
+                break;
+            }
+            System.out.println(g.get(n));
+        }
+    }
+}
+
+@
 
 \section{Chapter 7}
 
