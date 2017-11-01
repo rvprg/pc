@@ -31,7 +31,7 @@ I put everything into my package com.rvprg.pc)}.
 
 \tableofcontents
 
-\section{Chapter 1}
+\section{Getting Started}
 
 \subsection{The $3n+1$ Problem}
 
@@ -1141,7 +1141,7 @@ ballots.forEach(b -> {
 });
 @
 
-\section{Chapter 2}
+\section{Data Structures}
 
 \subsection{Jolly Jumpers}
 
@@ -2560,7 +2560,7 @@ public int[] getSolution() {
 
 This concludes this program.
 
-\section{Chapter 3}
+\section{Strings}
 
 \subsection{WERTYU}
 
@@ -3307,7 +3307,7 @@ public class Fmt {
 
 @
 
-\section{Chapter 4}
+\section{Sorting}
 
 \subsection{Vito's Family}
 
@@ -4314,7 +4314,7 @@ public class FootballAkaSoccer {
 
 @
 
-\section{Chapter 5}
+\section{Arithmetic and Algebra}
 
 \subsection{Primary Arithmetic}
 
@@ -4985,7 +4985,7 @@ public class PairsumoniousNumbers {
 
 @
 
-\section{Chapter 6}
+\section{Combinatorics}
 
 \subsection{How Many Fibs?}
 
@@ -5391,7 +5391,7 @@ class SelfDescribingSequence {
 
 @
 
-\section{Chapter 7}
+\section{Number Theory}
 
 \subsection{Light, More Light}
 
