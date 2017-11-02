@@ -5303,7 +5303,111 @@ public class Expressions {
 
 \subsection{Complete Tree Labeling}
 
-TDB.
+Let's look at a simple case, a tree of degree $k$ of depth 1. In this case there
+are $k+1$ nodes: the root and $k$ children. We have a list of labels in
+ascending order. To preserve the heap structure we need to take the minimum
+element from the list of labels as the root. Then we have $k!$ ways to
+arrange the children using the remaining labels. This is going to be our base
+case for the recursion.
+
+Let's define $f(b, s, k, h)$ as a function that returns the number of ways a
+$k$-ary tree can be labeled. Here $b$ is the base value (that is $k!$), $s$ is
+the number of nodes in the $k$-ary tree, $k$ is, obviously, the degree of the
+tree, and $h$ is the height of the tree.
+
+The total number of nodes in a $k$-ary tree of height $h$ is $$n(k, h) =
+\frac{k^{h+1}-1}{k-1}$$ Let's say we are at depth $1$ in the $k$-ary tree. At
+this level there are $k$ subtrees each having $n(k, h-1) = (n(k, h)-1)/ k$
+nodes. In how many ways can we choose the labels from the list of labels for
+this subtree? For the first subtree we can choose labels in $$n(k, h)-1-1
+\choose n(k, h-1)-1$$ ways. One -1 is because of the parent node, and another -1
+is because of the root of the subtree. For the second subtree we can now choose
+labels in $$n(k, h)-1-1-n(k, h-1) \choose n(k, h-1)-1$$ ways, and so on for the
+other subtrees. Remember that all this can be rearranged in $k!$ ways and that
+each subtree can be labeled in $f(b, n(k, h-1), k, h-1)$ ways. Multiplying all
+these together gives us the answer.
+
+<<Complete Tree Labeling>>=
+package com.rvprg.pc;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+class CompleteTreeLabeling {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    private static List<BigInteger> expand(int n, int upto) {
+        List<BigInteger> res = new ArrayList<BigInteger>();
+        for (int i = n; i > upto; --i) {
+            res.add(BigInteger.valueOf(i));
+        }
+        return res;
+    }
+
+    private static BigInteger mult(List<BigInteger> l) {
+        return l.stream().reduce(BigInteger.ONE, (x, y) -> x.multiply(y));
+    }
+
+    private static BigInteger choose(int n, int k) {
+        List<BigInteger> numerator = expand(n, (n - k));
+        List<BigInteger> denominator = expand(k, 0);
+        Iterator<BigInteger> it = denominator.iterator();
+        while (it.hasNext()) {
+            if (numerator.remove(it.next())) {
+                it.remove();
+            }
+        }
+        return mult(numerator).divide(mult(denominator));
+    }
+
+    private static BigInteger count(BigInteger base, int treeSize, int k,
+            int h) {
+        if (h == 1) {
+            return base;
+        }
+        int subtreeSize = (treeSize - 1) / k;
+        BigInteger subtreeCount = count(base, subtreeSize, k, h - 1);
+        BigInteger count = base;
+        for (int i = subtreeSize - 1; i <= treeSize - 2; i += subtreeSize) {
+            count = count.multiply(subtreeCount)
+                    .multiply(choose(i, subtreeSize - 1));
+        }
+        return count;
+    }
+
+    private static BigInteger solve(int k, int h) {
+        if (k == 1) {
+            return BigInteger.ONE;
+        }
+        int pow = 1;
+        for (int i = 0; i < h + 1; ++i) {
+            pow *= k;
+        }
+        return count(mult(expand(k, 0)), (pow - 1) / (k - 1), k, h);
+    }
+
+    public static void main(String[] args) throws IOException {
+        String currentLine;
+        while ((currentLine = reader.readLine()) != null) {
+            List<Integer> input = stream(currentLine.trim().split(" "))
+                    .filter(x -> !x.equals("")).map(Integer::parseInt)
+                    .collect(toList());
+            System.out.println(solve(input.get(0), input.get(1)));
+        }
+    }
+}
+
+@
+
 
 \subsection{Self-Describing Sequence}
 
