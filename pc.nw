@@ -1946,7 +1946,7 @@ public class StackEmUp {
 
 \subsection{Erd\"os Numbers}
 
-To solve this task ones just needs to apply breadth-first search algorithm.
+To solve this task one just needs to apply breadth-first search algorithm.
 Very straightforward.
 
 <<Erdos Numbers>>=
@@ -2432,7 +2432,9 @@ Yahtzee(List<List<Integer>> input) {
 
 @
 
-Now let's write [[solve]]. First we create an array [[candidateSolution]] that will hold points for the categories and we try to fit in the last four categories by finding rounds with the smallest sums of the dice:
+Now let's write [[solve]]. First we create an array [[candidateSolution]] that
+will hold points for the categories and we try to fit in the last four
+categories by finding rounds with the smallest sums of the dice:
 
 <<2.8 Methods>>=
 private void solve(List<Round> input) {
@@ -5489,6 +5491,116 @@ class SelfDescribingSequence {
                 break;
             }
             System.out.println(g.get(n));
+        }
+    }
+}
+
+@
+
+\subsection{Steps}
+
+The problem statement says that the length of the next step can be either the
+same or by one bigger or by one smaller as the previous one. Since this
+sequence always increases by one it's a simple arithmetic series. The sum of
+such series is $s(n) = \frac{n(1 + a_n)}{2}$. We need to find $n$ such that $x
++ s(n) \leq y$ and $x + s(n+1) > y$, here $x$ and $y$ as described in the
+problem statement. But we know that the first and the last steps must be of
+length 1, so we must have another arithmetic series to go down back to step of
+length 1. Therefore, we need to find $n$ such that $x + 2s(n) \leq y$, and
+$x + 2s(n+1) > y$. Because $a_n = n$, $s(n) = \frac{n(1+n)}{2}$, so we are
+looking for an $n$ such that $x + n(1+n) \leq y$ and  $x + (n+1)(n+2) > y$, 
+or, equivalently, $n(1+n) \leq y - x$ and $(n+1)(n+2) > y - x$.
+
+Once we found such an $n$, we know that the number of steps is $2n$. But we
+need to try two cases to finalize the answer. First, if $n(1+n) < y - x$, that
+is strictly less, we need to try to add more steps. We know that at some point
+we reach the step of length $n$, so we should try inserting additional $n$ and
+checking if we are still less than $y-x$. If not, keep adding. Adding $n$ is
+allowed, because a new step can be of the same length as the previous one. If
+adding another $n$ gets us above $y-x$, we need to try $n-1$ and so on down to
+$1$. This will give us the optimal number of steps.
+
+We also need to check another case: $(n+1)(n+2) > y - x$. In this case we
+need to remove steps to get us to $y-x$. We can safely remove steps in pairs.
+Let's image our steps are as follows $1, 2, 3, 4, 4, 3, 2, 1$. We can remove 4
+without breaking the rules. Then we can remove 4 again. Then 3, and then 3 one
+more time and so on. Basically we remove them in pairs. We keep removing until
+it gets us at or below $y-x$. Once we are there we are done. If we are below,
+we can still apply the procedure from the first case to align with $y-x$. 
+
+Now from those two cases we take the one that gives the smaller number of
+steps.
+
+<<Steps>>=
+package com.rvprg.pc;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
+
+class Steps {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    public static long getLength(long limit) {
+        long n = 1;
+        while (n * (1 + n) <= limit) {
+            n++;
+        }
+        if (n * (1 + n) > limit) {
+            n--;
+        }
+        return n;
+    }
+
+    public static long getSteps(long n, long limit) {
+        long sum = n * (1 + n);
+        long steps = n * 2;
+        long i = n;
+        short j = 0;
+
+        while (sum > limit) {
+            sum -= i;
+            steps--;
+            if (j == 1) {
+                j = 0;
+                i--;
+            }
+            j++;
+        }
+
+        while (sum < limit) {
+            while (sum + i <= limit) {
+                sum += i;
+                steps++;
+            }
+            if (i > 1) {
+                i--;
+            }
+        }
+        return steps;
+    }
+
+    public static long solve(long x, long y) {
+        long limit = y - x;
+        if (limit <= 1) {
+            return limit;
+        }
+        long len = getLength(limit);
+        return Math.min(getSteps(len, limit), getSteps(len + 1, limit));
+    }
+
+    public static void main(String[] args) throws IOException {
+        int n = Integer.parseInt(reader.readLine().trim());
+        for (int i = 0; i < n; ++i) {
+            List<Integer> input = stream(reader.readLine().trim().split(" "))
+                    .filter(x -> !x.equals("")).map(Integer::parseInt)
+                    .collect(toList());
+            System.out.println(solve(input.get(0), input.get(1)));
         }
     }
 }
