@@ -5410,6 +5410,93 @@ class CompleteTreeLabeling {
 
 @
 
+\subsection{The Priest Mathematicians}
+
+We know that the answer to the classic Hanoi Towers task is $T(n)=2^n-1$.
+However, in this task it's slightly modified where we have an option to use the
+four pegs instead of three, as described in the problem statement.
+
+It's really easy to come up with a recursive formula:
+
+$$ A(n) = min \{ 2^{n-k}-1 + 2A(k) : k \in (1, n) \} $$
+
+This is because first we use four pegs to move $k$ discs on to the intermediate
+peg, then use the classic algorithm using the three pegs, finally use four pegs
+to move $k$ discs again. We try all such $k \in (1, n)$ and find the minimum value.
+
+This formula coded as is would give the right answer, but it will be very slow.
+Still, it's very useful to have a look at the first few values: 
+
+
+\begin{tabular}{ l | l | l }
+\hline
+k & n & A(n) \\
+\hline
+1 & 2 & 3 \\ 
+1 & 3 & 5 \\
+1 & 4 & 9 \\
+2 & 5 & 13 \\ 
+3 & 6 & 17 \\
+3 & 7 & 25 \\
+4 & 8 & 33 \\
+5 & 9 & 41 \\
+\hline
+\end{tabular}
+
+
+The first column is the $k$ that lead to the minimal A(n). As you may have
+noticed it grows monotonically. This suggests how to construct the values
+iteratively: We simply calculate the value with the current $k$ and $k+1$, and
+if $k+1$ gives a better answer we accept it and advance $k$. This way we 
+calculate all the values for each $n \in (1, 10000)$. Then we simply look up
+the answer in the table.
+
+<<The Priest Mathematician>>=
+package com.rvprg.pc;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.BigInteger;
+
+class ThePriestMathematician {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+    private static final BigInteger TWO = BigInteger.valueOf(2);
+    private static final BigInteger ONE = BigInteger.ONE;
+    private static final BigInteger ZERO = BigInteger.ZERO;
+
+    public static BigInteger[] generate() {
+        BigInteger[] hanoi = new BigInteger[10001];
+        hanoi[0] = ZERO;
+        hanoi[1] = ONE;
+        for (int i = 2, k = 1; i <= 10000; ++i) {
+            BigInteger n1 = TWO.pow(i - k).subtract(ONE)
+                    .add(hanoi[k].multiply(TWO));
+            BigInteger n2 = hanoi[k + 1] != null ? TWO.pow(i - (k + 1))
+                    .subtract(ONE).add(hanoi[k + 1].multiply(TWO))
+                    : null;
+            if (n2 != null && n2.compareTo(n1) == -1) {
+                k++;
+                hanoi[i] = n2;
+            } else {
+                hanoi[i] = n1;
+            }
+        }
+        return hanoi;
+    }
+
+    public static void main(String[] args) throws IOException {
+        BigInteger[] hanoi = generate();
+        String currentLine = null;
+        while ((currentLine = reader.readLine()) != null &&
+                !currentLine.trim().equals("")) {
+            System.out.println(hanoi[Integer.parseInt(currentLine.trim())]);
+        }
+    }
+}
+
+@
 
 \subsection{Self-Describing Sequence}
 
