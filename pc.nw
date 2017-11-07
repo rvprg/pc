@@ -5042,12 +5042,13 @@ public class HowManyFibs {
 
 Unlike the previous task this one is much more entertaining.
 
-Let's see if we can consider this task a graph task? Actually yes we can. We
-can consider points on an ellipse and diagonal intersections as vertices of a
-graph, and edges being the connecting segments. We are asked to find the number of
-regions of this graph. Note that the task asks for the maximum number of
-regions, which basically means no more than two segments should cross the
-same point.
+Let's see if we can consider this task a graph task? Actually yes we
+can\footnote{There's a brilliant video that explains exactly the same solution:
+https://youtu.be/K8P8uFahAgc}. We can consider points on an ellipse and
+diagonal intersections as vertices of a graph, and edges being the connecting
+segments. We are asked to find the number of regions of this graph. Note that
+the task asks for the maximum number of regions, which basically means no more
+than two segments should cross the same point.
 
 There's an important characteristic in the graph theory called Euler's Formula:
 
@@ -5748,7 +5749,7 @@ less that the number itself, trying them one by one.
 Since we need to know the prime numbers, let's pre-calculate them first in the
 constructor. We won't need primes larger than $\sqrt{2^{32}-1}$, but we'll define
 a constant [[MAX_PRIMES]] a bit larger than that. We will use a classic algorithm
-for finding prime numbers, the sieve of Eratosthenes algorithm. 
+for finding prime numbers, the sieve of Eratosthenes algorithm (see \cite{SE}).
 
 <<7.1 Imports>>=
 import java.util.ArrayList;
@@ -5802,8 +5803,8 @@ $p_2^m$ & $p_1p_2^m$  &     ...      &  ... & $p_1^np_2^m$
 
 Therefore the number of its divisors is $(n+1)(m+1)$.
 
-Generally the number of the divisors for a number $v = p_1^np_2^m \cdots
-p_k^l$ is $(n+1)(m+1)\cdots(l+1)$.
+Generally the number of the divisors for a number $v = p_1^{n_1}p_2^{n_2} \cdots
+p_k^{n_m}$ is $(n_1+1)(n_2+1)\cdots(n_m+1)$.
 
 <<7.1 Implementation>>=
 List<Long> factors = new ArrayList<Long>();
@@ -5828,12 +5829,13 @@ This concludes the program.
 
 \subsection{Carmichael Numbers}
 
-To solve this task we need two algorithms: the sieve of Eratosthenes and a fast
-modular exponentiation (specifically, right-to-left binary method).
-BigInteger's modPow would do too, but it will be slower than a handcrafted one.
-I've tried BigInteger.modPow and the judge accepted my solution with 2.5s
-execution time. Handcrafted [[modPow]] though is considerably faster and the
-judge accepted my program with 560ms execution time.
+To solve this task we need two algorithms: the sieve of Eratosthenes (see
+\cite{SE}) and a fast modular exponentiation (specifically, right-to-left
+binary method, see \cite{ME}).  BigInteger's modPow would do too, but it will
+be slower than a handcrafted one.  I've tried BigInteger.modPow and the judge
+accepted my solution with 2.5s execution time. Handcrafted [[modPow]] though is
+considerably faster and the judge accepted my program with 560ms execution
+time.
 
 <<Carmichael Numbers>>=
 package com.rvprg.pc;
@@ -5934,6 +5936,69 @@ class CarmichaelNumbers {
 
 @
 
+\subsection{Euclid Problem}
+
+We just need to use the Extended Euclid Algorithm. The algorithm below is a
+direct translation of the pseudocode from \cite{EEA}.
+
+<<Euclid Problem>>=
+package com.rvprg.pc;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+class EuclidProblem {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    public static long[] euclid(long a, long b) {
+        long s = 0;
+        long old_s = 1;
+        long t = 1;
+        long old_t = 0;
+        long r = b;
+        long old_r = a;
+        while (r != 0) {
+            long quotient = old_r / r;
+            long p = r;
+            r = old_r - quotient * r;
+            old_r = p;
+            p = s;
+            s = old_s - quotient * s;
+            old_s = p;
+            p = t;
+            t = old_t - quotient * t;
+            old_t = p;
+        }
+        return new long[] { old_s, old_t, old_r };
+    }
+
+    public static String toString(long[] arr) {
+        return Arrays.stream(arr).mapToObj(String::valueOf)
+                .collect(Collectors.joining(" "));
+    }
+
+    public static void main(String[] args) throws IOException {
+        String currentLine = null;
+        while ((currentLine = reader.readLine()) != null &&
+                !currentLine.trim().equals("")) {
+            List<Integer> input = stream(currentLine.trim().split(" "))
+                    .filter(x -> !x.equals("")).map(Integer::parseInt)
+                    .collect(toList());
+            System.out.println(toString(euclid(input.get(0), input.get(1))));
+        }
+    }
+}
+
+@
+
 \section{License}
 
 Copyright\textcopyright 2017 Roman Valiu\v{s}enko
@@ -5965,6 +6030,13 @@ SOFTWARE.
 Journal, 1984, pp 97--111
 
 \bibitem{PC} Skiena, Steven S, Revilla, Miguel A., Programming Challenges, 2003
+
+\bibitem{SE} https://en.wikipedia.org/wiki/Sieve\_of\_Eratosthenes
+
+\bibitem{EEA} https://en.wikipedia.org/wiki/Extended\_Euclidean\_algorithm
+
+\bibitem{ME} https://en.wikipedia.org/wiki/Modular\_exponentiation
+
 
 \end{thebibliography}
 
