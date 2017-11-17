@@ -6362,6 +6362,178 @@ TBD.
 
 \section{Backtracking}
 
+\subsection{Little Bishops}
+
+First, there's a caveat with this task. The program below is absolutely correct
+and fast. The online judge, however, was rejecting my initial implementation
+with a timeout. On my machine (a laptop) it ran all possible test cases in less
+than 100 milliseconds, so I was not sure why the judge didn't like it. Because
+the variations of the input aren't massive, I decided to make a lookup table
+with precomputed results. This time the judge accepted the solution. So,
+apparently, the judge runs some test cases multiple times and if we don't cache
+the results we will run out of time. Probably it's a good idea to cache the
+results wherenever possible on these backtracking tasks.
+
+OK, so how to actually solve this? It's very similar to the eight queens
+problem. We should note that once we placed a bishop on a diagonal, no other
+bishops should be placed on that diagonal because obviously they will attack
+each other. This observation would allow us to write a considerably faster
+program than the naive approach but still would be unacceptably slow. We can
+speed up things by noting that if a bishop is on a black diagonal it won't
+attack any bishop on any white diagonal. We can get the number of placements by
+dividing the bishops into two groups: those that are on the black diagonals and
+those that are on the white diagonals. 
+
+Let's say we have $k$ bishops and $i$ bishops will be used on the black diagonals
+only, and $k-i$ bishops will be used on the white diagonals. Let's say $T_b(i)$
+is the number of placements of $i$ bishops on the black diagonals. Similarly,
+let's say $T_w(k-i)$ is the number of placements of $k-i$ bishops on the white
+diagonals. Then the number of combinations of $k$ bishops where exactly $i$
+bishops are on the black diagonals and exactly $k-i$ bishops are on the white
+diagonals and none of them attack each other is $T_b(i) \times T_w(k-i)$.
+Therefore, to get the number of all possible placements we need to get a sum: 
+
+$$  T(k) = \sum_{i=1}^{k} (T_w(i)T_b(k-i)) + T_w(k) + T_b(k) $$
+
+$T_w(k)$ and $T_b(k)$ are for the cases when all $k$ bishops are on the black
+diagonals and all $k$ bishops are on the white diagonals.
+
+In the constructor we will do the calculation as described above. The
+[[getCount]] method takes [[s]], the start diagonal, which is either 0 or 1,
+and [[k]], which is the number of bishops. The results of this method is the
+number of placements of $k$ bishops on a board of size $n$, but only one the
+squares of the specific color. We can assume 0 means black squares and 1 means
+white squares (or vice versa, it doesn't matter).
+
+At the same time we do a little optimization here. If it's not possible to
+place $i$ (out of $k$) bishops on the black squares, then we don't even try to
+place the $k-i$ bishops on the white squares.
+
+<<Little Bishops>>=
+package com.rvprg.pc;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
+class LittleBishops {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    private final int[][] attack;
+    private final int n;
+    private final int totalCount;
+
+    public LittleBishops(int n, int k) {
+        this.attack = new int[n][n];
+        this.n = n;
+        if (k > 0) {
+            int total = 0;
+            for (int i = 1; i < k; ++i) {
+                int v = getCount(0, i);
+                if (v > 0) {
+                    total += v * getCount(1, k - i);
+                }
+            }
+            this.totalCount = total + getCount(0, k) + getCount(1, k);
+        } else {
+            this.totalCount = 1;
+        }
+    }
+
+    private int getCount(int s, int k) {
+        AtomicInteger counter = new AtomicInteger(0);
+        count(s, k, counter);
+        return counter.get();
+    }
+
+    private void attack(int i, int j, int d) {
+        while (i + 1 < n && j + 1 < n) {
+            attack[++i][++j] += d;
+        }
+    }
+
+    public void count(int s, int k, AtomicInteger counter) {
+        <<8.1 Backtrack>>
+    }
+
+    public static void main(String[] args) throws IOException {
+        int[][] memo = new int[9][65];
+        for (int i = 0; i < 9; ++i) {
+            for (int j = 0; j < 65; ++j) {
+                memo[i][j] = -1;
+            }
+        }
+
+        String currentLine = null;
+        while ((currentLine = reader.readLine()) != null) {
+            List<Integer> input = stream(currentLine.trim().split(" "))
+                    .filter(x -> !x.equals("")).map(Integer::parseInt)
+                    .collect(toList());
+            if (input.get(0) == 0 && input.get(1) == 0) {
+                break;
+            }
+            int i = input.get(0);
+            int j = input.get(1);
+            if (memo[i][j] == -1) {
+                LittleBishops s = new LittleBishops(i, j);
+                memo[i][j] = s.totalCount;
+            }
+            System.out.println(memo[i][j]);
+        }
+    }
+}
+
+@
+
+A $n$-sized board has $2n-1$ diagonals. The search will try each diagonal (of
+the same color) one by one and try to place exactly one bishop on the diagonal
+in one of the squares of it. We will assume the squares of the given board are
+enumerated from 0 to $n^2-1$, from the upper left to the right and down.  
+For $i$-th diagonal we need to find the index of the initial square, this is
+saved in the [[ii]] variable. When $i < n$, the index of the initial square is
+simply $i$. If $i \geq n$ then the initial index of the squares will be
+$n(i-n+2)-1$.
+
+The number of the squares in $i$-th diagonal is determined by the
+[[squares]] variable. If $i < n$ the number of the squares equals $i+1$ (plus
+one because we count diagonal from 0). When $i \geq n$ then the number of the
+squares will be $2n-i-1$. We iterate on these squares in a diagonal by simply
+adding $n-1$ to the current index. 
+
+The array [[attack]] holds the number of attackers for each square. So if a
+corresponding element in the array is non-zero it means that square is under
+attack, and therefore we should not try to place any of the remaining bishops
+on it. 
+
+<<8.1 Backtrack>>=
+if (k == 0) {
+    counter.incrementAndGet();
+    return;
+}
+
+for (int i = s; i <= 2 * n - 1; i += 2) {
+    int ii = i >= n ? n * (i - n + 2) - 1 : i;
+    int squares = i >= n ? 2 * n - i - 1 : i + 1;
+    for (int j = ii, num = 0; num < squares; j += (n - 1), ++num) {
+        int x = j / n;
+        int y = j % n;
+        if (attack[x][y] > 0) {
+            continue;
+        }
+        attack(x, y, 1);
+        count(i + 2, k - 1, counter);
+        attack(x, y, -1);
+    }
+}
+@
+
+
 \section{License}
 
 Copyright\textcopyright 2017 Roman Valiu\v{s}enko
