@@ -6533,6 +6533,16 @@ for (int i = s; i <= 2 * n - 1; i += 2) {
 }
 @
 
+\subsection{15-Puzzle Problem}
+
+This task, if it was smaller, could be solved using BFS algorithm. But
+15-puzzle is quite troublesome to solve using BFS. However the task can be
+solved using iterative deepening A* algorithm. Even though the time limit is 15
+seconds, some cases may take much longer even with IDA* algorithm, but it seems
+that the online judge doesn't have such test cases.
+
+TDB.
+
 \section{Graph Traversal}
 
 \subsection{Bicoloring}
