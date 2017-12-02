@@ -6537,9 +6537,21 @@ for (int i = s; i <= 2 * n - 1; i += 2) {
 
 This task, if it was smaller, could be solved using BFS algorithm. But
 15-puzzle is quite troublesome to solve using BFS. However the task can be
-solved using iterative deepening A* algorithm. Even though the time limit is 15
+solved using the iterative deepening A* algorithm. Even though the time limit is 15
 seconds, some cases may take much longer even with IDA* algorithm, but it seems
-that the online judge doesn't have such test cases.
+that the online judge doesn't have such test cases. 
+
+First, let's sort out the unsolvable cases. There is a way to determine unsolvable
+cases and it is described in \cite{15PZL}: If the square containing the number
+$i$ appears before $n$ numbers that are less than $i$, then call it an
+inversion of order $n$, and denote it $n_i$. Let $N=\sum_{i=1}^{15}n_i$.  Now
+let $r_0$ be the row number containing the empty square (counting from 1), then
+if $N + r_0$ value is odd, then the puzzle is unsolvable.
+
+The IDA* algorithm requires a heuristic. Various heuristics may work with this
+task\footnote{See for example:
+http://www.ic-net.or.jp/home/takaken/e/15pz/index.html}, but the simple
+Manhattan distance is sufficient for the judge's input cases.
 
 TDB.
 
@@ -6825,6 +6837,7 @@ Journal, 1984
 
 \bibitem{ENT} Gareth A. Jones, Josephine M. Jones, Elementary Number Theory, 1998 
 
+\bibitem{15PZL} Slocum, Jerry and Weisstein, Eric W. "15 Puzzle." From MathWorld--A Wolfram Web Resource. http://mathworld.wolfram.com/15Puzzle.html
 
 \end{thebibliography}
 
