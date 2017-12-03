@@ -6553,7 +6553,237 @@ task\footnote{See for example:
 http://www.ic-net.or.jp/home/takaken/e/15pz/index.html}, but the simple
 Manhattan distance is sufficient for the judge's input cases.
 
-TDB.
+We are going to use a 1D array to store the puzzle state, 0 denoting the empty
+square. We will introduce a class to represent a node in a graph, which will
+hold puzzle's state and some additional information such as whether this
+configuration is solvable or not, and the Manhattan distance.
+
+Let's sort out input/output.
+
+<<15 Puzzle Problem>>=
+package com.rvprg.pc;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Deque;
+import java.util.List;
+
+public class The15PuzzleProblem {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    <<8.2. Node Class>>
+    <<8.2. IDA* Search>>
+
+    private static List<Integer> parseLine(String line) {
+        return stream(line.trim().split(" "))
+                .filter(x -> !x.equals(""))
+                .map(Integer::parseInt)
+                .collect(toList());
+    }
+
+    public static void main(String[] args) throws IOException {
+        int n = Integer.parseInt(reader.readLine().trim());
+        for (int i = 0; i < n; ++i) {
+            int[] puzzle = new int[16];
+            int l = 0;
+            for (int j = 0; j < 4; ++j) {
+                List<Integer> line = parseLine(reader.readLine().trim());
+                for (int k = 0; k < 4; ++k) {
+                    puzzle[l] = line.get(k);
+                    l += 1;
+                }
+            }
+            Node node = new Node(puzzle);
+            if (!node.isSolvable()) {
+                System.out.println("This puzzle is not solvable.");
+            } else {
+                System.out.println(solve(node));
+            }
+        }
+    }
+}
+
+@
+
+The [[Node]] class is quite straightforward. Its [[isSolvable]] method
+implements the check we discussed earlier. It also overrides [[equals]] because
+we will be checking if an instance of [[Node]] is in the stack or not in our
+implementation of the IDA* algorithm. The constructor takes a node, two indexes
+and a string. Two indexes define elements of the squares that need to be
+swapped, and the string argument is the direction of the move. Obviously, if
+the Manhattan distance is 0, then this configuration is the solution of the
+puzzle.
+
+<<8.2. Node Class>>=
+static class Node {
+    final int[] node;
+    final String path;
+    final int d;
+    final boolean isSolution;
+
+    public Node(Node node, int i, int j, String p) {
+        this.node = Arrays.copyOf(node.node, node.node.length);
+        int tmp = this.node[i];
+        this.node[i] = this.node[j];
+        this.node[j] = tmp;
+        this.path = node.path + p;
+        this.d = distance(this.node);
+        this.isSolution = d == 0;
+    }
+
+    private boolean isSolvable() {
+        int sum = 0;
+        int f = indexOfZero(this.node) / 4 + 1;
+        for (int i = 0; i < this.node.length; ++i) {
+            int c = 0;
+            for (int j = i; j < this.node.length; ++j) {
+                if (this.node[i] > 0 && this.node[j] > 0 &&
+                        this.node[i] > this.node[j]) {
+                    c++;
+                }
+            }
+            sum += c;
+        }
+        return (sum + f) % 2 == 0;
+    }
+
+    private int distance(int[] node) {
+        int d = 0;
+        for (int k = 0; k < node.length; ++k) {
+            if (node[k] == 0) {
+                continue;
+            }
+            int r0 = (node[k] - 1) / 4;
+            int c0 = (node[k] - 1) % 4;
+            int r1 = (k) / 4;
+            int c1 = (k) % 4;
+            d += Math.abs(r0 - r1) + Math.abs(c0 - c1);
+        }
+        return d;
+    }
+
+    public Node(int[] puzzle) {
+        this.node = puzzle;
+        this.path = "";
+        this.d = distance(this.node);
+        this.isSolution = d == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(node);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Node other = (Node) obj;
+        if (!Arrays.equals(node, other.node))
+            return false;
+        return true;
+    }
+}
+
+@
+
+Now let's implement the search algorithm. This implementation is a direct
+translation of the pseudocode from \cite{IDA*}. The method [[adjacent]] simply
+returns all possible movements for the given [[puzzle]].
+
+<<8.2. IDA* Search>>=
+private static final int FOUND = Integer.MIN_VALUE;
+
+public static int indexOfZero(int[] puzzle) {
+    for (int i = 0; i < puzzle.length; ++i) {
+        if (puzzle[i] == 0) {
+            return i;
+        }
+    }
+    return 0;
+}
+
+public static List<Node> adjacent(Node puzzle) {
+    List<Node> nodes = new ArrayList<>();
+    int p = indexOfZero(puzzle.node);
+
+    if (p + 1 <= 15 && p != 3 && p != 7 && p != 11 && p != 15) {
+        nodes.add(new Node(puzzle, p, p + 1, "R"));
+    }
+
+    if (p - 4 >= 0) {
+        nodes.add(new Node(puzzle, p, p - 4, "U"));
+    }
+
+    if (p - 1 >= 0 && p % 4 != 0) {
+        nodes.add(new Node(puzzle, p, p - 1, "L"));
+    }
+
+    if (p + 4 <= 15) {
+        nodes.add(new Node(puzzle, p, p + 4, "D"));
+    }
+
+    return nodes;
+}
+
+private static String solve(Node root) {
+    int limit = root.d;
+    Deque<Node> stack = new ArrayDeque<>();
+    stack.push(root);
+    while (true) {
+        int newBound = search(stack, 0, limit);
+        if (newBound == FOUND) {
+            return stack.peek().path;
+        }
+        if (newBound == Integer.MAX_VALUE) {
+            return "This puzzle is not solvable.";
+        }
+        limit = newBound;
+    }
+}
+
+private static int search(Deque<Node> stack, int g, int limit) {
+    Node node = stack.peek();
+    int f = g + node.d;
+
+    if (f > limit) {
+        return f;
+    }
+    if (node.isSolution) {
+        return FOUND;
+    }
+    int min = Integer.MAX_VALUE;
+    for (Node adjNode : adjacent(node)) {
+        if (!stack.contains(adjNode)) {
+            stack.push(adjNode);
+            int newBound = search(stack, g + 1, limit);
+            if (newBound == FOUND) {
+                return FOUND;
+            }
+            if (newBound < min) {
+                min = newBound;
+            }
+            stack.pop();
+        }
+    }
+    return min;
+}
+@
 
 \section{Graph Traversal}
 
@@ -6838,6 +7068,8 @@ Journal, 1984
 \bibitem{ENT} Gareth A. Jones, Josephine M. Jones, Elementary Number Theory, 1998 
 
 \bibitem{15PZL} Slocum, Jerry and Weisstein, Eric W. "15 Puzzle." From MathWorld--A Wolfram Web Resource. http://mathworld.wolfram.com/15Puzzle.html
+
+\bibitem{IDA*} https://en.wikipedia.org/wiki/Iterative\_deepening\_A*
 
 \end{thebibliography}
 
