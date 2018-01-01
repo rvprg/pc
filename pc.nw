@@ -7887,6 +7887,210 @@ public class TheNecklace {
 
 @
 
+\subsection{Fire Stations}
+
+Each intersection is a node in the graph. We are asked to minimize the maximum
+distance to the other nodes in the graph by placing a fire station at one of
+the nodes in the graph provided we already have a set of fire stations at some
+of the nodes (or not at all).
+
+OK, because we may have fire stations at some of the intersections, we need to
+calculate the distances from those fire stations to the other nodes. We keep
+track of the maximum distances and keep track of the minimum of these maximum
+distances. Next, at every intersection we calculate the distances to the other
+intersections using the Dijkstra's algorithm. We keep track of the minimum of
+the maximum distances for each intersection and select the one that minimizes
+it, as required by the problem.
+
+Our Dijkstra's algorithm implementation is not efficient as it doesn't use a
+priority queue. Standard Java doesn't have any proper priority queue. (Well, it
+does, but it's not a proper priority queue as it doesn't have ``decrease
+priority'' semantics to it.) But because the problem has a generous time out of
+more than 6 seconds, a naive implementation is sufficient.
+
+Let's break it down. First, I/O. We are going to represent the graph as a map,
+where key is the intersection index (node index) and the value is a list of
+[[AdjNode]] edges which are simply tuples with indexes of adjacent nodes and
+the weights (distances) of the corresponding edges. The [[solve]] method is the
+main method that will determine the index of an intersection where a new fire
+station needs to be built. It takes as input a set of indexes of the existing
+fire stations and the graph itself.
+
+<<Fire Stations>>=
+package com.rvprg.pc;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+public class FireStations {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    static class AdjNode {
+        final int index;
+        final long dist;
+
+        public AdjNode(int index, long dist) {
+            this.index = index;
+            this.dist = dist;
+        }
+    }
+
+    <<10.3 Methods>>
+    <<10.3 Solver>>
+
+    private static List<Integer> parseLine(String line) {
+        return stream(line.trim().split(" "))
+                .filter(x -> !x.equals(""))
+                .map(Integer::parseInt)
+                .collect(toList());
+    }
+
+    public static void main(String[] args) throws IOException {
+        int n = Integer.parseInt(reader.readLine().trim());
+        reader.readLine();
+        for (int i = 0; i < n; ++i) {
+            List<Integer> fi = parseLine(reader.readLine());
+            Set<Integer> stations = new HashSet<>();
+            for (int j = 0; j < fi.get(0); ++j) {
+                stations.add(Integer.parseInt(reader.readLine().trim()));
+            }
+            Map<Integer, List<AdjNode>> graph = new HashMap<>();
+            String currentLine = "";
+            while ((currentLine = reader.readLine()) != null &&
+                    !currentLine.trim().isEmpty()) {
+                List<Integer> node = parseLine(currentLine);
+                graph.putIfAbsent(node.get(0), new ArrayList<>());
+                graph.putIfAbsent(node.get(1), new ArrayList<>());
+                graph.get(node.get(0))
+                        .add(new AdjNode(node.get(1), node.get(2)));
+                graph.get(node.get(1))
+                        .add(new AdjNode(node.get(0), node.get(2)));
+            }
+
+            System.out.println(solve(stations, graph));
+
+            if (i < n - 1) {
+                System.out.println();
+            }
+        }
+    }
+
+}
+
+@
+
+Now let's implement the Dijkstra's algorithm. It'll be a naive implementation,
+but this is sufficient to solve this task in an acceptable time.
+
+The method takes the [[graph]] and the source [[src]] node index. It returns an
+array where each item represents the shortest path cost (in terms of distances)
+from the [[src]] to the corresponding item. Array's index corresponds to
+the intersection number.
+
+<<10.3 Methods>>=
+private static long[] dijkstra(
+        Map<Integer, List<AdjNode>> graph, int src) {
+    long[] distances = new long[501];
+    Arrays.fill(distances, Long.MAX_VALUE);
+    Set<Integer> next = new HashSet<>();
+    for (Entry<Integer, List<AdjNode>> e : graph.entrySet()) {
+        next.add(e.getKey());
+    }
+    distances[src] = 0L;
+
+    while (!next.isEmpty()) {
+        long min = -1;
+        int node = -1;
+        for (Integer nextNode : next) {
+            if (distances[nextNode] < min || min == -1) {
+                min = distances[nextNode];
+                node = nextNode;
+            }
+        }
+        next.remove(node);
+        for (AdjNode adj : graph.get(node)) {
+            long newMin = min + adj.dist;
+            if (newMin < distances[adj.index]) {
+                distances[adj.index] = newMin;
+            }
+        }
+    }
+
+    return distances;
+}
+
+@
+
+OK, once we've got the array of distances for specific source, we will need to
+somehow merge it with an array of distances of a different source. For that we
+are going to use the following method. It'll take the nodes collection and two
+distance arrays, and produce a new one by retaining the minimal distances.
+
+<<10.3 Methods>>=
+private static long[] merge(Collection<Integer> nodes,
+        long[] prevDistances,
+        long[] distancesFromStation) {
+    long[] merged = Arrays.copyOf(prevDistances,
+            prevDistances.length);
+    for (Integer j : nodes) {
+        merged[j] = Math.min(merged[j],
+                distancesFromStation[j]);
+    }
+    return merged;
+}
+
+@
+
+Finally, we can now implement the main [[solve]] method.
+
+<<10.3 Solver>>=
+private static int solve(Set<Integer> stations,
+     Map<Integer, List<AdjNode>> graph) {
+    long[] distances = null;
+    for (Integer station : stations) {
+        long[] distancesFromStation = dijkstra(graph, station);
+        distances = distances != null ? merge(graph.keySet(), distances,
+                distancesFromStation) : distancesFromStation;
+    }
+
+    long minMax = Long.MAX_VALUE;
+    int newStationNumber = 1;
+    for (Integer src : graph.keySet()) {
+        if (stations.contains(src)) {
+            continue;
+        }
+        long[] distancesFromStation = dijkstra(graph, src);
+        long[] newDistances = merge(graph.keySet(), distances,
+                distancesFromStation);
+        long max = 0;
+        for (Integer i : graph.keySet()) {
+            max = Math.max(newDistances[i], max);
+        }
+        if (max < minMax) {
+            minMax = max;
+            newStationNumber = src;
+        }
+    }
+
+    return newStationNumber;
+}
+@
+
+
 \section{Dynamic Programming}
 
 \section{Grids}
