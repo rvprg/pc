@@ -8090,6 +8090,17 @@ private static int solve(Set<Integer> stations,
 }
 @
 
+\subsection{Railroads}
+
+Well, I failed to solve this task with the BFS. I thought it would perfectly
+work, but the judge repeatedly declined my solution with the ``Time Limit
+Exceeded'' verdict despide of a number of attempts with various optimizations.
+It was clear: A different approach was required here. In the end, I have
+purloined the idea for this task solution from \cite{AlexLange}.
+
+<<Railroads>>=
+TBD
+@
 
 \section{Dynamic Programming}
 
@@ -8146,6 +8157,8 @@ Journal, 1984
 \bibitem{FW} https://en.wikipedia.org/wiki/Floyd-Warshall\_algorithm
 
 \bibitem{MAXIMIN} http://masc.cs.gmu.edu/wiki/floydwarshall/
+
+\bibitem{AlexLange} https://github.com/alex-lange/contest-programming/blob/master/uva/10039/Main.java
 
 \end{thebibliography}
 
