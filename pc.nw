@@ -6785,6 +6785,159 @@ private static int search(Deque<Node> stack, int g, int limit) {
 }
 @
 
+\subsection{Queue}
+
+This task was quite challenging despite the fact it is rated as Level 2 task.
+It took me two attempts before I came up with a correct solution.
+
+Let's agree that $l$ is the number of people visible while looking from the
+beginning of the queue, and $r$ is the number of people visible while looing
+from the end of the queue.
+
+Now, two important observations. Notice that out of $n$ persons there will
+always be the tallest person and that one will be visible from both ends of the
+queue. This is because all persons are of different height and if the person
+visible from both ends is not the tallest, then there will be a person that we
+will need to fit in between the persons and we won't be able to do that. So in
+every proper configuration the person visible from both ends is the tallest
+person. The second observation is that we don't need to arrange people into a
+queue as described in the problem in order to determine the required queue
+configurations. All we have to do is to find a configuration where all the
+people go in ascending order and such that the length of the arrangement is
+$l+r-2$; let's call this a queue. (Minus $2$ because both $l$ and $r$ parts
+``contain'' the tallest person). Then the number of configurations as it's
+asked in the problem statement is equal to ${l+r-2} \choose {l-1}$. Now we will
+have some people that should be distributed in between these people in the
+queue. For example if we have three people in a queue $p_1, p_2, p_3$ and $p_1
+< p_2 < p_3$ then the other people can be inserted between $p_1$ and $p_2$
+(let's call it $p_1$ bucket), and $p_2$ and $p_3$ ($p_2$ bucket), provided that
+$p_2 - p_1 > 1$ and $p_3 - p_2 > 1$, and that those other people heights are
+less than $p_1$ and $p_2$ and so on. This is where the backtracking technique
+comes in: We try all possible placements of the people into such buckets. Note
+that we put the people into buckets in a methodic way and in ascending order.
+Once we have a placement in a bucket, $d$ people within the bucket can be
+permuted in $d!$ ways. Since we have multiple buckets we just multiple these
+factorials to get the final answer. Then we find another distribution in the
+buckets and repeat the calculation while accumulating the value. Once
+distributions in the buckets are exhausted for this queue, we find a nother
+queue and repeat the process.\footnote{Incidentally, there's a very short and
+efficient solution using dynamic programming technique. See
+https://github.com/morris821028/UVa/blob/master/volume101/10128 - Queue.cpp.}
+
+<<Queue>>=
+package com.rvprg.pc;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
+import java.util.stream.LongStream;
+
+public class Queue {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    private final int n;
+    private final int k;
+    private final int[] buckets;
+    private final int[] queue;
+    private final int[] values;
+    private final boolean[] skip;
+    private long total;
+    private long counter;
+
+    private static final long[] factorial = LongStream.rangeClosed(0, 13)
+            .map(f -> f == 0 ? 1
+                    : LongStream.rangeClosed(1, f).reduce(1L,
+                            (x, y) -> x * y))
+            .toArray();
+
+    private static final Long[][][] cache = new Long[13 + 1][13 + 1][13 + 1];
+
+    public Queue(int n, int l, int r) {
+        this.n = n;
+        this.k = l - 1;
+        buckets = new int[n + 1];
+        skip = new boolean[n + 1];
+        queue = new int[l + r - 2];
+        values = new int[n - (l + r - 2) - 1 < 0 ? 0 : n - (l + r - 2) - 1];
+        skip[n] = true;
+        if (cache[n][l][r] != null) {
+            total = cache[n][l][r];
+        } else {
+            select(0);
+            cache[n][l][r] = total;
+        }
+    }
+
+    private void select(int pos) {
+        if (pos == queue.length) {
+            for (int i = 1, j = 0; i <= n; ++i) {
+                if (!skip[i]) {
+                    values[j++] = i;
+                }
+            }
+            counter = 0;
+            count(0);
+            int nn = queue.length;
+            total += counter * factorial[nn] /
+                    (factorial[k] * factorial[nn - k]);
+            return;
+        }
+
+        int start = pos - 1 >= 0 ? queue[pos - 1] + 1 : 1;
+        for (int i = start; i < n; ++i) {
+            queue[pos] = i;
+            skip[i] = true;
+            select(pos + 1);
+            skip[i] = false;
+        }
+    }
+
+    private void count(int pos) {
+        if (pos == values.length) {
+            long permutations = 1;
+            for (int i = 0; i < buckets.length; ++i) {
+                permutations *= factorial[buckets[i]];
+            }
+            counter += permutations;
+            return;
+        }
+
+        for (int bucket : queue) {
+            if (bucket > values[pos]) {
+                buckets[bucket]++;
+                count(pos + 1);
+                buckets[bucket]--;
+            }
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        int n = Integer.parseInt(reader.readLine().trim());
+        for (int i = 0; i < n; ++i) {
+            List<Integer> line = stream(reader.readLine().split(" "))
+                    .filter(x -> !x.equals(""))
+                    .map(Integer::parseInt)
+                    .collect(toList());
+            int l = line.get(1);
+            int r = line.get(2);
+            if (l + r - 1 > 13) {
+                System.out.println(0);
+            } else {
+                Queue q = new Queue(line.get(0), l, r);
+                System.out.println(q.total);
+            }
+        }
+    }
+
+}
+
+@
+
 \section{Graph Traversal}
 
 \subsection{Bicoloring}
