@@ -6938,6 +6938,32 @@ public class Queue {
 
 @
 
+\subsection{Servicing Stations}
+
+There's no alternative other than just try all possible configurations as this
+task is known to be an NP problem\footnote{See ``dominating set''}. So we will
+have to exhaustively try various configurations until we arrive at one that
+satisfies the problem requirements. We start with just one node, and if we
+can't find a solution we try two nodes, then three nodes, and so on, until we
+find a solution.
+
+One important thing to do is to find the graphs, because some nodes can be
+disconnected from the others. Once we found these graphs we then find the
+dominating sets per each graph and sum up the sizes of those dominating
+sets to get the final result.
+
+We will be using bit arrays per each node. Each such bit array will define
+which nodes are connected to the node. A bit at index $i$ tells whether node
+$i$ is connected to this node. At first I chose to use [[boolean]] arrays but then
+switched to Java's [[BitSet]]. However, [[BitSet]]'s performance wasn't satisfcatory,
+therefore I chose to use [[long]] type to hold my bits and use bit operations
+to set and unset bits in it.
+
+<<Servicing Stations>>=
+TBD
+@
+
+
 \section{Graph Traversal}
 
 \subsection{Bicoloring}
