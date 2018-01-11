@@ -23,10 +23,10 @@ of literate programming please refer \cite{Knuth1984}. These programs are my
 solutions to the programming tasks from the "Programming Challenges"
 book\cite{PC} which in turn is a collection of problems from the UVa Online
 Judge hosted by University of Valladolid\footnote{If you are going to submit
-any of these programs to the UVa Online Judge make sure the class name is Main
-and that it's not in any package; For the class names I use problem names, and
-I put everything into my package com.rvprg.pc)}.  
-\end{abstract}
+any of these programs to the UVa Online Judge (which you obviously shouldn't)
+make sure the class name is Main and that it is not in any package; Note that
+for the class names I use problem names and I put everything into my package
+com.rvprg.pc)}.  \end{abstract}
 
 
 \tableofcontents
@@ -6955,14 +6955,230 @@ sets to get the final result.
 We will be using bit arrays per each node. Each such bit array will define
 which nodes are connected to the node. A bit at index $i$ tells whether node
 $i$ is connected to this node. At first I chose to use [[boolean]] arrays but then
-switched to Java's [[BitSet]]. However, [[BitSet]]'s performance wasn't satisfcatory,
-therefore I chose to use [[long]] type to hold my bits and use bit operations
+switched to Java's [[BitSet]]. However, [[BitSet]]'s performance wasn't satisfactory,
+whether [[boolean]] arrays required a number of ugly cycles to be coded here and 
+there. Therefore I chose to use [[long]] type to hold my bits and use bit operations
 to set and unset bits in it.
 
+The template for the program will be as follows.
+
 <<Servicing Stations>>=
-TBD
+package com.rvprg.pc;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
+
+public class ServicingStations {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    <<8.4 Bits Class>>
+    <<8.4 Fields>>
+
+    public ServicingStations(Bits[] cities) throws Exception {
+        <<8.4 Constuctor>>
+    }
+
+    <<8.4 Graphs>>
+    <<8.4 Backtrack>>
+
+    private static List<Integer> parseLine(String line) {
+        return stream(line.split(" "))
+                .filter(x -> !x.equals(""))
+                .map(Integer::parseInt)
+                .collect(toList());
+    }
+
+    public static void main(String[] args) throws Exception {
+        <<8.4 Input/Output>>
+    }
+
+}
+
 @
 
+Let's add the [[Bits]] class first. It's just a wrapper around
+[[long]] value that sets and reads bits of it:
+
+<<8.4 Bits Class>>=
+static class Bits {
+    long v = 0L;
+
+    boolean get(int b) {
+        return (this.v & (1L << b)) != 0;
+    }
+
+    void set(int b) {
+        this.v |= (1L << b);
+    }
+}
+
+@
+
+Our input graph will be represented as an array of [[Bits]], [[Bits[] cities]],
+where an index $i$ in the array [[cities]] is the node $i$, and the
+corresponding array element of type [[Bits]], e.g. [[cities[i]]], is its
+adjacency bit array.
+
+The input graph may be actually a set of graphs which are completely isolated
+from each other. We would like to decompose the input graph to such isolated
+graphs first.
+
+To do that we are going to use the depth-first search:
+
+<<8.4 Graphs>>=
+private List<Bits> graphs(Bits[] cities) {
+    List<Bits> graphs = new ArrayList<>();
+    Bits all = new Bits();
+    boolean finished = false;
+    while (!finished) {
+        finished = true;
+        for (int i = 0; i < cities.length; ++i) {
+            if (!all.get(i)) {
+                finished = false;
+                Bits graph = bfs(i, cities);
+                graphs.add(graph);
+                all.v |= graph.v;
+                break;
+            }
+        }
+    }
+    return graphs;
+}
+
+private Bits bfs(int s, Bits[] cities) {
+    Deque<Integer> next = new ArrayDeque<>();
+    Bits visited = new Bits();
+    next.add(s);
+    while (!next.isEmpty()) {
+        int n = next.pop();
+        for (int i = 0; i < cities.length; ++i) {
+            if (cities[n].get(i) && !visited.get(i)) {
+                next.add(i);
+            }
+        }
+        visited.set(n);
+    }
+    return visited;
+}
+
+@
+
+Before implementing the constructor, let's introduce some fields that we are
+going to need:
+
+<<8.4 Fields>>=
+private final Bits[] cities;
+private final Bits[] stack;
+private int count;
+private Bits currentGraph;
+
+@
+
+[[count]] field will hold the minimum number we are seeking; [[cities]] will be
+the input array, [[stack]] and [[currentGraph]] will be used in our
+backtracking.
+
+Let's implement the constructor:
+
+<<8.4 Constuctor>>=
+count = 0;
+this.stack = new Bits[40];
+for (int i = 0; i < this.stack.length; ++i) {
+    this.stack[i] = new Bits();
+}
+this.cities = cities;
+for (Bits graph : graphs(this.cities)) {
+    currentGraph = graph;
+    for (int i = 0; i < cities.length; ++i) {
+        <<8.4 Invoke Backtrack>>
+    }
+}
+@
+
+Now let's get to the backtrack. It's going to be a classic backtrack. When we
+try a new node, we first check if that node is within our current graph, and
+that adding that node gives us any improvement or not. If it does not, then it
+moves on to next node. If it does improve, it recurses. Once we've tried the
+predefined number of nodes and we found a configuration, we check if that
+configuration covered all the nodes in the graph, and if it did, it means we
+found a solution. If not, we backtrack. (Note how we are using the bitwise
+operations on the adjacency bits and the [[stack]]. We could have done this
+without the [[stack]]. But the reason we have the [[stack]] is to avoid
+repeated creation of [[Bits]] objects.)
+
+<<8.4 Backtrack>>=
+private boolean backtrack(int count, int pos, int depth) throws Exception {
+    if (count == 0) {
+        return ((stack[depth].v &
+                currentGraph.v) == currentGraph.v);
+    }
+    for (int i = pos; i < cities.length; ++i) {
+        if (!currentGraph.get(i) && !stack[depth].get(i)) {
+            continue;
+        }
+
+        stack[depth + 1].v = stack[depth].v | cities[i].v;
+        if (stack[depth + 1].v == stack[depth].v) {
+            continue;
+        }
+
+        if (backtrack(count - 1, i + 1, depth + 1)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+@
+
+Now we need to invoke this from the constructor:
+
+<<8.4 Invoke Backtrack>>=
+if (backtrack(i, 0, 0)) {
+    count += i;
+    break;
+}
+@
+
+Finally we can implement the input/output:
+
+<<8.4 Input/Output>>=
+String currentLine;
+while ((currentLine = reader.readLine()) != null) {
+    if (currentLine.trim().isEmpty()) {
+        continue;
+    }
+    List<Integer> nm = parseLine(currentLine);
+    int n = nm.get(0);
+    int m = nm.get(1);
+    if (n == 0 && m == 0) {
+        break;
+    }
+    Bits[] cities = new Bits[n];
+    for (int i = 0; i < cities.length; ++i) {
+        cities[i] = new Bits();
+        cities[i].set(i);
+    }
+    while (m > 0) {
+        if ((currentLine = reader.readLine()).trim().isEmpty()) {
+            continue;
+        }
+        List<Integer> fromTo = parseLine(currentLine.trim());
+        cities[fromTo.get(0) - 1].set(fromTo.get(1) - 1);
+        cities[fromTo.get(1) - 1].set(fromTo.get(0) - 1);
+        m--;
+    }
+    System.out.println(new ServicingStations(cities).count);
+}
+@
 
 \section{Graph Traversal}
 
