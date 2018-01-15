@@ -7,6 +7,7 @@
 \usepackage{textcomp}
 \noweboptions{smallcode,longchunks}
 \usepackage{multirow}
+\usepackage{hyperref}
 
 
 \begin{document}
@@ -5044,7 +5045,7 @@ Unlike the previous task this one is much more entertaining.
 
 Let's see if we can consider this task a graph task? Actually yes we
 can\footnote{There's a brilliant video that explains exactly the same solution:
-https://youtu.be/K8P8uFahAgc}. We can consider points on an ellipse and
+\url{https://youtu.be/K8P8uFahAgc}}. We can consider points on an ellipse and
 diagonal intersections as vertices of a graph, and edges being the connecting
 segments. We are asked to find the number of regions of this graph. Note that
 the task asks for the maximum number of regions, which basically means no more
@@ -6550,7 +6551,7 @@ if $N + r_0$ value is odd, then the puzzle is unsolvable.
 
 The IDA* algorithm requires a heuristic. Various heuristics may work with this
 task\footnote{See for example:
-http://www.ic-net.or.jp/home/takaken/e/15pz/index.html}, but the simple
+\url{http://www.ic-net.or.jp/home/takaken/e/15pz/index.html}}, but the simple
 Manhattan distance is sufficient for the judge's input cases.
 
 We are going to use a 1D array to store the puzzle state, 0 denoting the empty
@@ -6822,7 +6823,7 @@ buckets and repeat the calculation while accumulating the value. Once
 distributions in the buckets are exhausted for this queue, we find a nother
 queue and repeat the process.\footnote{Incidentally, there's a very short and
 efficient solution using dynamic programming technique. See
-https://github.com/morris821028/UVa/blob/master/volume101/10128 - Queue.cpp.}
+\url{https://github.com/morris821028/UVa/blob/master/volume101/10128 - Queue.cpp}.}
 
 <<Queue>>=
 package com.rvprg.pc;
@@ -7179,6 +7180,107 @@ while ((currentLine = reader.readLine()) != null) {
     System.out.println(new ServicingStations(cities).count);
 }
 @
+
+\subsection{Tug Of War}
+
+I have no idea how to solve this task using backtrack and it seems neither
+do the authors of the book.
+
+The task can be solved using dynamic programming. Let's say the input array is
+$A$ of size $n$. Let $S$ be the sum of the elements of $A$. Let's also assume
+we have an array $M$ of boolean values of size $S+1$. The $i$-th item in this
+array means whether there's a sum that is equal to $i$ using some elements of $A$
+or not. So $M[0]=true$, because we can always have a sum that is equal to $0$
+by taking none of the elements of $A$. Let's take the first element from
+$A$, $A[0]$. Now we will have $M[0]=true$ and $M[0+A[0]]=true$, because we can
+extend our empty set by adding $A[0]$ into it. Now, generally, when we are
+processing $A[i]$, then at every position $j$ in $M$ where $M[j]=true$ we can
+extend it by adding the $A[i]$ element by setting $M[j+A[i]]$ to $true$. Once
+we have finished, we can check if $M[S/2]$ is true and if so, then there's a
+subset of $A$ that sums to $S/2$. 
+
+That answer is absolutely correct, but it doesn't take into account the size of
+the subsets! We need to somehow modify this algorithm so that it also keeps
+track of the number of elements of the subsets. Then we could choose the one
+that matches the requirement, that is such that the size of the subset is the
+half of the $A$ exactly or differs by no more than 1 and that the sum is as
+close to the $S/2$ value as possible.
+
+Let's modify our $M$ array to hold integers instead of boolean values (it is of
+[[long]] type, because we may have up to 50 elements in our subset and long is
+64-bit in Java). Then we shift the value at $M[i]$ to the left by one each time
+we extend the subset, and use the bitwise OR to combine the values. Once
+finished, we will have values at $M[i]$ such that bits in this value will
+define the sizes of the subsets. So the bit at $j$-th position in the value
+$M[i]$ means there's a subset of size $j$ that sums to $i$. To get the
+required answer, we start with the value at $M[S/2]$ and check if the bit at
+$n/2$-th position is set or not if $n$ is even, and we check both $n/2$-th and
+$n/2+1$-th bits if $n$ is odd. If the bit is set, then $S/2$ is the answer.
+Otherwise we check $M[S/2-1]$, $M[S/2-2]$, and so on until we find a match.
+
+To arrive at this solution a tutorial \cite{DP3} was of great help. The bit 
+trick was purloined from \cite{TOW}.
+
+<<Tug Of War>>=
+package com.rvprg.pc;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+
+public class TugOfWar {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    private static int[] solve(int[] arr) {
+        int n = arr.length;
+        int sum = Arrays.stream(arr).sum();
+        long[] m = new long[sum + 1];
+        m[0] = 1;
+        for (int i = 0; i < n; ++i) {
+            for (int j = sum - arr[i]; j >= 0; --j) {
+                m[j + arr[i]] |= m[j] << 1L;
+            }
+        }
+
+        for (int i = sum / 2; i >= 0; --i) {
+            if (n % 2 == 0) {
+                if ((m[i] & 1L << (n / 2)) > 0) {
+                    return new int[] { i, sum - i };
+                }
+            } else {
+                if ((m[i] & 1L << (n / 2)) > 0 ||
+                        (m[i] & 1L << (n / 2 + 1)) > 0) {
+                    return new int[] { i, sum - i };
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public static void main(String[] args) throws Exception {
+        int n = Integer.parseInt(reader.readLine().trim());
+        reader.readLine();
+        for (int i = 0; i < n; ++i) {
+            int m = Integer.parseInt(reader.readLine().trim());
+            int[] arr = new int[m];
+            for (int j = 0; j < m; ++j) {
+                arr[j] = Integer.parseInt(reader.readLine().trim());
+            }
+            int[] s = solve(arr);
+            System.out.println(s[0] + " " + s[1]);
+            if (i < n - 1) {
+                System.out.println();
+                reader.readLine();
+            }
+        }
+    }
+
+}
+
+@
+
 
 \section{Graph Traversal}
 
@@ -8648,23 +8750,27 @@ Journal, 1984
 
 \bibitem{PC} Skiena, Steven S., Revilla, Miguel A., Programming Challenges, 2003
 
-\bibitem{SE} https://en.wikipedia.org/wiki/Sieve\_of\_Eratosthenes
+\bibitem{SE} \url{https://en.wikipedia.org/wiki/Sieve\_of\_Eratosthenes}
 
-\bibitem{EEA} https://en.wikipedia.org/wiki/Extended\_Euclidean\_algorithm
+\bibitem{EEA} \url{https://en.wikipedia.org/wiki/Extended\_Euclidean\_algorithm}
 
-\bibitem{ME} https://en.wikipedia.org/wiki/Modular\_exponentiation
+\bibitem{ME} \url{https://en.wikipedia.org/wiki/Modular\_exponentiation}
 
 \bibitem{ENT} Gareth A. Jones, Josephine M. Jones, Elementary Number Theory, 1998 
 
 \bibitem{15PZL} Slocum, Jerry and Weisstein, Eric W. "15 Puzzle." From MathWorld--A Wolfram Web Resource. http://mathworld.wolfram.com/15Puzzle.html
 
-\bibitem{IDA*} https://en.wikipedia.org/wiki/Iterative\_deepening\_A*
+\bibitem{IDA*} \url{https://en.wikipedia.org/wiki/Iterative\_deepening\_A*}
 
-\bibitem{FW} https://en.wikipedia.org/wiki/Floyd-Warshall\_algorithm
+\bibitem{FW} \url{https://en.wikipedia.org/wiki/Floyd-Warshall\_algorithm}
 
-\bibitem{MAXIMIN} http://masc.cs.gmu.edu/wiki/floydwarshall/
+\bibitem{MAXIMIN} \url{http://masc.cs.gmu.edu/wiki/floydwarshall/}
 
-\bibitem{AlexLange} https://github.com/alex-lange/contest-programming/blob/master/uva/10039/Main.java
+\bibitem{AlexLange} \url{https://github.com/alex-lange/contest-programming/blob/master/uva/10039/Main.java}
+
+\bibitem{DP3} \url{http://www.cs.cornell.edu/~wdtseng/icpc/notes/dp3.pdf}
+
+\bibitem{TOW} \url{https://github.com/morris821028/UVa/blob/master/volume100/10032 - Tug of War.cpp}
 
 \end{thebibliography}
 
