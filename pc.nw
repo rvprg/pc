@@ -7393,6 +7393,22 @@ public class GardenOfEden {
 
 @
 
+\subsection{Colours Hash}
+
+It seems that this can be solved with a breadth-first search. And it can, but
+it won't be very quick. There's a trick, however, that works well with this
+task: Using the BFS we can find all the reachable states (and how to get there)
+starting from the final state up to a certain depth level.  Having the depth of
+8 is enough for this task. One we have this precomputed set, we start doing the
+BFS from the input state, but we again limit it to 8 levels of depth. (Note
+that the task's requirement is to give up searching if the depth is more than
+16.) If we can reach any state in the precomputed set from out input state,
+then we know there's a path, and we can easily reconstruct it.
+
+<<Colours Hash>>=
+TBD
+@
+
 \section{Graph Traversal}
 
 \subsection{Bicoloring}
