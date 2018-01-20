@@ -7402,11 +7402,276 @@ starting from the final state up to a certain depth level.  Having the depth of
 8 is enough for this task. One we have this precomputed set, we start doing the
 BFS from the input state, but we again limit it to 8 levels of depth. (Note
 that the task's requirement is to give up searching if the depth is more than
-16.) If we can reach any state in the precomputed set from out input state,
-then we know there's a path, and we can easily reconstruct it.
+16.) If we can reach any state in the precomputed set from an input state,
+then we know there's a path, and we can reconstruct it.
 
 <<Colours Hash>>=
-TBD
+package com.rvprg.pc;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+public class ColoursHash {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    <<8.7 Fields>>
+
+    <<8.7 State Class>>
+
+    <<8.7 Precompute>>
+
+    <<8.7 Find>>
+
+    public static void main(String[] args) throws Exception {
+        int n = Integer.parseInt(reader.readLine().trim());
+        for (int i = 0; i < n; ++i) {
+            String line = reader.readLine();
+            List<Integer> input = stream(line.trim().split(" "))
+                    .filter(x -> !x.equals(""))
+                    .map(Integer::parseInt)
+                    .collect(toList());
+            State state = new State(input);
+            if (state.equals(finalState)) {
+                System.out.println("PUZZLE ALREADY SOLVED");
+            } else {
+                String solution = find(state);
+                if (solution != null) {
+                    System.out.println(solution);
+                } else {
+                    System.out.println("NO SOLUTION WAS FOUND IN 16 STEPS");
+                }
+            }
+        }
+
+    }
+}
+@
+
+The [[State]] class is going to be fairly simple. It will hold the state as an
+array of integers. The constructor will allow to create a new state from the
+given state by rotating the wheels. I have chosen to use [[LinkedList]] here as
+it has convenient methods to do the rotations. I could have done this using
+[[System.arraycopy]] too, but decided for something that is more readable (that
+is [[LinkedList]]). The [[equals]] and [[hashCode]] are necessary as we will be
+using maps and sets while doing the BFS.
+
+<<8.7 State Class>>=
+static class State {
+    final int[] curr;
+
+    public State(State state, int rotation) {
+        this(state.curr, rotation);
+    }
+
+    public State(List<Integer> state) {
+        curr = new int[21];
+        for (int i = 0; i < curr.length; ++i) {
+            curr[i] = state.get(i);
+        }
+    }
+
+    public State(int[] state, int rotation) {
+        this.curr = new int[21];
+
+        final LinkedList<Integer> left = new LinkedList<>();
+        final LinkedList<Integer> right = new LinkedList<>();
+        final LinkedList<Integer> middle = new LinkedList<>();
+
+        for (int i = 0; i < 12; ++i) {
+            if (i < 9) {
+                left.add(state[i]);
+                right.add(state[i + 12]);
+            } else {
+                middle.add(state[i]);
+            }
+        }
+
+        if (rotation == 1) {
+            middle.addFirst(left.removeLast());
+            middle.addFirst(left.removeLast());
+            left.addFirst(middle.removeLast());
+            left.addFirst(middle.removeLast());
+        } else if (rotation == 2) {
+            middle.addLast(right.removeFirst());
+            middle.addLast(right.removeFirst());
+            right.addLast(middle.removeFirst());
+            right.addLast(middle.removeFirst());
+        } else if (rotation == 3) {
+            middle.addLast(left.removeFirst());
+            middle.addLast(left.removeFirst());
+            left.addLast(middle.removeFirst());
+            left.addLast(middle.removeFirst());
+        } else if (rotation == 4) {
+            middle.addFirst(right.removeLast());
+            middle.addFirst(right.removeLast());
+            right.addFirst(middle.removeLast());
+            right.addFirst(middle.removeLast());
+        }
+
+        for (int i = 0; i < left.size(); ++i) {
+            curr[i] = left.get(i);
+        }
+        for (int i = 0; i < middle.size(); ++i) {
+            curr[9 + i] = middle.get(i);
+        }
+        for (int i = 0; i < right.size(); ++i) {
+            curr[12 + i] = right.get(i);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(curr);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        State other = (State) obj;
+        if (!Arrays.equals(curr, other.curr))
+            return false;
+        return true;
+    }
+}
+@
+
+Now we can define the initial state:
+
+<<8.7 Fields>>=
+private static State finalState = new State(
+        new int[] { 0, 3, 4, 3, 0, 5, 6, 5, 0, 1,
+                2, 1, 0, 7, 8, 7, 0, 9, 10, 9, 0 },
+        0);
+
+@
+
+Let's write the initialization of the [[precomputed]] set, the set of the
+states that are reachable from the [[finalState]]. First, let's define
+[[moves]] array. Because we are searching from the [[finalState]] to a
+reachable state, we will use this array to know the ``reversed'' moves, because
+we are looking for a path from a rechable state to the final state and not the
+other way round.
+
+<<8.7 Fields>>=
+final static int[] moves = new int[] { 3, 4, 1, 2 };
+final static Map<State, String> precomputed = init();
+@
+
+We will need to keep track of the depths and moves sequences while doing BFS ,
+so let's define a helper class for that:
+
+<<8.7 Precompute>>=
+static class Tuple {
+    int depth;
+    String solution;
+
+    public Tuple(int depth, String solution) {
+        this.depth = depth;
+        this.solution = solution;
+    }
+}
+
+@
+
+Now let's implement the [[init()]] method that precomputes the reachable states
+set. The [[generate]] method is a simple BFS implementation, the only difference
+is that it terminates once it has reached the depth of 8.
+
+<<8.7 Precompute>>=
+static Map<State, String> init() {
+    Map<State, String> solutions = new HashMap<>();
+    generate(solutions, finalState);
+    return solutions;
+}
+
+private static void generate(Map<State, String> solutions, State node) {
+    Deque<State> next = new ArrayDeque<>();
+    Map<State, Tuple> depths = new HashMap<>();
+    Set<State> visited = new HashSet<>();
+    next.addLast(node);
+    depths.put(node, new Tuple(0, ""));
+    visited.add(node);
+
+    while (!next.isEmpty()) {
+        State n = next.pop();
+        Tuple tuple = depths.get(n);
+        if (tuple.depth > 8) {
+            continue;
+        }
+        String solution = tuple.solution;
+        for (int i = 1; i <= 4; ++i) {
+            State adj = new State(n, moves[i - 1]);
+            if (!visited.contains(adj)) {
+                next.add(adj);
+                depths.putIfAbsent(adj,
+                        new Tuple(tuple.depth + 1, i + solution));
+                solutions.putIfAbsent(adj, i + solution);
+            }
+        }
+        visited.add(n);
+    }
+}
+
+@
+
+Now we can implement the [[find]] method, that will do a similar BFS, but will
+check whether we have reached any state in [[precomputed]] set. If we have,
+then we have found the solution!
+
+<<8.7 Find>>=
+private static String find(State node) {
+    Deque<State> next = new ArrayDeque<>();
+    Map<State, Tuple> depths = new HashMap<>();
+    Set<State> visited = new HashSet<>();
+    next.addLast(node);
+    depths.put(node, new Tuple(0, ""));
+    visited.add(node);
+
+    while (!next.isEmpty()) {
+        State n = next.pop();
+        Tuple tuple = depths.get(n);
+        String solution = tuple.solution;
+        if (tuple.depth > 8) {
+            continue;
+        }
+        if (ColoursHash.precomputed.containsKey(n)) {
+            return solution + ColoursHash.precomputed.get(n);
+        }
+        for (int i = 1; i <= 4; ++i) {
+            State adj = new State(n, i);
+            if (!visited.contains(adj)) {
+                next.add(adj);
+                depths.putIfAbsent(adj,
+                        new Tuple(tuple.depth + 1, solution + i));
+            }
+        }
+        visited.add(n);
+    }
+
+    return null;
+}
+
 @
 
 \section{Graph Traversal}
