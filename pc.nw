@@ -7674,6 +7674,32 @@ private static String find(State node) {
 
 @
 
+\subsection{Bigger Square Please...}
+
+Well, this task is impossible to solve in under 3 seconds as the judge expects
+us to solve.  So the only sensible way is to write a meta-program that
+generates a program than then gets accepted by the judge. The generated program
+got to be a simple lookup type of a program that uses pre-computed table of
+solutions. This is possible as the range for the input is small.
+
+But even a meta-program will need to be written with some heuristics here and
+there to allow for beter run time. As this meta-program won't be run by the
+judge we can use all available tools. Specifically, we will use all the cores of
+the CPU to run computations in parallel as much as possible.
+
+Just a few notes on the problem itself. It's a very well known problem; the
+sequence of minimal number of smaller integer-sided squares that tile an $n
+\times n$ square is registered in the On-Line Encyclopedia of Integer Sequences
+as A018835 sequence\cite{OEIS}.
+
+Obviously, any square that has a side of an even value is trivially divisible
+into four squares of equal size, and you can't do better than that. So at least
+half of the problem is now solved! Any square that has a side of an odd value,
+provided it's not a prime value, is also trivially divisible. So we only need
+to use backtracking for the prime numbers $2 \leq p \leq 50$.
+
+
+
 \section{Graph Traversal}
 
 \subsection{Bicoloring}
@@ -9163,6 +9189,8 @@ Journal, 1984
 \bibitem{DP3} \url{http://www.cs.cornell.edu/~wdtseng/icpc/notes/dp3.pdf}
 
 \bibitem{TOW} \url{https://github.com/morris821028/UVa/blob/master/volume100/10032 - Tug of War.cpp}
+
+\bibitem{OEIS} \url{https://oeis.org/A018835}
 
 \end{thebibliography}
 
