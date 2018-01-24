@@ -8,6 +8,7 @@
 \noweboptions{smallcode,longchunks}
 \usepackage{multirow}
 \usepackage{hyperref}
+\usepackage{pstricks}
 
 
 \begin{document}
@@ -7692,12 +7693,37 @@ sequence of minimal number of smaller integer-sided squares that tile an $n
 \times n$ square is registered in the On-Line Encyclopedia of Integer Sequences
 as A018835 sequence\cite{OEIS}.
 
-Obviously, any square that has a side of an even value is trivially divisible
+Obviously, any square that has a side of an even length is trivially divisible
 into four squares of equal size, and you can't do better than that. So at least
-half of the problem is now solved! Any square that has a side of an odd value,
-provided it's not a prime value, is also trivially divisible. So we only need
-to use backtracking for the prime numbers $2 \leq p \leq 50$.
+half of the problem is now solved! Any square that has a side length that is a
+multiple of 3 (but not 5) is also trivially divisible. So we only need to use
+backtracking for the rest of the values in $3 \leq p \leq 50$ interval.
 
+\begin{figure}[h]
+\centering
+\begin{pspicture}(-4,0)(4,3)
+
+\rput(-3.2, 0){
+\psframe(0,0)(3,3)
+\psframe(0,0)(2,2)
+\rput[bl](0.1,0.1){6}
+\rput(0,2){\rput[bl](0.1,0.1){3}\psframe(0,0)(1,1)}
+\rput(1,2){\rput[bl](0.1,0.1){3}\psframe(0,0)(1,1)}
+\rput(2,2){\rput[bl](0.1,0.1){3}\psframe(0,0)(1,1)}
+\rput(2,1){\rput[bl](0.1,0.1){3}\psframe(0,0)(1,1)}
+\rput(2,0){\rput[bl](0.1,0.1){3}\psframe(0,0)(1,1)}
+}
+
+\rput(0.2,0){
+\psframe(0,0)(0,3)
+\rput(0,0){\rput[bl](0.1,0.1){2}\psframe(0,0)(1.5,1.5)}
+\rput(0,1.5){\rput[bl](0.1,0.1){2}\psframe(0,0)(1.5,1.5)}
+\rput(1.5,0){\rput[bl](0.1,0.1){2}\psframe(0,0)(1.5,1.5)}
+\rput(1.5,1.5){\rput[bl](0.1,0.1){2}\psframe(0,0)(1.5,1.5)}
+}
+\end{pspicture}
+\caption{Example for $9 \times 9$ and $4 \times 4$ .}
+\end{figure}
 
 
 \section{Graph Traversal}
