@@ -23,7 +23,7 @@
 \begin{abstract}
 This is a collection of literate programs. If you are unfamiliar with the idea
 of literate programming please refer \cite{Knuth1984}. These programs are my
-solutions to the programming tasks from the "Programming Challenges"
+solutions to the programming tasks from the ``Programming Challenges''
 book\cite{PC} which in turn is a collection of problems from the UVa Online
 Judge hosted by University of Valladolid\footnote{If you are going to submit
 any of these programs to the UVa Online Judge (which you obviously shouldn't)
@@ -391,6 +391,8 @@ class LCDisplay {
 Each LCD digit has 7 segments: Two in the first and the third columns and
 three in the second column. Let's encode our digits:
 
+\begin{table}
+\begin{center}
 \begin{tabular}{ l | l | l }
 \hline
 Digit & Binary & Hex \\
@@ -407,6 +409,9 @@ Digit & Binary & Hex \\
 9 & 01 111 11 & 3F \\
 \hline
 \end{tabular}
+\caption{LCD segments}
+\end{center}
+\end{table}
 
 Since we know that the input ends in two zeros we define this string constant
 plus a couple of other string constants.
