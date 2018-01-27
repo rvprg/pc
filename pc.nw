@@ -389,7 +389,7 @@ class LCDisplay {
 @
 
 Each LCD digit has 7 segments: Two in the first and the third columns and
-three in the second column. Let's encode our digits:
+three in the second column. Let's encode our digits as in the table.
 
 \begin{table}
 \begin{center}
@@ -5799,8 +5799,8 @@ To see why, consider a number of the form $v = p_1^n$. The divisors of this
 number are $1, p_1, p_1^2, p_1^3, \ldots, p_1^n$; therefore the number of the
 divisors is $n+1$.  
 
-Consider a number of the form $v = p_1^np_2^m$, its divisors are:
-
+\begin{table}
+\begin{center}
 \begin{tabular}{lllll}
 1     & $p_1$     & $p_1^2$      & ... & $p_1^n$  \\
 $p_2$ & $p_1p_2$  & $p_1^2p_2$   & ... & $p_1^np_2$   \\
@@ -5808,6 +5808,12 @@ $p_2^2$ & $p_1p_2^2$  & $p_1^2p_2^2$ & ... & $p_1^np_2^2$   \\
 ...   & ...       &     ...    & ... & ...   \\
 $p_2^m$ & $p_1p_2^m$  &     ...      &  ... & $p_1^np_2^m$
 \end{tabular}
+\caption{Divisors}
+\end{center}
+\label{table:divisors}
+\end{table}
+
+Consider a number of the form $v = p_1^np_2^m$. (See table).
 
 Therefore the number of its divisors is $(n+1)(m+1)$.
 
