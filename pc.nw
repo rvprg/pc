@@ -8167,7 +8167,6 @@ static class SquareSideLengthsGenerator {
             squareSizes.add(new ArrayList<>(currSquareSizes));
             return;
         }
-
         for (int i = startSquareSize; i >= 1; --i) {
             if (currArea + i * i <= targetArea &&
                     currSquareSizes.size() <= maxLen) {
@@ -8525,10 +8524,11 @@ static class SolutionFinderTask
 \caption{Solutions for prime side lengths ($31 < n < 50$).}
 \end{figure}
 
-Let's now implement the method that solves the trivial cases. The parameter
-[[d]] can take 2 or 3 as values, and [[n]] is the square side length. It
-returns a list of arrays of [[int]]s, which have three values in the format as
-outlined in the problem description.
+Let's now implement the method that solves the trivial cases. It puts one large
+square and then fills the remaining parts with the samller squares. The
+parameter [[d]] can take 2 or 3 as values, and [[n]] is the square side length.
+It returns a list of arrays of [[int]]s, which have three values in the format
+as outlined in the problem description.
 
 <<8.8 Methods>>=
 private static Deque<int[]> trivial(int n, int d) {
@@ -8547,9 +8547,9 @@ private static Deque<int[]> trivial(int n, int d) {
 
 Finally, we can start writing the method that will actually try to solve the
 input. [[minSolutionSize]] is the minimal size of a solution we are trying to
-find. This is used for prime values only as only for them the solution sizes
-seem to grow monotonically. [[adjust]] parameter is used to change the sizes of
-the initial three squares.
+find. This is used for prime values only (except 2) as only for them the
+solution sizes seem to grow monotonically. [[adjust]] parameter is used to
+change the sizes of the initial three squares.
 
 <<8.8 Methods>>=
 final static int[] primes = new int[] { 3, 5, 7, 11, 13, 17, 19, 23,
@@ -8616,30 +8616,24 @@ static Deque<int[]> getSolution(int n, Deque<int[]> initial,
             n * n - count,
             minSolutionSize - initial.size());
 
-    final ExecutorService executor = Executors
-            .newFixedThreadPool(
-                    Runtime.getRuntime().availableProcessors() + 1);
-    final CompletionService<SolutionFinderTaskResult> completionService = new ExecutorCompletionService<>(
-            executor);
+    final ExecutorService executor = 
+        Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
+    final CompletionService<SolutionFinderTaskResult> completionService = 
+        new ExecutorCompletionService<>(executor);
 
     for (int i = 0; i < s.squareSizes.size(); ++i) {
-        completionService
-                .submit(new SolutionFinderTask(i, initial,
-                        s.squareSizes.get(i),
-                        n));
+        completionService.submit(
+            new SolutionFinderTask(i, initial, s.squareSizes.get(i), n));
     }
 
-    SolutionFinderTaskResult[] result = new SolutionFinderTaskResult[s.squareSizes
-            .size()];
+    SolutionFinderTaskResult[] result = 
+        new SolutionFinderTaskResult[s.squareSizes.size()];
 
     int lastIndex = 0;
-
     try {
         while (true) {
-            Future<SolutionFinderTaskResult> f = completionService
-                    .take();
+            Future<SolutionFinderTaskResult> f = completionService.take();
             result[f.get().index] = f.get();
-
             for (int i = lastIndex; i < result.length; ++i) {
                 if (result[i] == null) {
                     break;
@@ -8659,7 +8653,7 @@ static Deque<int[]> getSolution(int n, Deque<int[]> initial,
 
 @
 
-And that's all. Now we can write out main method.
+And that's all. Now we can write our main method.
 
 <<8.8 Main>>=
 public static void main(String[] args) throws Exception {
@@ -8679,12 +8673,16 @@ public static void main(String[] args) throws Exception {
         }
     }
 }
+
 @
 
-Note though that this returns answers in the following format: The value on the
-first line is the size of the square $n$, the next line has the number of
-squares $s$, and the following $s$ lines have the coordinates and sizes of the
-smaller squares.
+This program is very slow. It took 90 minutes on my laptop to find all the
+solutions for the input range.
+
+Note though that this program returns answers in the following format: The
+value on the first line is the size of the square $n$, the next line has the
+number of squares $s$, and the following $s$ lines have the coordinates and
+sizes of the smaller squares.
 
 To convert this into a program that you can submit to UVa online judge we
 need another program, which reads this input and produces a program as
@@ -8694,7 +8692,7 @@ Of course, we could have written the first program to output a program without
 this intermediate output, but I used the output to also generate \LaTeX\ code for
 the images with the solutions.
 
-Now let's write a program that generates the required program:
+Now let's write a program that generates the required program.
 
 TBD.
 
@@ -10127,6 +10125,10 @@ public class Railroads {
 @
 
 \section{Dynamic Programming}
+
+\subsection{Is Bigger Smarter?}
+
+TBD
 
 \section{Grids}
 
