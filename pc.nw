@@ -8091,7 +8091,7 @@ unfilled area.
 
 Now let's start writing code. 
 
-<<Bigger Square Please>>=
+<<Bigger Square Please Offline>>=
 package com.rvprg.pc;
 
 import java.util.ArrayDeque;
@@ -8111,7 +8111,7 @@ import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class Main {
+public class BiggerSquarePleaseOffline {
     <<8.8 Classes>>
     <<8.8 Methods>>
     <<8.8 Main>>
@@ -8676,7 +8676,7 @@ public static void main(String[] args) throws Exception {
 
 @
 
-This program is very slow. It took 90 minutes on my laptop to find all the
+This program is painfuly slow. It took 90 minutes on my laptop to find all the
 solutions for the input range.
 
 Note though that this program returns answers in the following format: The
@@ -8692,9 +8692,86 @@ Of course, we could have written the first program to output a program without
 this intermediate output, but I used the output to also generate \LaTeX\ code for
 the images with the solutions.
 
-Now let's write a program that generates the required program.
+Here is the program that generates a program to be submitted to the judge.
 
-TBD.
+<<Bigger Square Please Meta>>=
+package com.rvprg.pc;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class BiggerSquarePleaseMetaProgram {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+    private static final String indend8 = "        ";
+    private static final String indend4 = "    ";
+
+    private static void printProgram(Map<Integer, List<List<Integer>>> solutions) {
+        System.out.println("import java.io.BufferedReader;");
+        System.out.println("import java.io.InputStreamReader;");
+        System.out.println();
+        System.out.println("public class BiggerSquarePlease {");
+        System.out.println("    private static final BufferedReader reader = new BufferedReader(");
+        System.out.println("            new InputStreamReader(System.in));");
+        System.out.println();
+        System.out.println("    private static final int[][][] table = new int[][][] {");
+
+        for (int i = 0; i <= 50; ++i) {
+            List<List<Integer>> solution = solutions.get(i);
+            if (solution == null || solution.size() == 0) {
+                System.out.println(indend8 + "{{}}, //" + i);
+                continue;
+            }
+            System.out.print(indend8 + "{");
+            for (List<Integer> s : solution) {
+                System.out.printf("{%d, %d, %d},", s.get(0), s.get(1), s.get(2));
+            }
+            System.out.println("}, //" + i);
+        }
+        System.out.println(indend4 + "};");
+        System.out.println();
+        System.out.println(indend4 + "public static void main(String[] args) throws Exception {");
+        System.out.println(indend4 + "    int n = Integer.parseInt(reader.readLine().trim());");
+        System.out.println(indend4 + "    for (int i = 0; i < n; ++i) {");
+        System.out.println(indend4 + "        int m = Integer.parseInt(reader.readLine().trim());");
+        System.out.println(indend4 + "        int[][] solution = table[m];");
+        System.out.println(indend4 + "        System.out.println(solution.length);");
+        System.out.println(indend4 + "        for (int[] s : solution) {");
+        System.out.println(indend4 + "          System.out.println(s[0] + \" \" + s[1] + \" \" + s[2]);");
+        System.out.println(indend4 + "        }");
+        System.out.println(indend4 + "    }");
+        System.out.println(indend4 + "}");
+        System.out.println("}");
+        System.out.println();
+    }
+
+    public static void main(String[] args) throws Exception {
+        String currentLine;
+        Map<Integer, List<List<Integer>>> solutions = new HashMap<>();
+        while ((currentLine = reader.readLine()) != null) {
+            int n = Integer.parseInt(currentLine.trim());
+            int s = Integer.parseInt(reader.readLine().trim());
+            List<List<Integer>> solution = new ArrayList<>();
+            for (int i = 0; i < s; ++i) {
+                solution.add(stream(reader.readLine().trim().split(" "))
+                        .filter(x -> !x.equals(""))
+                        .map(Integer::parseInt)
+                        .collect(toList()));
+            }
+            solutions.put(n, solution);
+        }
+        printProgram(solutions);
+    }
+}
+
+@
 
 \section{Graph Traversal}
 
