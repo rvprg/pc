@@ -52,12 +52,57 @@ A collection of my solutions to the problems from the "Programming Challenges" b
 * [The Stern-Brocot Number System](https://github.com/rvprg/pc/blob/master/src/Chapter5/TheSternBrocotNumberSystem.java)
 * [Pairsumonious Numbers](https://github.com/rvprg/pc/blob/master/src/Chapter5/PairsumoniousNumbers.java)
 
-## Combinatorics (Chapter 7)
-* []()
-* []()
-* []()
-* []()
-* []()
-* []()
-* []()
+## Combinatorics (Chapter 6)
+* [How Many Fibs?](https://github.com/rvprg/pc/blob/master/src/Chapter6/HowManyFibs.java)
+* [How Many Pieces of Land?](https://github.com/rvprg/pc/blob/master/src/Chapter6/HowManyPiecesOfLand.java)
+* [Counting](https://github.com/rvprg/pc/blob/master/src/Chapter6/Counting.java)
+* [Expressions](https://github.com/rvprg/pc/blob/master/src/Chapter6/Expressions.java)
+* [Complete Tree Labeling](https://github.com/rvprg/pc/blob/master/src/Chapter6/CompleteTreeLabeling.java)
+* [The Priest Mathematicians](https://github.com/rvprg/pc/blob/master/src/Chapter6/ThePriestMathematician.java)
+* [Self-Describing Sequence](https://github.com/rvprg/pc/blob/master/src/Chapter6/SelfDescribingSequence.java)
+* [Steps](https://github.com/rvprg/pc/blob/master/src/Chapter6/Steps.java)
+
+## Number Theory (Chapter 7)
+* [Light, More Light](https://github.com/rvprg/pc/blob/master/src/Chapter7/LightMoreLight.java)
+* [Carmichael Numbers](https://github.com/rvprg/pc/blob/master/src/Chapter7/CarmichaelNumbers.java)
+* [Euclid Problem](https://github.com/rvprg/pc/blob/master/src/Chapter7/EuclidProblem.java)
+* [Factovisors](https://github.com/rvprg/pc/blob/master/src/Chapter7/Factovisors.java)
+* [Summation of Four Primes](https://github.com/rvprg/pc/blob/master/src/Chapter7/SummationOfFourPrimes.java)
+* [Smith Numbers](https://github.com/rvprg/pc/blob/master/src/Chapter7/SmithNumbers.java)
+* [Marbles](https://github.com/rvprg/pc/blob/master/src/Chapter7/Marbles.java)
+* Repackaging (unsolved)
+
+## Backtracking (Chapter 8)
+* [Little Bishops](https://github.com/rvprg/pc/blob/master/src/Chapter8/LittleBishops.java)
+* [15-Puzzle Problem](https://github.com/rvprg/pc/blob/master/src/Chapter8/The15PuzzleProblem.java)
+* [Queue](https://github.com/rvprg/pc/blob/master/src/Chapter8/Queue.java)
+* [Servicing Stations](https://github.com/rvprg/pc/blob/master/src/Chapter8/ServicingStations.java)
+* [Tug Of War](https://github.com/rvprg/pc/blob/master/src/Chapter8/TugOfWar.java)
+* [Garden of Eden](https://github.com/rvprg/pc/blob/master/src/Chapter8/GardenOfEden.java)
+* [Colours Hash](https://github.com/rvprg/pc/blob/master/src/Chapter8/ColoursHash.java)
+* [Bigger Square Please...](https://github.com/rvprg/pc/blob/master/src/Chapter8/BiggerSquarePleaseOffline.java)
+
+## Graph Traversal (Chapter 9)
+* [Bicoloring](https://github.com/rvprg/pc/blob/master/src/Chapter9/Bicoloring.java)
+* [Playing With Wheels](https://github.com/rvprg/pc/blob/master/src/Chapter9/PlayingWithWheels.java)
+* [The Tourist Guide](https://github.com/rvprg/pc/blob/master/src/Chapter9/TheTouristGuide.java)
+* [Slash Maze](https://github.com/rvprg/pc/blob/master/src/Chapter9/SlashMaze.java)
+* [Edit Step Ladders](https://github.com/rvprg/pc/blob/master/src/Chapter9/EditStepLadders.java)
+* [Tower of Cubes](https://github.com/rvprg/pc/blob/master/src/Chapter9/TowerOfCubes.java)
+* [From Dusk Till Dawn](https://github.com/rvprg/pc/blob/master/src/Chapter9/FromDuskTillDawn.java)
+* [Hanoi Tower Troubles Again!](https://github.com/rvprg/pc/blob/master/src/Chapter9/HanoiTowerTroublesAgain.java)
+
+## Graph Algorithms (Chapter 10)
+* [Freckles](https://github.com/rvprg/pc/blob/master/src/Chapter10/Freckles.java)
+* [The Necklace](https://github.com/rvprg/pc/blob/master/src/Chapter10/TheNecklace.java)
+* [Fire Stations](https://github.com/rvprg/pc/blob/master/src/Chapter10/FireStations.java)
+* [Railroads](https://github.com/rvprg/pc/blob/master/src/Chapter10/Railroads.java)
+
+## Dynamic Programming (Chapter 11)
+* [Is Bigger Smarter?](https://github.com/rvprg/pc/blob/master/src/Chapter11/IsBiggerSmarter.java)
+
+
+
+
+
 
