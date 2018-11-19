@@ -1,6 +1,6 @@
 # Programming Challenges.
 
-A collection of my solutions to the problems from the "Programming Challenges" book. The list of files below are the files produced by the noweb tool. Please read the [PDF](https://github.com/rvprg/pc/blob/master/pc.pdf) file to find the detailed explanation of the programs.
+A collection of my solutions to the problems from the "Programming Challenges" book. (Some of the problems were solved with help from the Internet. In such cases there will be links within the PDF file to the original sources.) The list of files below are the files produced by the noweb tool. Please read the [PDF](https://github.com/rvprg/pc/blob/master/pc.pdf) file to find the detailed explanation of the programs.
 
 The book with the literate programs can be downloaded [here](https://github.com/rvprg/pc/blob/master/pc.pdf).
 
@@ -26,7 +26,7 @@ NOTE: This is a work in progress.
 * [Contest Scoreboard](https://github.com/rvprg/pc/blob/master/src/Chapter2/ContestScoreboard.java)
 * [Yahtzee](https://github.com/rvprg/pc/blob/master/src/Chapter2/Yahtzee.java)
 
-## String (Chapter 3)
+## Strings (Chapter 3)
 * [WERTYU](https://github.com/rvprg/pc/blob/master/src/Chapter3/WERTYU.java)
 * [Where’s Waldorf](https://github.com/rvprg/pc/blob/master/src/Chapter3/WheresWaldorf.java)
 * [Common Permutation](https://github.com/rvprg/pc/blob/master/src/Chapter3/CommonPermutation.java)
