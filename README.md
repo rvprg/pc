@@ -1,6 +1,10 @@
-# Programming Challenges. (Literate programs.) 
+# Programming Challenges.
 
-A collection of my solutions to the problems from the "Programming Challenges" book.
+A collection of my solutions to the problems from the "Programming Challenges" book. The list of files below are the files produced by the noweb tool. Please read the [PDF](https://github.com/rvprg/pc/blob/master/pc.pdf) file to find the detailed explanation of the programs.
+
+The book with the literate programs can be downloaded [here](https://github.com/rvprg/pc/blob/master/pc.pdf).
+
+NOTE: This is a work in progress.
 
 ## Getting Started (Chapter 1)
 * [The 3n + 1 Problem](https://github.com/rvprg/pc/blob/master/src/Chapter1/Collatz.java)
@@ -100,7 +104,6 @@ A collection of my solutions to the problems from the "Programming Challenges" b
 
 ## Dynamic Programming (Chapter 11)
 * [Is Bigger Smarter?](https://github.com/rvprg/pc/blob/master/src/Chapter11/IsBiggerSmarter.java)
-
 
 
 
