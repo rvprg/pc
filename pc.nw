@@ -10201,6 +10201,124 @@ public class Railroads {
 
 @
 
+\subsection{War}
+
+I failed to solve this task without help, so the solution below is based on the
+solution from \cite{TOW}.
+
+The idea is to use a data structure called Disjoin-set\cite{DS}. For that we
+will maintain an array of $2n$ size, first half of which will be maintained
+for friends and the other half of it will be maintained for enemies; a trick
+purloined from \cite{TOW}. And that is key.
+
+Now what we need to do is carefully maintain friends and enemies sets. If $i$
+and $j$ are both in the same set, it means they are friends. To check this we
+check if they are either both in the friends sets, or both are in the enemies
+sets.  Similarly, to test if $i$ and $j$ are enemies, we check if one of them
+is in friends sets, and the other is in the enemies sets, or vice versa.
+
+Now when we execute [[setFriends(i, j)]] we first check if $i$ and $j$ aren't
+enemies. If not, we join $i$ and $j$, because friends of our friends are our
+friends too. We also join enemies, because enemies of our friends are our
+enemies. When we execute [[setEnemies(i, j)]], we join $i$ and enemies of $j$.
+Similarly we join $j$ and enemies of $i$ together. This is because enemies of
+our enemies are our friends. 
+
+<<War>>=
+package com.rvprg.pc;
+
+import java.util.*;
+
+public class War {
+    private final int[] friends;
+    private final int n;
+
+    public War(int n) {
+        this.n = n;
+        friends = new int[2 * (n + 1)];
+        for (int i = 0; i < 2 * (n + 1); ++i) {
+            friends[i] = i;
+        }
+    }
+
+    public int enemy(int i) {
+        return i + n;
+    }
+
+    public int find(int i) {
+        if (friends[i] != i) {
+            friends[i] = find(friends[i]);
+        }
+        return friends[i];
+    }
+
+    public void union(int i, int j) {
+        if (find(i) != find(j)) {
+            friends[find(j)] = find(i);
+        }
+    }
+
+    private boolean setFriends(int i, int j) {
+        if (areEnemies(i, j)) {
+            return false;
+        }
+        union(i, j);
+        union(enemy(i), enemy(j));
+        return true;
+    }
+
+    private boolean setEnemies(int i, int j) {
+        if (areFriends(i, j)) {
+            return false;
+        }
+        union(i, enemy(j));
+        union(j, enemy(i));
+        return true;
+    }
+
+    private boolean areFriends(int i, int j) {
+        return find(i) == find(j) ||
+                find(enemy(i)) == find(enemy(j));
+    }
+
+    private boolean areEnemies(int i, int j) {
+        return find(i) == find(enemy(j)) ||
+                find(j) == find(enemy(i));
+    }
+
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+        War war = new War(s.nextInt());
+        while (s.hasNextInt()) {
+            switch (s.nextInt()) {
+                case 0:
+                    return;
+                case 1:
+                    if (!war.setFriends(s.nextInt(), s.nextInt())) {
+                        System.out.println(-1);
+                    }
+                    break;
+                case 2:
+                    if (!war.setEnemies(s.nextInt(), s.nextInt())) {
+                        System.out.println(-1);
+                    }
+                    break;
+                case 3:
+                    System.out.println(war.areFriends(s.nextInt(), s.nextInt()) ? 1 : 0);
+                    break;
+                case 4:
+                    System.out.println(war.areEnemies(s.nextInt(), s.nextInt()) ? 1 : 0);
+                    break;
+                default:
+                    throw new IllegalArgumentException();
+            }
+        }
+    }
+}
+
+@
+
+
 \section{Dynamic Programming}
 
 \subsection{Is Bigger Smarter?}
@@ -10339,9 +10457,11 @@ Journal, 1984
 
 \bibitem{DP3} \url{http://www.cs.cornell.edu/~wdtseng/icpc/notes/dp3.pdf}
 
-\bibitem{TOW} \url{https://github.com/morris821028/UVa/blob/master/volume100/10032 - Tug of War.cpp}
+\bibitem{TOW} \url{https://github.com/morris821028}
 
 \bibitem{OEIS} \url{https://oeis.org/A018835}
+
+\bibitem{DS} \url{https://en.wikipedia.org/wiki/Disjoint-set_data_structure}
 
 \end{thebibliography}
 
