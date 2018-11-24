@@ -101,6 +101,7 @@ NOTE: This is a work in progress.
 * [The Necklace](https://github.com/rvprg/pc/blob/master/src/Chapter10/TheNecklace.java)
 * [Fire Stations](https://github.com/rvprg/pc/blob/master/src/Chapter10/FireStations.java)
 * [Railroads](https://github.com/rvprg/pc/blob/master/src/Chapter10/Railroads.java)
+* [War](https://github.com/rvprg/pc/blob/master/src/Chapter10/War.java)
 
 ## Dynamic Programming (Chapter 11)
 * [Is Bigger Smarter?](https://github.com/rvprg/pc/blob/master/src/Chapter11/IsBiggerSmarter.java)
