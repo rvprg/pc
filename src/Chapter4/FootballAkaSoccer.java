@@ -1,5 +1,3 @@
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;

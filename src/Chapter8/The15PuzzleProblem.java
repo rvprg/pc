@@ -1,5 +1,3 @@
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 

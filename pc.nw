@@ -28,8 +28,7 @@ book\cite{PC} which in turn is a collection of problems from the UVa Online
 Judge hosted by University of Valladolid\footnote{If you are going to submit
 any of these programs to the UVa Online Judge (which you obviously shouldn't)
 make sure the class name is Main and that it is not in any package; Note that
-for the class names I use problem names and I put everything into my package
-com.rvprg.pc)}.  \end{abstract}
+for the class names I use problem names}.  \end{abstract}
 
 
 \tableofcontents
@@ -53,8 +52,6 @@ So let's start with the definitions of the array that will hold all the
 [[lengths]] and the [[reader]] that will be used to read the input data.
 
 <<3n+1>>=
-package com.rvprg.pc;
-
 <<1.1 Imports>>
 
 class Collatz {
@@ -183,8 +180,6 @@ number of cells that have '*' in them.
 Our program structure is simple as usual:
 
 <<Minesweeper>>=
-package com.rvprg.pc;
-
 <<1.2 Imports>>
 
 class Minesweeper {
@@ -280,8 +275,6 @@ should note for ourselves is that we are not going to use the floating point
 types to do the calculations.
 
 <<The Trip>>=
-package com.rvprg.pc;
-
 <<1.3 Imports>>
 
 class TheTrip {
@@ -377,8 +370,6 @@ a top to bottom (or bottom to up) row-by-row manner, but in a columnar manner;
 at the same time scaling becomes very easy. 
 
 <<LC Display>>=
-package com.rvprg.pc;
-
 <<1.4 Imports>>
 
 class LCDisplay {
@@ -609,7 +600,7 @@ operation, but I leave it without comments either as the code is
 self-explanatory.
 
 <<Graphical Editor>>=
-package com.rvprg.pc;
+
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
@@ -761,8 +752,6 @@ public class GraphicalEditor {
 This task is disappointingly straightforward.
 
 <<Interpreter>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -846,8 +835,6 @@ class Interpreter {
 This task is trivial.
 
 <<Check The Check>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -1017,8 +1004,6 @@ each index in the ballots, this is for easier access to the arrays, as
 they are indexed from 0.
 
 <<Australian Voting>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -1156,8 +1141,6 @@ ballots.forEach(b -> {
 This task must be a joke.
 
 <<Jolly Jumpers>>=
-package com.rvprg.pc;
-
 import static java.lang.Math.abs;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
@@ -1194,8 +1177,6 @@ coding. Anyway, here's the whole program without comments as the code is
 self-explanatory.
 
 <<Poker Hands>>=
-package com.rvprg.pc;
-
 import static java.util.stream.Collectors.toList;
 
 import java.io.BufferedReader;
@@ -1482,8 +1463,6 @@ a bitmap will be just fine. This results in a much shorter and less
 complicated code.
 
 <<Hartals>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -1567,8 +1546,6 @@ have just one method [[decrypt]] that will take a string and return either a
 decrypted text or stars, as per problem statement.
 
 <<Crypt Kicker>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -1854,7 +1831,7 @@ public String decrypt(String input) {
 Easy.
 
 <<Stack em Up>>=
-package com.rvprg.pc;
+
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
@@ -1958,8 +1935,6 @@ To solve this task one just needs to apply breadth-first search algorithm.
 Very straightforward.
 
 <<Erdos Numbers>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -2062,8 +2037,6 @@ teams attempted but never solved, that's the only tricky thing that might not
 be obvious from the problem statement.
 
 <<Contest Scoreboard>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -2183,8 +2156,6 @@ required by the task. Note that dice will be sorted in ascending order. This
 will be useful later on.
 
 <<Yahtzee>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -2577,8 +2548,6 @@ This concludes this program.
 Trivial.
 
 <<WERTYU>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -2621,8 +2590,6 @@ public class WERTYU {
 Trivial.
 
 <<Where is Waldorf>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -2727,8 +2694,6 @@ character by character while taking into account their runs: We just take the
 smallest run out of two on each step.
 
 <<Common Permutation>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -2784,8 +2749,6 @@ to locate the pangram in the input lines. We will use exactly the same technique
 as we used while solving the original Crypt Kicker problem.
 
 <<Crypt Kicker II>>=
-package com.rvprg.pc;
-
 import static java.lang.Math.abs;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
@@ -2875,8 +2838,6 @@ by a line feed.'' So the input, when read by [[readLine()]], would apparently
 miss some characters. Other than this caveat, the task is trivial.
 
 <<Automated Judge Script>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -2935,8 +2896,6 @@ file). Input is rather straightforward and, unfortunately, due to the format of
 the input data, isn't very concise.
 
 <<File Fragmentation>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -3055,7 +3014,7 @@ algorithm to find the shortest path.
 Very straightforward.
 
 <<Doublets>>=
-package com.rvprg.pc;
+
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
@@ -3192,8 +3151,6 @@ tokens and simply follow the rules of formatting outlines in the problem
 statement.
 
 <<Fmt>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -3324,8 +3281,6 @@ public class Fmt {
 All we need to do is to find the median and then sum the distances.
 
 <<Vitos Family>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -3381,8 +3336,6 @@ appears next to the previous largest value; continue until the array
 is sorted.
 
 <<Stacks of Flapjacks>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -3460,8 +3413,6 @@ of [[getStrategy]] and prints it out in the format specified in the problem
 statement.
 
 <<Bridge>>=
-package com.rvprg.pc;
-
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 
@@ -3653,8 +3604,6 @@ these combined intervals.
 The program is self-explanatory.
 
 <<Longest Nap>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -3793,8 +3742,6 @@ $f_3/d_3 \geq f_4/d_4$. So, generally, $d_i$ will go before $d_j$ if
 $f_i/d_i \geq f_j/d_j$.
 
 <<Shoemakers Problem>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -3875,8 +3822,6 @@ will be the bill in cents. We are using [[AtomicInteger]] because it has
 convenient update semantics.
 
 <<CDVII>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -4092,8 +4037,6 @@ which takes [[input]] array and the [[target]] array and returns an answer,
 i.e. a list of items that need to be moved to the top:
 
 <<ShellSort>>=
-package com.rvprg.pc;
-
 import static java.util.stream.Collectors.toList;
 
 import java.io.BufferedReader;
@@ -4163,8 +4106,6 @@ judge didn't like my solution I ended up writing my custom made method. I've
 left it as is as I don't want to spend any more time on this task.
 
 <<Football aka Soccer>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -4331,8 +4272,6 @@ public class FootballAkaSoccer {
 This task is trivial.
 
 <<Primary Arithmetic>>=
-package com.rvprg.pc;
-
 import static java.util.stream.Collectors.toList;
 
 import java.io.BufferedReader;
@@ -4405,8 +4344,6 @@ public class PrimaryArithmetic {
 This task is trivial.
 
 <<Reverse And Add>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -4487,8 +4424,6 @@ stops, we check if $m \cdot log(2) < log(v+1) + n$, and if so, $m$ is the
 answer. Otherwise, we increment $n$ and start everything all over again.
 
 <<The Archeologists Dilemma>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -4547,8 +4482,6 @@ reminder until it doesn't divide without a reminder.
 Before we implement the long division, let's write input/output:
 
 <<Ones>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -4614,8 +4547,6 @@ to the result.
 The program is quite compact:
 
 <<A Multiplication Game>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -4678,8 +4609,6 @@ $$\frac{n!}{k_1!k_2! \ldots k_m!}$$
 We won't calculate it as is, but first simplify the fraction whenever possible.
 
 <<Polynomial Coefficients>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -4739,8 +4668,6 @@ public class PolynomialCoefficients {
 This task is just about searching the binary tree, which is trivial.
 
 <<The Stern-Brocot Number System>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -4849,8 +4776,6 @@ The lower bound can be taken as the minimum of the differences of the pairs
 made of the input values.\marginpar{Can you see why?}
 
 <<Pairsumonious Numbers>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -5002,8 +4927,6 @@ public class PairsumoniousNumbers {
 This task is particularly easy in Java because of [[BigInteger]] class.
 
 <<How Many Fibs>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -5109,8 +5032,6 @@ $$ F = 1 + {n \choose 2} + {n \choose 4} $$
 This translates into Java code extremely easily:
 
 <<How Many Pieces of Land>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -5168,8 +5089,6 @@ will also implement it in a iterative manner rather than recursive function
 calls.
 
 <<Counting>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -5251,8 +5170,6 @@ Of course we need memoization in the implementation which is trivial in this
 case.
 
 <<Expressions>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -5339,8 +5256,6 @@ each subtree can be labeled in $f(b, n(k, h-1), k, h-1)$ ways. Multiplying all
 these together gives us the answer.
 
 <<Complete Tree Labeling>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -5461,8 +5376,6 @@ calculate all the values for each $n \in (1, 10000)$. Then we simply look up
 the answer in the table.
 
 <<The Priest Mathematician>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -5522,8 +5435,6 @@ range into which $n$ falls. Once we know the range, we simply return its index.
 For instance, $a(5)=3$, because $5 \in (4, 5)_3$, and therefore $a(5)=3$. 
 
 <<Self Describing Sequence>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -5628,8 +5539,6 @@ Now from those two cases we take the one that gives the smaller number of
 steps.
 
 <<Steps>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -5715,8 +5624,6 @@ Let's sort out the input/output first as usual. We assume that we have
 [[calculate]] method that returns the number of divisors for a given number.
 
 <<Light, More Light>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -5852,8 +5759,6 @@ considerably faster and the judge accepted my program with 560ms execution
 time.
 
 <<Carmichael Numbers>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -5956,8 +5861,6 @@ We just need to use the Extended Euclid Algorithm. The algorithm below is a
 direct translation of the pseudocode from \cite{EEA}.
 
 <<Euclid Problem>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -6023,8 +5926,6 @@ check that this holds for every $p_i$ from the unique prime factorization. If
 it doesn't, then $m$ does not divide $n!$.
 
 <<Factovisors>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -6099,8 +6000,6 @@ the Sieve of Eratosthenes. Once we have all these primes we can find the
 required sums by a simple search.
 
 <<Summation of Four Primes>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -6184,8 +6083,6 @@ To solve this task it will suffice to do the checks without doing anything very
 complicated.
 
 <<Smith Numbers>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -6265,8 +6162,6 @@ that gives the smallest cost, we check the solutions on both ends of
 that range and choose the one that is smaller.
 
 <<Marbles>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -6424,8 +6319,6 @@ place $i$ (out of $k$) bishops on the black squares, then we don't even try to
 place the $k-i$ bishops on the white squares.
 
 <<Little Bishops>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -6575,8 +6468,6 @@ configuration is solvable or not, and the Manhattan distance.
 Let's sort out input/output.
 
 <<15 Puzzle Problem>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -6839,8 +6730,6 @@ efficient solution using dynamic programming technique. See
 \url{https://github.com/morris821028/UVa/blob/master/volume101/10128 - Queue.cpp}.}
 
 <<Queue>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -6977,8 +6866,6 @@ to set and unset bits in it.
 The template for the program will be as follows.
 
 <<Servicing Stations>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -7235,8 +7122,6 @@ To arrive at this solution a tutorial \cite{DP3} was of great help. The bit
 trick was purloined from \cite{TOW}.
 
 <<Tug Of War>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -7306,8 +7191,6 @@ just use the transition table for the given automaton while trying to
 reconstruct the previous state.
 
 <<Garden of Eden>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -7419,8 +7302,6 @@ that the task's requirement is to give up searching if the depth is more than
 then we know there's a path, and we can reconstruct it.
 
 <<Colours Hash>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -8092,8 +7973,6 @@ unfilled area.
 Now let's start writing code. 
 
 <<Bigger Square Please Offline>>=
-package com.rvprg.pc;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8695,8 +8574,6 @@ the images with the solutions.
 Here is the program that generates a program to be submitted to the judge.
 
 <<Bigger Square Please Meta>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -8785,8 +8662,6 @@ bipartite. If we can complete the breadth-first search without encountering
 that situation, then the graph is bipartite.
 
 <<Bicoloring>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -8883,8 +8758,6 @@ will get a "Runtime error" if you believe there is only one blank line or at
 least one blank line. Assume there may be multiple blank lines or none at all!
 
 <<Playing With Wheels>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -9023,8 +8896,6 @@ own format and inserts empty lines here and there, so watch out with your
 input parsing!
 
 <<The Tourist Guide>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -9112,8 +8983,6 @@ are made of two triangles.
 
 
 <<Slash Maze>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -9256,8 +9125,6 @@ of the maximum ladder length. Then we continue in this manner until we have
 iterated on the whole list of words. Once finished, we will know the maximum.
 
 <<Edit Step Ladders>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9355,8 +9222,6 @@ The method [[buildUpTable]] builds up the [[table]] discussed above. And the
 actual tower.
 
 <<Tower of Cubes>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -9480,8 +9345,6 @@ nodes. We keep doing so until we either arrive at the required station or we
 declare there's no such route.
 
 <<From Dusk Till Dawn>>=
-package com.rvprg.pc;
-
 import static java.util.stream.Collectors.toList;
 
 import java.io.BufferedReader;
@@ -9624,8 +9487,6 @@ This task must be a joke because it's trivial. (To much surprise, it's
 designated as ``Level 3'' task.)
 
 <<Hanoi Tower Troubles Again>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9678,8 +9539,6 @@ doesn't require any sophisticated data structures usage (like Fibonacci heaps
 etc) and can be implemented in a naive way.
 
 <<Freckles>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -9774,8 +9633,6 @@ even degrees (as per Euler's theorem), and if they do, we search for the
 Eulerian cycle; otherwise, we conclude this graph can't have an Eulerian cycle.
 
 <<The Necklace>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -9905,8 +9762,6 @@ station needs to be built. It takes as input a set of indexes of the existing
 fire stations and the graph itself.
 
 <<Fire Stations>>=
-package com.rvprg.pc;
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -10087,8 +9942,6 @@ It was clear: A different approach was required here. In the end, I have
 purloined the idea for this task solution from \cite{AlexLange}.
 
 <<Railroads>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10225,8 +10078,6 @@ Similarly we join $j$ and enemies of $i$ together. This is because enemies of
 our enemies are our friends. 
 
 <<War>>=
-package com.rvprg.pc;
-
 import java.util.*;
 
 public class War {
@@ -10318,6 +10169,102 @@ public class War {
 
 @
 
+\subsection{Tourist Guide}
+
+This task is about finding articulation points in a graph. There are known
+algorithms to do this in linear time\cite{ARP}. The only ``catch'' in this task
+is that you need to run articulation points search for each connected
+component, which there may be more than one, although the problem's description
+may suggest that town road map is a connected component. Apparently, that's not
+true for this task.
+
+The [[findCutPoints]] is a direct translaction of the pseudo-code from \cite{ARP}.
+
+<<TouristGuide>>=
+import java.util.*;
+
+public class TouristGuide {
+    private final Set<String> cutVertices = new HashSet<>();
+    private final Set<String> visited = new HashSet<>();
+    private final Map<String, String> parent = new HashMap<>();
+    private final Map<String, Integer> depths = new HashMap<>();
+    private final Map<String, Integer> low = new HashMap<>();
+    private final Map<String, Set<String>> graph;
+
+    public TouristGuide(Map<String, Set<String>> graph) {
+        this.graph = graph;
+        Set<String> processed = new HashSet<>();
+        Set<String> roots = new HashSet<>(graph.keySet());
+        while (processed.size() != graph.keySet().size()) {
+            findCutVertices(roots.iterator().next(), 0);
+            processed.addAll(visited);
+            roots.removeAll(visited);
+        }
+    }
+
+    public Set<String> getCutVertices() {
+        return cutVertices;
+    }
+
+    private void findCutVertices(String v, int d) {
+        visited.add(v);
+        depths.put(v, d);
+        low.put(v, d);
+        int childCount = 0;
+        boolean isCutVertix = false;
+        for (String n : graph.get(v)) {
+            if (!visited.contains(n)) {
+                parent.put(n, v);
+                findCutVertices(n, d + 1);
+                childCount++;
+                if (low.get(n) >= depths.get(v)) {
+                    isCutVertix = true;
+                }
+                low.put(v, Math.min(low.get(v), low.get(n)));
+            } else if (!n.equals(parent.get(v))) {
+                low.put(v, Math.min(low.get(v), depths.get(n)));
+            }
+        }
+        if ((parent.containsKey(v) && isCutVertix) ||
+                (!parent.containsKey(v) && childCount > 1)) {
+            cutVertices.add(v);
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+        int n = 0;
+        int c = 0;
+        while ((n = s.nextInt()) != 0) {
+            c++;
+            if (c > 1) {
+                System.out.println();
+            }
+            s.nextLine();
+            for (int i = 0; i < n; ++i) {
+                s.nextLine();
+            }
+            Map<String, Set<String>> graph = new HashMap<>();
+            int edgesCount = s.nextInt();
+            s.nextLine();
+            for (int i = 0; i < edgesCount; ++i) {
+                String[] edge = s.nextLine().replaceAll("\\s+", " ").split(" ");
+                assert (edge.length == 2);
+                graph.putIfAbsent(edge[0], new HashSet<>());
+                graph.putIfAbsent(edge[1], new HashSet<>());
+                graph.get(edge[0]).add(edge[1]);
+                graph.get(edge[1]).add(edge[0]);
+            }
+            TouristGuide t = new TouristGuide(graph);
+            List<String> cutPoints = new ArrayList<>(t.getCutVertices());
+            cutPoints.sort(String::compareTo);
+            System.out.println(String.format("City map #%d: %d camera(s) found", c, cutPoints.size()));
+            cutPoints.forEach(System.out::println);
+        }
+    }
+}
+
+@
 
 \section{Dynamic Programming}
 
@@ -10328,8 +10275,6 @@ to extend the sequence. We keep two arrays, [[res]], to keep the lengths of the
 sequences, and [[ref]], to keep the references to the previous elements.
 
 <<Is Bigger Smarter>>=
-package com.rvprg.pc;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -10462,6 +10407,8 @@ Journal, 1984
 \bibitem{OEIS} \url{https://oeis.org/A018835}
 
 \bibitem{DS} \url{https://en.wikipedia.org/wiki/Disjoint-set_data_structure}
+
+\bibitem{ARP} \url{https://en.wikipedia.org/wiki/Biconnected_component}
 
 \end{thebibliography}
 

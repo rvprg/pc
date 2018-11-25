@@ -1,5 +1,3 @@
-package com.rvprg.pc;
-
 import static java.lang.Math.abs;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;

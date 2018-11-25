@@ -1,5 +1,3 @@
-package com.rvprg.pc;
-
 import java.util.*;
 
 public class War {
