@@ -102,6 +102,7 @@ NOTE: This is a work in progress.
 * [Fire Stations](https://github.com/rvprg/pc/blob/master/src/Chapter10/FireStations.java)
 * [Railroads](https://github.com/rvprg/pc/blob/master/src/Chapter10/Railroads.java)
 * [War](https://github.com/rvprg/pc/blob/master/src/Chapter10/War.java)
+* [Tourist Guide](https://github.com/rvprg/pc/blob/master/src/Chapter10/TouristGuide.java)
 
 ## Dynamic Programming (Chapter 11)
 * [Is Bigger Smarter?](https://github.com/rvprg/pc/blob/master/src/Chapter11/IsBiggerSmarter.java)
