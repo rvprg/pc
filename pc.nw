@@ -10180,7 +10180,7 @@ true for this task.
 
 The [[findCutPoints]] is a direct translaction of the pseudo-code from \cite{ARP}.
 
-<<TouristGuide>>=
+<<Tourist Guide>>=
 import java.util.*;
 
 public class TouristGuide {
@@ -10265,6 +10265,108 @@ public class TouristGuide {
 }
 
 @
+
+\subsection{The Grand Dinner}
+
+This task can be modeled as a flow problem. Team sizes would become capacities of
+the edges coming from the source node. There would be $M$ nodes connecting to the
+source node, where $M$ is the number of teams. Then there would be another set of
+nodes corresponding to the tables; there would be $N$ such nodes. Each edge 
+leaving a ``table'' node and ending in the sink node would have a capacity of the
+corresponding table. Then each ``team'' node would be connected to each
+``table'' node with an edge of capacity 1. Then we find a maximum flow in
+this network. If we can't saturate each edge leaving the source node to their
+maximum capacity, it means there's no solution to the problem. Otherwise a 
+solution exists and the solution corresponds to the edges between ``team'' and
+``table'' nodes that have flows through the edges.
+
+I have tried submitting a solution based on Edmond Karp algorithm (as it is
+easy to implement), but the tests have large cases which make this algorithm
+impractical due to its running time complexity $O(VE^2)$. I got ``Time Limit
+Exceeded'' verdicts. (And what I was hoping for?)  A solution using push
+relabel algorithm may pass the tests as it has much better running time
+complexity of $O(V^2E)$.
+
+However, as the book suggests, there is a greedy algorithm. The strategy is
+to try to seat the largest team to the tables with the largest capacities
+first. Keep doing until you either succeed or fail.
+
+<<The Grand Dinner>>=
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+public class TheGrandDinner {
+    static class Tuple {
+        final int v1;
+        int v2;
+
+        public Tuple(int v1, int v2) {
+            this.v1 = v1;
+            this.v2 = v2;
+        }
+    }
+
+    public static List<List<Integer>> solve(List<Tuple> teams, List<Tuple> tables) {
+        List<List<Integer>> solution = new ArrayList<>();
+        teams.forEach(x -> solution.add(new ArrayList<>()));
+        teams.sort((x, y) -> Integer.compare(y.v2, x.v2));
+        for (int i = 0; i < teams.size(); ++i) {
+            tables.sort((x, y) -> Integer.compare(y.v2, x.v2));
+            for (int j = 0; j < tables.size() && teams.get(i).v2 > 0; ++j) {
+                solution.get(teams.get(i).v1 - 1).add(tables.get(j).v1);
+                tables.get(j).v2--;
+                teams.get(i).v2--;
+                if (tables.get(j).v2 < 0) {
+                    return null;
+                }
+            }
+            if (teams.get(i).v2 > 0) {
+                return null;
+            }
+        }
+        return solution;
+    }
+
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+        int n = 0;
+        int m = 0;
+
+        while (true) {
+            m = s.nextInt();
+            n = s.nextInt();
+            if (m == 0 && n == 0) {
+                break;
+            }
+            List<Tuple> teams = new ArrayList<>();
+            List<Tuple> tables = new ArrayList<>();
+            for (int i = 0; i < m; ++i) {
+                teams.add(new Tuple(i + 1, s.nextInt()));
+            }
+            for (int i = 0; i < n; ++i) {
+                tables.add(new Tuple(i + 1, s.nextInt()));
+            }
+
+            List<List<Integer>> solution = solve(teams, tables);
+            if (solution != null) {
+                System.out.println(1);
+                for (int i = 0; i < m; i++) {
+                    System.out.println(solution.get(i)
+                            .stream().map(String::valueOf)
+                            .collect(Collectors.joining(" ")));
+                }
+            } else {
+                System.out.println(0);
+            }
+        }
+    }
+
+}
+
+@
+
 
 \section{Dynamic Programming}
 
