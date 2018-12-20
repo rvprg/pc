@@ -104,6 +104,7 @@ NOTE: This is a work in progress.
 * [War](https://github.com/rvprg/pc/blob/master/src/Chapter10/War.java)
 * [Tourist Guide](https://github.com/rvprg/pc/blob/master/src/Chapter10/TouristGuide.java)
 * [The Grand Dinner](https://github.com/rvprg/pc/blob/master/src/Chapter10/TheGrandDinner.java)
+* [The Problem with the Problem Setter](https://github.com/rvprg/pc/blob/master/src/Chapter10/TheProblemWithTheProblemSetter.java)
 
 ## Dynamic Programming (Chapter 11)
 * [Is Bigger Smarter?](https://github.com/rvprg/pc/blob/master/src/Chapter11/IsBiggerSmarter.java)
