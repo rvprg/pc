@@ -108,7 +108,7 @@ NOTE: This is a work in progress.
 
 ## Dynamic Programming (Chapter 11)
 * [Is Bigger Smarter?](https://github.com/rvprg/pc/blob/master/src/Chapter11/IsBiggerSmarter.java)
-
+* [Distinct Subsequences](https://github.com/rvprg/pc/blob/master/src/Chapter11/DistinctSubsequences.java)
 
 
 
