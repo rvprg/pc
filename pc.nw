@@ -10,6 +10,7 @@
 \usepackage{hyperref}
 \usepackage{pstricks}
 \usepackage{subfig}
+\usepackage{booktabs}
 
 
 \begin{document}
@@ -10669,7 +10670,7 @@ public class Main {
 
 Now, a recursive solution: Sequentially scan for the last character of Z in
 X. Suppose its index is $i$. Now recursively call the function with a substring
-of $X[0, i-1]$ and $Z'$, which is the same as $Z$ except its last character
+of $X[1, i-1]$ and $Z'$, which is the same as $Z$ except its last character
 removed. The answer is the sum of the returned values from the recursive calls
 for each such index $i$. This solution is slow (even with memoization) and the
 online judge will not accept it, because of the time limit. But the solution is
@@ -10705,7 +10706,37 @@ private BigInteger slowRecursive(String line, String subs, BigInteger[][] memo) 
 
 @
 
-A tabular solution: TBD.
+A tabular solution. Let's create a table [[memo]] of $|X|$ by $|Z|$ size. We
+will fill out the first row and the first column with zeroes and we will assume
+our indexiding starts from 1 because it is easier to maintain the table that
+way.  Then, we start going through $Z$ character by character and fill out the
+table row by row. If it's the second row, then we just put 1 on the first
+occurance of the matching characters and keep increasing it on subsequent
+matches. The second row answers the question of what if our $Z$ had only the
+frist character. So we just count how many times it occurs in $X$. The third 
+row (and all subsequent rows) of the table, which corresponds to the case when
+$Z$ has more than one character, will be constructed in a different way. First, if
+characters don't match for the given cell, we simply take the previous value to
+this cell. It basically says that the number of subsequences hasn't changed for
+this longer $X$. But if the characters match, we calculate the value by taking
+$memo[i-1][j-1] + memo[j-1][i]$. Essentially we are saying that the number of
+subsequences of $Z[1,i]$ in $X[1,j]$ is the same as the number of subsequences
+of $Z[1,i-1]$ in $X[1,j-1]$ plus the number of subsequences of $Z[1,i]$ in
+$X[1,j-1]$. Once we have completed filling out the table, it will contain the
+answers for all pairs of lengths of $X$ and $Z$.
+
+\begin{table}[]
+\begin{center}
+\begin{tabular}{@{}lllllllll@{}}
+\toprule
+\textbf{}  & \textbf{} & \textbf{b} & \textbf{a} & \textbf{b} & \textbf{g} & \textbf{b} & \textbf{a} & \textbf{g} \\ \midrule
+           & 0         & 0          & 0          & 0          & 0          & 0          & 0          & 0          \\
+\textbf{b} & 0         & 1          & 1          & 2          & 2          & 3          & 3          & 3          \\
+\textbf{a} & 0         & 0          & 1          & 1          & 1          & 1          & 4          & 4          \\
+\textbf{g} & 0         & 0          & 0          & 0          & 1          & 1          & 1          & 5          \\ \bottomrule
+\end{tabular}
+\end{center}
+\end{table}
 
 <<11.2 Fast Tabular>>=
 private BigInteger fastTabular(String line, String subs) {
