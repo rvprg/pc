@@ -10708,12 +10708,12 @@ private BigInteger slowRecursive(String line, String subs, BigInteger[][] memo) 
 
 A tabular solution. Let's create a table [[memo]] of $|X|$ by $|Z|$ size. We
 will fill out the first row and the first column with zeroes and we will assume
-our indexiding starts from 1 because it is easier to maintain the table that
+our indexing starts from 1 because it is easier to maintain the table that
 way.  Then, we start going through $Z$ character by character and fill out the
 table row by row. If it's the second row, then we just put 1 on the first
-occurance of the matching characters and keep increasing it on subsequent
+occurrence of the matching characters and keep increasing it on subsequent
 matches. The second row answers the question of what if our $Z$ had only the
-frist character. So we just count how many times it occurs in $X$. The third 
+first character. So we just count how many times it occurs in $X$. The third 
 row (and all subsequent rows) of the table, which corresponds to the case when
 $Z$ has more than one character, will be constructed in a different way. First, if
 characters don't match for the given cell, we simply take the previous value to
@@ -10762,6 +10762,117 @@ private BigInteger fastTabular(String line, String subs) {
     }
     return memo[line.length()][subs.length()];
 }
+
+@
+
+\subsection{Weights and Measures}
+
+The tricky part in this problem is how to come up with a set of subproblems
+using which we can build a solution.
+
+Let's say we are given $T_1, \ldots, T_n$ turtles, and two functions
+$weight(T_i)$ and $strength(T_i)$. We are asked to find a largest stack of
+turtles such that for each turtle in this stack its capacity (i.e. strength
+minus its own weight) is larger or equal to the weights of all turtles above
+it.
+
+Let us take a random proper stack of turtles $T_{t_1}, \ldots, T_{t_m}$. Since
+this is a proper stack, it means that for all $i \leq m$ the following
+inequality holds:
+
+$$\sum_{j=1}^{i-1}weight(T_{t_j}) \leq strength(T_{t_i}) - weigth(T_{t_i})$$
+
+In order to allow for recursive construction we need to define an ordering of
+turtles in our stacks. We will show that any proper stack of turtles can be
+reordered to a non-decreasing sequence of turtles with respect to their
+strengths.
+
+Let's assume we have a proper stack of turtles $T_{t_1}, \ldots, T_{t_i},
+T_{t_{i+1}}, \ldots, T_{t_{m}}$, and let's also assume that
+$strength(T_{t_{i+1}}) < strength(T_{t_{i}})$. (Remember: $strength(T_i)$
+returns turtle's strength which is how much this turtle can carry including its
+own weight.) But note that $T_{t_{i+1}}$ and $T_{t_{i}}$ can be swapped and a new 
+stack of turtles would still be a proper stack. That is $T_{t_1}, \ldots,
+T_{t_{i+1}}, T_{t_{i}}, \ldots, T_{t_{m}}$ would be a proper stack. This observation
+means that we can take any proper stack and transform it to a non-decreasing
+stack with respect to the strengths, which will also be a proper stack. (For a
+formal proof of this claim see \cite{TURTLE}.)
+
+This also means that once we have sorted our input by strengths, we can proceed
+along the sorted list of turtles and obtain proper ordered stacks. 
+
+The sub-problem $S_j$, $j \leq n$ is the following: Among all the stacks of
+height $k \leq j$ built from turtles $T_1, \ldots, T_j$ find the lightest one.
+
+Let's assume we have solved $S_{j-1}$.
+
+TDB.
+
+
+<<Weights and Measures>>=
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Scanner;
+
+public class WeightsAndMeasures {
+    private static class Turtle {
+        int weight;
+        int strength;
+
+        public Turtle(int weight, int strength) {
+            this.weight = weight;
+            this.strength = strength;
+        }
+    }
+
+    public static int solve(List<Turtle> input) {
+        input.sort(Comparator.comparingInt(x -> x.strength));
+        int[][] height = new int[2][input.size() + 1];
+        height[0][0] = 0;
+        for (int i = 1; i <= input.size(); ++i) {
+            height[0][i] = Integer.MAX_VALUE;
+            height[1][i] = Integer.MAX_VALUE;
+        }
+
+        for (int i = 1; i <= input.size(); ++i) {
+            Turtle t = input.get(i - 1);
+            for (int k = i; k >= 1; --k) {
+                if (height[0][k - 1] <= (t.strength - t.weight)) {
+                    height[1][k] = Math.min(height[0][k], height[0][k - 1] + t.weight);
+                } else {
+                    height[1][k] = height[0][k];
+                }
+            }
+            System.arraycopy(height[1], 0, height[0], 0, height[1].length);
+            for (int k = 1; k <= input.size(); ++k) {
+                height[1][k] = Integer.MAX_VALUE;
+            }
+        }
+        for (int i = input.size(); i >= 0; --i) {
+            if (height[0][i] < Integer.MAX_VALUE) {
+                return i;
+            }
+        }
+        return 1;
+    }
+
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        String line;
+        List<Turtle> input = new ArrayList<>();
+        while ((line = reader.readLine()) != null) {
+            Scanner scanner = new Scanner(line);
+            input.add(new Turtle(scanner.nextInt(), scanner.nextInt()));
+        }
+        System.out.println(solve(input));
+    }
+}
+
 
 @
 
@@ -10831,6 +10942,8 @@ Journal, 1984
 
 \bibitem{ARP} \url{https://en.wikipedia.org/wiki/Biconnected_component}
 
+\bibitem{TURTLE} \url{http://profs.sci.univr.it/~rrizzi/classes/Algoritmi/dispense/DP/moreDP.pdf}
+
 \end{thebibliography}
 
 \vskip 16pt
@@ -10847,5 +10960,4 @@ Journal, 1984
 @
 
 \end{document}
-
 
