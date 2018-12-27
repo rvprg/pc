@@ -10767,9 +10767,6 @@ private BigInteger fastTabular(String line, String subs) {
 
 \subsection{Weights and Measures}
 
-The tricky part in this problem is how to come up with a set of subproblems
-using which we can build a solution.
-
 Let's say we are given $T_1, \ldots, T_n$ turtles, and two functions
 $weight(T_i)$ and $strength(T_i)$. We are asked to find a largest stack of
 turtles such that for each turtle in this stack its capacity (i.e. strength
@@ -10780,34 +10777,32 @@ Let us take a random proper stack of turtles $T_{t_1}, \ldots, T_{t_m}$. Since
 this is a proper stack, it means that for all $i \leq m$ the following
 inequality holds:
 
-$$\sum_{j=1}^{i-1}weight(T_{t_j}) \leq strength(T_{t_i}) - weigth(T_{t_i})$$
+$$\sum_{j=1}^{i-1}weight(T_{t_j}) \leq strength(T_{t_i}) - weight(T_{t_i})$$
 
 In order to allow for recursive construction we need to define an ordering of
-turtles in our stacks. We will show that any proper stack of turtles can be
-reordered to a non-decreasing sequence of turtles with respect to their
-strengths.
-
-Let's assume we have a proper stack of turtles $T_{t_1}, \ldots, T_{t_i},
-T_{t_{i+1}}, \ldots, T_{t_{m}}$, and let's also assume that
+turtles in our stacks. Let's assume we have a proper stack of turtles $T_{t_1},
+\ldots, T_{t_i}, T_{t_{i+1}}, \ldots, T_{t_{m}}$, and let's also assume that
 $strength(T_{t_{i+1}}) < strength(T_{t_{i}})$. (Remember: $strength(T_i)$
 returns turtle's strength which is how much this turtle can carry including its
-own weight.) But note that $T_{t_{i+1}}$ and $T_{t_{i}}$ can be swapped and a new 
-stack of turtles would still be a proper stack. That is $T_{t_1}, \ldots,
-T_{t_{i+1}}, T_{t_{i}}, \ldots, T_{t_{m}}$ would be a proper stack. This observation
-means that we can take any proper stack and transform it to a non-decreasing
-stack with respect to the strengths, which will also be a proper stack. (For a
-formal proof of this claim see \cite{TURTLE}.)
+own weight.) But note that $T_{t_{i+1}}$ and $T_{t_{i}}$ can be swapped and a
+new stack of turtles would still be a proper stack. That is $T_{t_1}, \ldots,
+T_{t_{i+1}}, T_{t_{i}}, \ldots, T_{t_{m}}$ would be a proper stack. This
+observation means that we can take any proper stack and change it to a
+non-decreasing stack with respect to the strengths, which will also be a proper
+stack. (For a formal proof of this claim see \cite{TURTLE}.)
 
 This also means that once we have sorted our input by strengths, we can proceed
 along the sorted list of turtles and obtain proper ordered stacks. 
 
 The sub-problem $S_j$, $j \leq n$ is the following: Among all the stacks of
 height $k \leq j$ built from turtles $T_1, \ldots, T_j$ find the lightest one.
-
-Let's assume we have solved $S_{j-1}$.
-
-TDB.
-
+Let's assume we have solved $S_{j-1}$. If we want to build the lightest stack
+from $T_1, \ldots, T_j$ of length $k$, let's call it $W_k^j$, we look at the
+lightest stack of lengths $k$ and $k-1$ build from $T_1, \ldots, T_{j-1}$.
+Let's call them $W_k^{j-1}$ and $W_{k-1}^{j-1}$ correspondingly. If we can
+extend the stack $W_{k-1}^{j-1}$ with $T_j$ and it is lighter than $W_k^{j-1}$,
+then that's our lightest stack built from $T_1, \ldots, T_j$, otherwise we let
+$W_k^j=W_k^{j-1}$ (see \cite{TURTLE}).
 
 <<Weights and Measures>>=
 import java.io.BufferedReader;
@@ -10831,29 +10826,29 @@ public class WeightsAndMeasures {
 
     public static int solve(List<Turtle> input) {
         input.sort(Comparator.comparingInt(x -> x.strength));
-        int[][] height = new int[2][input.size() + 1];
-        height[0][0] = 0;
+        int[][] W = new int[2][input.size() + 1];
+        W[0][0] = 0;
         for (int i = 1; i <= input.size(); ++i) {
-            height[0][i] = Integer.MAX_VALUE;
-            height[1][i] = Integer.MAX_VALUE;
+            W[0][i] = Integer.MAX_VALUE;
+            W[1][i] = Integer.MAX_VALUE;
         }
 
         for (int i = 1; i <= input.size(); ++i) {
             Turtle t = input.get(i - 1);
             for (int k = i; k >= 1; --k) {
-                if (height[0][k - 1] <= (t.strength - t.weight)) {
-                    height[1][k] = Math.min(height[0][k], height[0][k - 1] + t.weight);
+                if (W[0][k - 1] <= (t.strength - t.weight)) {
+                    W[1][k] = Math.min(W[0][k], W[0][k - 1] + t.weight);
                 } else {
-                    height[1][k] = height[0][k];
+                    W[1][k] = W[0][k];
                 }
             }
-            System.arraycopy(height[1], 0, height[0], 0, height[1].length);
+            System.arraycopy(W[1], 0, W[0], 0, W[1].length);
             for (int k = 1; k <= input.size(); ++k) {
-                height[1][k] = Integer.MAX_VALUE;
+                W[1][k] = Integer.MAX_VALUE;
             }
         }
         for (int i = input.size(); i >= 0; --i) {
-            if (height[0][i] < Integer.MAX_VALUE) {
+            if (W[0][i] < Integer.MAX_VALUE) {
                 return i;
             }
         }
@@ -10873,8 +10868,11 @@ public class WeightsAndMeasures {
     }
 }
 
-
 @
+
+\subsection{Unidirectional TSP}
+
+TBD.
 
 \section{Grids}
 

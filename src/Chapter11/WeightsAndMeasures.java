@@ -19,29 +19,29 @@ public class WeightsAndMeasures {
 
     public static int solve(List<Turtle> input) {
         input.sort(Comparator.comparingInt(x -> x.strength));
-        int[][] height = new int[2][input.size() + 1];
-        height[0][0] = 0;
+        int[][] W = new int[2][input.size() + 1];
+        W[0][0] = 0;
         for (int i = 1; i <= input.size(); ++i) {
-            height[0][i] = Integer.MAX_VALUE;
-            height[1][i] = Integer.MAX_VALUE;
+            W[0][i] = Integer.MAX_VALUE;
+            W[1][i] = Integer.MAX_VALUE;
         }
 
         for (int i = 1; i <= input.size(); ++i) {
             Turtle t = input.get(i - 1);
             for (int k = i; k >= 1; --k) {
-                if (height[0][k - 1] <= (t.strength - t.weight)) {
-                    height[1][k] = Math.min(height[0][k], height[0][k - 1] + t.weight);
+                if (W[0][k - 1] <= (t.strength - t.weight)) {
+                    W[1][k] = Math.min(W[0][k], W[0][k - 1] + t.weight);
                 } else {
-                    height[1][k] = height[0][k];
+                    W[1][k] = W[0][k];
                 }
             }
-            System.arraycopy(height[1], 0, height[0], 0, height[1].length);
+            System.arraycopy(W[1], 0, W[0], 0, W[1].length);
             for (int k = 1; k <= input.size(); ++k) {
-                height[1][k] = Integer.MAX_VALUE;
+                W[1][k] = Integer.MAX_VALUE;
             }
         }
         for (int i = input.size(); i >= 0; --i) {
-            if (height[0][i] < Integer.MAX_VALUE) {
+            if (W[0][i] < Integer.MAX_VALUE) {
                 return i;
             }
         }
@@ -60,5 +60,4 @@ public class WeightsAndMeasures {
         System.out.println(solve(input));
     }
 }
-
 
