@@ -11,6 +11,9 @@
 \usepackage{pstricks}
 \usepackage{subfig}
 \usepackage{booktabs}
+\usepackage[normalem]{ulem}
+\usepackage{mathtools}
+\useunder{\uline}{\ul}{}
 
 
 \begin{document}
@@ -10936,6 +10939,74 @@ public class CuttingSticks {
 @
 
 \section{Grids}
+
+\subsection{Ant on a Chessboard}
+
+It's easy to note that each stripe $k$ starts with $k^2$. This means that we
+can obtain stripes' number by taking the ceiling of the value of the square
+root of the input value, that is for any value $v$ we have $k=\lceil \sqrt{v} \rceil$.
+This tells us one of the coordinates, but whether that's $x$ or $y$ depends on
+whether $k$ is odd or even.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{llllll}
+\textbf{5} & \textit{25} & 24         & 23         & 22          & {\ul 21}   \\ 
+\textbf{4} & 10          & 11         & 12         & {\ul 13}    & 20         \\
+\textbf{3} & \textit{9}  & 8          & {\ul 7}    & 14          & 19         \\
+\textbf{2} & 2           & {\ul 3}    & 6          & 15          & 18         \\
+\textbf{1} & {\ul 1}     & \textit{4} & 5          & \textit{16} & 17         \\
+           & \textbf{1}  & \textbf{2} & \textbf{3} & \textbf{4}  & \textbf{5} \\ 
+\end{tabular}
+\end{center}
+\end{table}
+
+The values in italics in the table are equal to $m = k^2-k+1$. Now once we know
+$k$ and $m$ we can work out the coordiantes. If $v$ equals $m$ it's the
+``corner'' and so both $x$ and $y$ are the same, that is equal to $k$.
+Otherwise, depending on whether $k$ is odd or even, we can work out the
+coordinates for each case. For example, if $k$ is odd and $v \ge m$, then
+$x=k^2-v+1$. (You can convince yourself by looking at the table.) Similarly we
+can work out for the rest of the cases, that is when $v < m$ and when $k$ is
+either odd or even.
+
+<<Ant On a Chessboard>>=
+import java.util.Scanner;
+
+public class AntOnAChessboard {
+    private static long[] get(long v) {
+        long k = (long) Math.ceil(Math.sqrt(v));
+        long m = k * k - k + 1;
+        boolean isOdd = k % 2 == 1;
+        if (v == m) {
+            return new long[]{k, k};
+        } else if (v >= m) {
+            if (isOdd) {
+                return new long[]{k * k - v + 1, k};
+            }
+            return new long[]{k, k * k - v + 1};
+        } else {
+            if (isOdd) {
+                return new long[]{k, k - (m - v)};
+            }
+            return new long[]{k - (m - v), k};
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+        while (true) {
+            long v = s.nextLong();
+            if (v == 0) {
+                break;
+            }
+            long[] ans = get(v);
+            System.out.println(String.format("%d %d", ans[0], ans[1]));
+        }
+    }
+}
+
+@
 
 \section{Geometry}
 
