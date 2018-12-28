@@ -111,6 +111,12 @@ NOTE: This is a work in progress.
 ## Dynamic Programming (Chapter 11)
 * [Is Bigger Smarter?](https://github.com/rvprg/pc/blob/master/src/Chapter11/IsBiggerSmarter.java)
 * [Distinct Subsequences](https://github.com/rvprg/pc/blob/master/src/Chapter11/DistinctSubsequences.java)
+* [Weights and Measures](https://github.com/rvprg/pc/blob/master/src/Chapter11/WeightsAndMeasures.java)
+* [Unidirectional TSP](https://github.com/rvprg/pc/blob/master/src/Chapter11/UnidirectionalTSP.java)
+* [Cutting Sticks](https://github.com/rvprg/pc/blob/master/src/Chapter11/CuttingSticks.java)
+
+## Grids (Chapter 12)
+* [Ant On a Chessboard](https://github.com/rvprg/pc/blob/master/src/Chapter12/AntOnAChessboard.java)
 
 
 
