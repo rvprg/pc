@@ -114,6 +114,7 @@ NOTE: This is a work in progress.
 * [Weights and Measures](https://github.com/rvprg/pc/blob/master/src/Chapter11/WeightsAndMeasures.java)
 * [Unidirectional TSP](https://github.com/rvprg/pc/blob/master/src/Chapter11/UnidirectionalTSP.java)
 * [Cutting Sticks](https://github.com/rvprg/pc/blob/master/src/Chapter11/CuttingSticks.java)
+* [Ferry Loading](https://github.com/rvprg/pc/blob/master/src/Chapter11/FerryLoading.java)
 
 ## Grids (Chapter 12)
 * [Ant On a Chessboard](https://github.com/rvprg/pc/blob/master/src/Chapter12/AntOnAChessboard.java)
