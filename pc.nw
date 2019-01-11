@@ -13,6 +13,8 @@
 \usepackage{booktabs}
 \usepackage[normalem]{ulem}
 \usepackage{mathtools}
+\usepackage{tabularx}
+\usepackage{amssymb}
 \useunder{\uline}{\ul}{}
 
 
@@ -37,9 +39,17 @@ for the class names I use problem names}.  \end{abstract}
 
 \tableofcontents
 
+\newpage
 \section{Getting Started}
 
 \subsection{The $3n+1$ Problem}
+
+\begin{tabularx}{\textwidth}{XXXXXX}
+\hline
+  \textbf{UVa ID} & \textbf{Popularity} & \textbf{Success Rate} & \textbf{Level} & \textbf{Personal}      & \textbf{Problem} \\ 
+  100             & A                   & low                   & 1              & $\bigstar$             & \href{https://uva.onlinejudge.org/external/1/100.pdf}{Link} \\ \hline
+\end{tabularx}
+\vspace{1mm}
 
 This task is not difficult if you notice that all the lengths of the sequences
 can easily be calculated up front. Then all that is needed is to lookup
@@ -175,6 +185,13 @@ public static void main(String[] args) {
 @
 
 \subsection{Minesweeper}
+
+\begin{tabularx}{\textwidth}{XXXXXX}
+\hline
+  \textbf{UVa ID} & \textbf{Popularity} & \textbf{Success Rate} & \textbf{Level} & \textbf{Personal}      & \textbf{Problem} \\ 
+  10189             & A                   & high                   & 1           & $\bigstar$             & \href{https://uva.onlinejudge.org/external/101/10189.pdf}{Link} \\ \hline
+\end{tabularx}
+\vspace{1mm}
 
 This task is trivial: We simply count the number of mines around each cell.
 There are eigth cells around each cell that we need to inspect. If our cell is
