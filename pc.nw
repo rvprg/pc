@@ -17,6 +17,15 @@
 \usepackage{amssymb}
 \useunder{\uline}{\ul}{}
 
+\newcommand{\MyHdr}[6]{
+\begin{tabularx}{\textwidth}{XXXXXX}
+\hline
+  \textbf{UVa ID} & \textbf{Popularity} & \textbf{Success Rate} & \textbf{Level} & \textbf{Personal}      & \textbf{Problem} \\ 
+  {#1}            & {#2}                & {#3}                  & {#4}           & {#5}                   & \href{{#6}}{Link} \\ \hline
+\end{tabularx}
+\vspace{1mm}
+}
+
 
 \begin{document}
 \pagestyle{myheadings}\markright{Programming Challenges\hfill \today\hfill}
@@ -44,12 +53,7 @@ for the class names I use problem names}.  \end{abstract}
 
 \subsection{The $3n+1$ Problem}
 
-\begin{tabularx}{\textwidth}{XXXXXX}
-\hline
-  \textbf{UVa ID} & \textbf{Popularity} & \textbf{Success Rate} & \textbf{Level} & \textbf{Personal}      & \textbf{Problem} \\ 
-  100             & A                   & low                   & 1              & $\bigstar$             & \href{https://uva.onlinejudge.org/external/1/100.pdf}{Link} \\ \hline
-\end{tabularx}
-\vspace{1mm}
+\MyHdr{100}{A}{low}{1}{$\bigstar$}{https://uva.onlinejudge.org/external/1/100.pdf}
 
 This task is not difficult if you notice that all the lengths of the sequences
 can easily be calculated up front. Then all that is needed is to lookup
@@ -186,12 +190,7 @@ public static void main(String[] args) {
 
 \subsection{Minesweeper}
 
-\begin{tabularx}{\textwidth}{XXXXXX}
-\hline
-  \textbf{UVa ID} & \textbf{Popularity} & \textbf{Success Rate} & \textbf{Level} & \textbf{Personal}      & \textbf{Problem} \\ 
-  10189             & A                   & high                   & 1           & $\bigstar$             & \href{https://uva.onlinejudge.org/external/101/10189.pdf}{Link} \\ \hline
-\end{tabularx}
-\vspace{1mm}
+\MyHdr{10198}{A}{high}{1}{$\bigstar$}{https://uva.onlinejudge.org/external/101/10189.pdf}
 
 This task is trivial: We simply count the number of mines around each cell.
 There are eigth cells around each cell that we need to inspect. If our cell is
@@ -291,6 +290,8 @@ public static void main(String[] args) throws IOException {
 
 \subsection{The Trip}
 
+\MyHdr{10137}{B}{averge}{1}{$\bigstar$}{https://uva.onlinejudge.org/external/101/10137.pdf}
+
 This task is much more fun that the previous two. The important thing that we
 should note for ourselves is that we are not going to use the floating point
 types to do the calculations.
@@ -383,6 +384,8 @@ public static void main(String[] args) throws IOException {
 @
 
 \subsection{LC Display}
+
+\MyHdr{706}{A}{average}{1}{$\bigstar\bigstar$}{https://uva.onlinejudge.org/external/7/706.pdf}
 
 This task may seem quite involved at first sight, because you may start
 thinking about two-dimensional patterns and scaling functions. But in reality
@@ -616,13 +619,13 @@ And that completes the program.
 
 \subsection{Graphical Editor}
 
+\MyHdr{10267}{B}{low}{1}{$\bigstar$}{https://uva.onlinejudge.org/external/102/10267.pdf}
+
 Very straightforward task. The only difficult part being the [[fill]]
 operation, but I leave it without comments either as the code is
 self-explanatory.
 
 <<Graphical Editor>>=
-
-
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
@@ -770,6 +773,8 @@ public class GraphicalEditor {
 
 \subsection{Interpreter}
 
+\MyHdr{10033}{B}{low}{2}{$\bigstar$}{https://uva.onlinejudge.org/external/100/10033.pdf}
+
 This task is disappointingly straightforward.
 
 <<Interpreter>>=
@@ -852,6 +857,8 @@ class Interpreter {
 @
 
 \subsection{Check The Check}
+
+\MyHdr{10196}{B}{average}{1}{$\bigstar$}{https://uva.onlinejudge.org/external/101/10196.pdf}
 
 This task is trivial.
 
@@ -1013,6 +1020,8 @@ public class CheckTheCheck {
 @
 
 \subsection{Australian Voting}
+
+\MyHdr{10142}{B}{low}{1}{$\bigstar$}{https://uva.onlinejudge.org/external/101/10142.pdf}
 
 This task is very straightforward. 
 
