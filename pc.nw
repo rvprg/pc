@@ -1168,6 +1168,8 @@ ballots.forEach(b -> {
 
 \subsection{Jolly Jumpers}
 
+\MyHdr{10038}{A}{average}{1}{$\bigstar$}{https://uva.onlinejudge.org/external/100/10038.pdf}
+
 This task must be a joke.
 
 <<Jolly Jumpers>>=
@@ -1201,6 +1203,8 @@ class JollyJumpers {
 @
 
 \subsection{Poker Hands}
+
+\MyHdr{10315}{C}{average}{2}{$\bigstar$}{https://uva.onlinejudge.org/external/103/10315.pdf}
 
 The task isn't particularly difficult in any way, but requires some lengthy
 coding. Anyway, here's the whole program without comments as the code is 
@@ -1486,6 +1490,8 @@ public class PokerHands {
 
 \subsection{Hartals}
 
+\MyHdr{10050}{B}{high}{2}{$\bigstar$}{https://uva.onlinejudge.org/external/100/10050.pdf}
+
 It seems that for this tasks you'd need to use GCDs and LCMs to figure out the 
 overlapping days etc. But in reality this is not needed. If you look at the
 input numbers you'll notice that they are very small, so a simulation on top of
@@ -1540,6 +1546,8 @@ public class Hartals {
 @
 
 \subsection{Crypt Kicker}
+
+\MyHdr{843}{B}{low}{2}{$\bigstar$$\bigstar$$\bigstar$}{https://uva.onlinejudge.org/external/8/843.pdf}
 
 This task is a lot of fun! To solve it we are going to need a very good
 bookkeeping discipline.
@@ -1858,6 +1866,8 @@ public String decrypt(String input) {
 
 \subsection{Stack 'em Up}
 
+\MyHdr{10205}{B}{average}{1}{$\bigstar$}{https://uva.onlinejudge.org/external/102/10205.pdf}
+
 Easy.
 
 <<Stack em Up>>=
@@ -1961,6 +1971,8 @@ public class StackEmUp {
 
 \subsection{Erd\"os Numbers}
 
+\MyHdr{10044}{B}{low}{2}{$\bigstar$}{https://uva.onlinejudge.org/external/100/10044.pdf}
+
 To solve this task one just needs to apply breadth-first search algorithm.
 Very straightforward.
 
@@ -2061,6 +2073,8 @@ public class ErdosNumbers {
 @
 
 \subsection{Contest Scoreboard}
+
+\MyHdr{10258}{B}{average}{1}{$\bigstar$}{https://uva.onlinejudge.org/external/102/10258.pdf}
 
 With this task one must be careful not to add penalties to the tasks that some
 teams attempted but never solved, that's the only tricky thing that might not
@@ -2170,6 +2184,8 @@ public class ContestScoreboard {
 @
 
 \subsection{Yahtzee}
+
+\MyHdr{10149}{C}{average}{3}{$\bigstar$$\bigstar$}{https://uva.onlinejudge.org/external/101/10149.pdf}
 
 This task's solution is going to be a bit lengthy due to necessary coding. The
 solution itself though is not so complicated. Notice that for the five of a
