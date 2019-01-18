@@ -2591,6 +2591,8 @@ This concludes this program.
 
 \subsection{WERTYU}
 
+\MyHdr{10082}{A}{high}{1}{$\bigstar$}{https://uva.onlinejudge.org/external/100/10082.pdf}
+
 Trivial.
 
 <<WERTYU>>=
@@ -2632,6 +2634,8 @@ public class WERTYU {
 @
 
 \subsection{Where's Waldorf}
+
+\MyHdr{10010}{B}{average}{2}{$\bigstar$}{https://uva.onlinejudge.org/external/100/10010.pdf}
 
 Trivial.
 
@@ -2731,6 +2735,8 @@ public class WheresWaldorf {
 
 \subsection{Common Permutation}
 
+\MyHdr{10252}{A}{average}{1}{$\bigstar$}{https://uva.onlinejudge.org/external/102/10252.pdf}
+
 This task is quite simple. First, we sort the input line characters in
 ascending order. Then, for each character in the input lines we compute its
 run. A run is a string of consecutive characters that are the same, for example
@@ -2787,6 +2793,8 @@ public class CommonPermutation {
 @
 
 \subsection{Crypt Kicker II}
+
+\MyHdr{850}{A}{average}{2}{$\bigstar$}{https://uva.onlinejudge.org/external/8/850.pdf}
 
 This task is much easier than Crypt Kicker. Here we have a very well known
 pangram ``the quick brown fox jumps over the lazy dog.'' A pangram is a sentence
@@ -2875,6 +2883,8 @@ class CryptKickerII {
 
 \subsection{Automated Judge Script}
 
+\MyHdr{10188}{B}{average}{1}{$\bigstar$}{https://uva.onlinejudge.org/external/101/10188.pdf}
+
 This task looks so trivial, but it took me a few attempts before the online
 judge accepted it. The reason was that it was wrong to use the [[readLine()]]
 method, because it strips characters; the contract says that ``line is
@@ -2935,6 +2945,8 @@ public class AutomatedJudgeScript {
 @
 
 \subsection{File Fragmentation}
+
+\MyHdr{10132}{C}{average}{2}{$\bigstar$}{https://uva.onlinejudge.org/external/101/10132.pdf}
 
 Let's sort out input/output assuming that our function [[restore]] takes a
 list of strings (i.e. shards) and returns the restored string (i.e. original
@@ -3052,6 +3064,8 @@ In accordance to the problem statement "Impossible" should never be returned,
 unless the input is malformed for any reason.
 
 \subsection{Doublets}
+
+\MyHdr{10150}{C}{average}{3}{$\bigstar$$\bigstar$}{https://uva.onlinejudge.org/external/101/10150.pdf}
 
 It's a simple task of the shortest path search in a graph. But because this
 graph is not directed and each edge has length 1, we can use deaph-first search
@@ -3187,6 +3201,8 @@ public class Doublets {
 @
 
 \subsection{Fmt}
+
+\MyHdr{848}{C}{low}{2}{$\bigstar$$\bigstar$}{https://uva.onlinejudge.org/external/8/848.pdf}
 
 This task may look simple to do at first sight, but actually it's quite
 involved.  The task becomes much easier if the whole text is read before
