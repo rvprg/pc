@@ -3340,6 +3340,8 @@ public class Fmt {
 
 \subsection{Vito's Family}
 
+\MyHdr{10041}{A}{high}{1}{$\bigstar$}{https://uva.onlinejudge.org/external/100/10041.pdf}
+
 All we need to do is to find the median and then sum the distances.
 
 <<Vitos Family>>=
@@ -3390,6 +3392,8 @@ public class VitosFamily {
 @
 
 \subsection{Stacks of Flapjacks}
+
+\MyHdr{120}{B}{high}{2}{$\bigstar$}{https://uva.onlinejudge.org/external/1/120.pdf}
 
 To solve this task all we have to do is the following: Find the next largest
 value in the array that is not already in its correct position and flip it so
@@ -3462,6 +3466,8 @@ public class StacksOfFlapjacks {
 @
 
 \subsection{Bridge}
+
+\MyHdr{10037}{B}{low}{3}{$\bigstar$$\bigstar$$\bigstar$}{https://uva.onlinejudge.org/external/100/10037.pdf}
 
 This task is quite tricky. But before trying to solve it, let's just sort out
 input/output to get it out of the way. 
@@ -3659,6 +3665,8 @@ This concludes the program.
 
 \subsection{Longest Nap}
 
+\MyHdr{10191}{B}{average}{1}{$\bigstar$}{https://uva.onlinejudge.org/external/101/10191.pdf}
+
 Here we simply need to read time intervals, then combine the overlapping or
 connecting intervals into the large ones, finally find the longest gap between
 these combined intervals.
@@ -3782,6 +3790,8 @@ public class LongestNap {
 
 \subsection{Shoemaker's Problem}
 
+\MyHdr{10026}{C}{average}{2}{$\bigstar$$\bigstar$$\bigstar$}{https://uva.onlinejudge.org/external/100/10026.pdf}
+
 Let's assume we have four jobs that take $d_1, d_2, d_3, d_4$ days and have
 corresponding fines $f_1, f_2, f_3, f_4$. Let's also assume they are in the
 optimal order, that is $S = 0 \cdot f_1 + (d_1) \cdot f_2 + (d_1 + d_2) \cdot
@@ -3864,6 +3874,8 @@ public class ShoemakersProblem {
 @
 
 \subsection{CDVII}
+
+\MyHdr{10138}{C}{low}{2}{$\bigstar$$\bigstar$}{https://uva.onlinejudge.org/external/101/10138.pdf}
 
 The problem statement is a bit vague. When I first read it I thought I'd need
 to figure out the speed of each car and then using that figure out how many
@@ -4089,6 +4101,8 @@ This concludes the program.
 
 \subsection{ShellSort}
 
+\MyHdr{10152}{B}{average}{2}{$\bigstar$$\bigstar$}{https://uva.onlinejudge.org/external/101/10152.pdf}
+
 The key to this problem answer is to note that all the items in the stack
 above the one that is about to be moved will move down. Therefore we just need
 to find all such elements, and everything else will need to be moved using the
@@ -4156,6 +4170,8 @@ return output;
 @
 
 \subsection{Football (aka Soccer)}
+
+\MyHdr{10194}{B}{average}{1}{$\bigstar$}{https://uva.onlinejudge.org/external/101/10194.pdf}
 
 It took me so many attempts before the online judge accepted my solution (15
 times!) so that at some point I thought I'd give up. It turned out that my
