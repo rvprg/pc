@@ -4347,6 +4347,8 @@ public class FootballAkaSoccer {
 
 \subsection{Primary Arithmetic}
 
+\MyHdr{10194}{A}{average}{1}{$\bigstar$}{https://uva.onlinejudge.org/external/101/10194.pdf}
+
 This task is trivial.
 
 <<Primary Arithmetic>>=
@@ -4419,6 +4421,8 @@ public class PrimaryArithmetic {
 
 \subsection{Reverse And Add}
 
+\MyHdr{10018}{A}{low}{1}{$\bigstar$}{https://uva.onlinejudge.org/external/100/10018.pdf}
+
 This task is trivial.
 
 <<Reverse And Add>>=
@@ -4465,6 +4469,8 @@ class ReverseAndAdd {
 @
 
 \subsection{The Archeologists' Dilemma}
+
+\MyHdr{701}{A}{low}{1}{$\bigstar$$\bigstar$$\bigstar$$\bigstar$}{https://uva.onlinejudge.org/external/7/701.pdf}
 
 Unlike the previous two tasks, this tasks is quite challenging. 
 
@@ -4540,6 +4546,8 @@ public class TheArcheologistsDilemma {
 
 \subsection{Ones}
 
+\MyHdr{10127}{A}{high}{2}{$\bigstar$}{https://uva.onlinejudge.org/external/101/10127.pdf}
+
 This is a little nice problem but it may take some time to come up with a proper
 solution. Obviously these "minimum multiples" of [[n]] can quickly become too
 large, and so we can't use the standard types of the language to do the
@@ -4613,6 +4621,8 @@ Brilliant.
 
 \subsection{A Multiplication Game}
 
+\MyHdr{847}{A}{high}{3}{$\bigstar$$\bigstar$}{https://uva.onlinejudge.org/external/8/847.pdf}
+
 Unfortunately I couldn't come up with anything more clever than a recursive
 algorithm that tries all the possible multipliers at each step and chooses the
 one that leads to the win. Because a direct recursive algorithm without any
@@ -4676,6 +4686,8 @@ class MultiplicationGame {
 @
 
 \subsection{Polynomial Coefficients}
+
+\MyHdr{10105}{A}{high}{1}{$\bigstar$$\bigstar$}{https://uva.onlinejudge.org/external/101/10105.pdf}
 
 This task is very straightforward, we just use the Newton's generalized
 binomial theorem.
@@ -4742,6 +4754,8 @@ public class PolynomialCoefficients {
 @
 
 \subsection{The Stern-Brocot Number System}
+
+\MyHdr{10077}{C}{high}{1}{$\bigstar$$\bigstar$}{https://uva.onlinejudge.org/external/100/10077.pdf}
 
 This task is just about searching the binary tree, which is trivial.
 
@@ -4814,6 +4828,8 @@ public class TheSternBrocotNumberSystem {
 @
 
 \subsection{Pairsumonious Numbers}
+
+\MyHdr{10202}{B}{high}{4}{$\bigstar$$\bigstar$$\bigstar$$\bigstar$$\bigstar$}{https://uva.onlinejudge.org/external/102/10202.pdf}
 
 Let's have a look at a small example. Let's suppose our numbers 
 $a_1, a_2, a_3, a_4$ are all positive and in ascending order then their sums are
