@@ -5018,6 +5018,8 @@ public class PairsumoniousNumbers {
 
 \subsection{How Many Fibs?}
 
+\MyHdr{10183}{B}{average}{1}{$\bigstar$}{https://uva.onlinejudge.org/external/101/10183.pdf}
+
 This task is particularly easy in Java because of [[BigInteger]] class.
 
 <<How Many Fibs>>=
@@ -5064,6 +5066,8 @@ public class HowManyFibs {
 @
 
 \subsection{How Many Pieces of Land?}
+
+\MyHdr{10213}{B}{average}{2}{$\bigstar$$\bigstar$$\bigstar$$\bigstar$}{https://uva.onlinejudge.org/external/102/10213.pdf}
 
 Unlike the previous task this one is much more entertaining.
 
@@ -5159,6 +5163,8 @@ public class HowManyPiecesOfLand {
 
 \subsection{Counting}
 
+\MyHdr{10198}{B}{high}{2}{$\bigstar$$\bigstar$}{https://uva.onlinejudge.org/external/101/10198.pdf}
+
 There's always one easy case: that's when the number of $1$s matches $n$, so
 their sum matches $n$. But now we can start constructing other cases. If we
 remove three 1s from it and replace by $3$ they would still add up to $n$.
@@ -5227,6 +5233,8 @@ public class Counting {
 @
 
 \subsection{Expressions}
+
+\MyHdr{10157}{C}{average}{2}{$\bigstar$$\bigstar$$\bigstar$}{https://uva.onlinejudge.org/external/101/10157.pdf}
 
 It's an interesting task! To solve it let's have a look at the recurrence
 formula of the Catalan numbers. As the textbook explains it's constructed in
@@ -5324,6 +5332,8 @@ public class Expressions {
 @
 
 \subsection{Complete Tree Labeling}
+
+\MyHdr{10247}{C}{average}{2}{$\bigstar$$\bigstar$$\bigstar$$\bigstar$}{https://uva.onlinejudge.org/external/102/10247.pdf}
 
 Let's look at a simple case, a tree of degree $k$ of depth 1. In this case there
 are $k+1$ nodes: the root and $k$ children. We have a list of labels in
@@ -5430,6 +5440,8 @@ class CompleteTreeLabeling {
 
 \subsection{The Priest Mathematicians}
 
+\MyHdr{10254}{C}{high}{2}{$\bigstar$$\bigstar$}{https://uva.onlinejudge.org/external/102/10254.pdf}
+
 We know that the answer to the classic Hanoi Towers task is $T(n)=2^n-1$.
 However, in this task it's slightly modified where we have an option to use the
 four pegs instead of three, as described in the problem statement.
@@ -5516,6 +5528,8 @@ class ThePriestMathematician {
 
 \subsection{Self-Describing Sequence}
 
+\MyHdr{10049}{C}{high}{2}{$\bigstar$$\bigstar$$\bigstar$}{https://uva.onlinejudge.org/external/100/10049.pdf}
+
 To solve this task we don't even need to come up with a recursive formula. We
 can simply generate the sequence and then lookup the required value. The trick
 however is to make the sequence compact. Instead of writing out each member of
@@ -5599,6 +5613,8 @@ class SelfDescribingSequence {
 @
 
 \subsection{Steps}
+
+\MyHdr{10049}{A}{high}{2}{$\bigstar$$\bigstar$$\bigstar$}{https://uva.onlinejudge.org/external/100/10049.pdf}
 
 The problem statement says that the length of the next step can be either the
 same or by one bigger or by one smaller as the previous one. Since this
