@@ -119,3 +119,4 @@ NOTE: This is a work in progress.
 ## Grids (Chapter 12)
 * [Ant On a Chessboard](https://github.com/rvprg/pc/blob/master/src/Chapter12/AntOnAChessboard.java)
 * [The Monocycle](https://github.com/rvprg/pc/blob/master/src/Chapter12/TheMonocycle.java)
+* [Bee Maja](https://github.com/rvprg/pc/blob/master/src/Chapter12/BeeMaja.java)
