@@ -2,7 +2,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class Main {
+public class BeeMaja {
     private static int[][] PATTERN = {
             {0, 1}, {-1, 1}, {-1, 0}, {0, -1}, {1, -1}, {1, 0}, {0, 1}
     };
