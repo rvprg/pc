@@ -11489,7 +11489,7 @@ trying to put in there. Once you've done this for each line, you will have the
 maximum possible sum in the star. However, it may happen that placing values
 for subsequent lines may invalidate maximum values placed in the previous
 lines. If you detect this situation, then it's not possible to have the star in
-the first place, so you conclude "NO SOLUTION". 
+the first place, so you conclude ``NO SOLUTION''. 
 
 To get the minimum you need to remember that some cells lie on the
 intersections of up to two other lines. This means that it may happen that if
@@ -11665,9 +11665,10 @@ public class Main {
 
 @
 
+
 \subsection{Bee Maja}
 
-To solve this problem you just need to notice the pattern occuring when
+To solve this problem you just need to notice the pattern occurring when
 traversing cells. Let's say d means down, dl means down and left, lu means left
 and up, u means up, ru means right and up, rd means right and down. On the
 first circle it goes like this: 1 d, 0 dl, 1 lu, 1 u, 1 ru, 1 rd, 1 d. On the
@@ -11732,6 +11733,139 @@ public class BeeMaja {
 
 @
 
+\subsection{Robbery}
+
+From each cell we try to see if it could have ever been a cell where the robber
+could end up at time $t$. The robber could end up in this cell if the robber
+has already been there, or if they came from one of the adjacent cells. The
+robber cannot be in the cells that are being observed. If there's at least one
+adjacent cell that is not observed at $t - 1$, then the robber came to the
+current cell from there. Thus we recursively keep tracing such cells until we
+reach $t = 1$. If after we haver tried every cell we see there are no cells
+where the robber could have ended up at time $t$, we conclude the robber has
+escaped. Otherwise for each $t_i \leq t$ we check if there's only one cell where
+the robber could have been hiding, we output that. If, however, there are
+multiple such cells, then we can't conclude unambiguously where the robber was
+and we skip such $t_i$. If every singe $t_i$ was ambiguous, we conclude that
+nothing is known. Thanks \cite{Faximan} for a nice and concise solution.
+
+<<Robbery>>=
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class Robbery {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+    private static final Boolean HIDDEN = Boolean.FALSE;
+    private static final Boolean VISIBLE = Boolean.TRUE;
+    private static int[][] DIRECTION = {{0, 0}, {-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+    private static boolean inCity(int x, int y, Boolean[][][] city) {
+        return x >= 1 && x < city[0].length && y >= 1 && y < city.length;
+    }
+
+    private static Boolean visibility(Boolean[][][] city, int x, int y, int time) {
+        if (!inCity(x, y, city)) {
+            return VISIBLE;
+        }
+        if (city[y][x][time] != null) {
+            return city[y][x][time];
+        }
+        if (time == 1) {
+            city[y][x][time] = HIDDEN;
+            return city[y][x][time];
+        }
+
+        boolean hidden = false;
+        for (int i = 0; i < DIRECTION.length; i++) {
+            boolean isHidden = visibility(
+			city, 
+			x + DIRECTION[i][0], 
+			y + DIRECTION[i][1], 
+			time - 1) == HIDDEN;
+            hidden |= isHidden;
+        }
+
+        city[y][x][time] = hidden ? HIDDEN : VISIBLE;
+        return city[y][x][time];
+    }
+
+    private static int[] findUniqueLocation(Boolean[][][] city, int time) {
+        List<int[]> locations = new ArrayList<>();
+        for (int y = 1; y < city.length; y++) {
+            for (int x = 1; x < city[0].length; x++) {
+                if (city[y][x][time] == HIDDEN) {
+                    locations.add(new int[]{x, y});
+                }
+            }
+        }
+        return locations.size() == 1 ? locations.get(0) : null;
+    }
+
+    public static void main(String[] args) throws IOException {
+        String currentLine;
+        int count = 0;
+        while ((currentLine = reader.readLine()) != null) {
+            if (currentLine.isEmpty()) {
+                continue;
+            }
+            Integer[] input = Arrays.stream(
+                currentLine.trim().split(" ")).map(Integer::parseInt).toArray(l -> new Integer[l]);
+            int w = input[0];
+            int h = input[1];
+            int t = input[2];
+            if (w == 0 && h == 0 && t == 0) break;
+            System.out.println("Robbery #" + (++count) + ":");
+            Boolean[][][] city = new Boolean[h + 1][w + 1][t + 1]; // h x w x t
+            int n = Integer.parseInt(reader.readLine());
+            for (int i = 0; i < n; i++) {
+                Integer[] m = Arrays.stream(
+                    reader.readLine().trim().split(" "))
+                        .map(Integer::parseInt).toArray(l -> new Integer[l]);
+                // 0 time 1 left 2 top 3 right 4 bottom
+                for (int x = m[1]; x <= m[3]; x++) {
+                    for (int y = m[2]; y <= m[4]; y++) {
+                        city[y][x][m[0]] = VISIBLE;
+                    }
+                }
+            }
+
+            boolean escaped = true;
+            for (int y = 1; y <= h; y++) {
+                for (int x = 1; x <= w; x++) {
+                    if (visibility(city, x, y, t) == HIDDEN) {
+                        escaped = false;
+                    }
+                }
+            }
+
+            if (escaped) {
+                System.out.println("The robber has escaped.");
+            } else {
+                List<String> output = new ArrayList<>();
+                for (int time = 1; time <= t; time++) {
+                    int[] loc = findUniqueLocation(city, time);
+                    if (loc != null) {
+                        output.add("Time step " + time + 
+                            ": The robber has been at " + loc[0] + "," + loc[1] + ".");
+                    }
+                }
+                if (output.isEmpty()) {
+                    System.out.println("Nothing known.");
+                } else {
+                    output.forEach(System.out::println);
+                }
+            }
+            System.out.println();
+        }
+    }
+}
+
+@
 
 \section{Geometry}
 
@@ -11798,6 +11932,8 @@ Journal, 1984
 \bibitem{ARP} \url{https://en.wikipedia.org/wiki/Biconnected_component}
 
 \bibitem{TURTLE} \url{https://cgi.cse.unsw.edu.au/~cs3121/Lectures/COMP3121_Lecture_Notes_DP.pdf}
+
+\bibitem{Faximan} \url{https://github.com/faximan/uva/blob/master/707-Robbery.cpp}
 
 \end{thebibliography}
 
