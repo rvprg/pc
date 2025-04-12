@@ -11867,6 +11867,116 @@ public class Robbery {
 
 @
 
+\subsection{(2/3/4)-D Sqr/Rects/Cubes/Boxes?}
+
+To count squares you simply fix a square of a certain size and imagine it
+sliding from left to right while counting how many of those fit, then shift it
+down by one unit, and repeat, until you've exhausted all the positions. You can
+also think of it this way: Take a square of size $4$. Obviously only one square
+of size $4$ fits in it. Now take a square of size $3$, you see that $4$ of
+these fit. Take $2$, and $9$ of those fit. Finally, take $1$, and $16$ fit.
+It's not hard to spot a pattern here. With $1 \le i \le n$, you get
+$(n-i+1)^2$, so the number of all squares will be equal to
+$\sum_{i=n}^{1}(n-i+1)^2 = \sum_{i=1}^{n}i^2$.
+
+What about rectangles? It's the same idea, really. Just need two variables for
+the sides of rectangles: $\sum_{i=1}^{n}\sum_{j=1}^{n}ij$. This will count
+in squares though, but we can simply check if $i = j$ and count those as
+squares separately. 
+
+What about three dimensions? Same situation, but with three variables. Four
+dimensions? Four variables.
+
+So it will be for loops nested? Yes, but it will be fast enough, because we
+only need monotonically non-decreasing set of values. We multiply them all, and
+then also multiple by a another factor which is calculated using permutations
+with repetition. Since we only have up to four elements, all in sorted order,
+we can easily have a few cases to account for each of them in each of
+the dimensions.
+
+The resulting loop looks hairy, but in practice it's quick enough and can be used to
+calculate the whole lookup table for all possible inputs within a fraction of
+allowed time.
+
+<<SqrRectsCubesBoxes>>=
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class SqrRectsCubesBoxes {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    private static long[] calculate(int n) {
+        long[] res = new long[]{0, 0, 0, 0, 0, 0};
+        for (int i = 1; i <= n; i++) {
+            for (int j = i; j <= n; j++) {
+                int ij = i * j;
+                if (i <= n && j <= n) {
+                    if (i == j) {
+                        res[0] += ij;
+                    } else {
+                        res[1] += ij * 2;
+                    }
+                }
+                for (int k = j; k <= n; k++) {
+                    int ijk = ij * k;
+                    if (i <= n && j <= n && k <= n) {
+                        boolean a = i == j;
+                        boolean b = j == k;
+                        if (a && b) {
+                            res[2] += ijk;
+                        } else if (a && !b || !a && b ) {
+                            res[3] += ijk * 3;
+                        } else {
+                            res[3] += ijk * 6;
+                        }
+                    }
+                    for (int l = k; l <= n; l++) {
+                        boolean a = i == j;
+                        boolean b = j == k;
+                        boolean c = k == l;
+                        if (i == j && j == k && k == l) {
+                            res[4] += ijk * l;
+                        } else {
+                            long f = 0;
+                            if (a && !b && !c || !a && b && !c || !a && !b && c) {
+                                f = 12;
+                            } else if (a && b && !c || !a && b && c) {
+                                f = 4;
+                            } else if (!a && !b && !c) {
+                                f = 24;
+                            } else {
+                                f = 6;
+                            }
+                            res[5] += ijk * l * f;
+                        }
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    public static void main(String[] args) throws IOException {
+        long[][] lookup = new long[101][6];
+        for (int i = 0; i <= 100; i++) {
+            lookup[i] = calculate(i);
+        }
+        String currentLine;
+        while ((currentLine = reader.readLine()) != null &&
+                !currentLine.trim().isEmpty()) {
+            int n = Integer.parseInt(currentLine);
+            long[] res = lookup[n];
+            System.out.println(String.format(
+                "%d %d %d %d %d %d", res[0], res[1], res[2], res[3], res[4], res[5]));
+        }
+    }
+}
+
+@
+
+
 \section{Geometry}
 
 \section{Computational Geometry}
