@@ -11976,6 +11976,98 @@ public class SqrRectsCubesBoxes {
 
 @
 
+\subsection{Dermuba Triangle}
+
+First, something to notice about the structure of the triangle. Each row begins
+with the square of the row number. So given a number, $n$, we can determine its
+row as $s_n=\lfloor{\sqrt{n}}\rfloor$. Now we can calculate the relative distance
+from the first cell to the target cell on this row. For example, if $n=8$, then
+the row $s_n=\lfloor{\sqrt{8}}\rfloor=2$. Also this determines the number in the
+first cell of this row, which is $2^2=4$. We know that the edge size is $1$, so
+we can count in halves, $1/2$. Between $8$ and $4$ there are 4 halves, therefore the distance is $(8-4)/2=2$. This calculation works on any row with any cell. In
+general, it is $l_1=(n-s_n^2)/2$.
+
+Let's keep this distance relative to the target cell, so it will be some
+negative value (or $0$). Let's now determine the other row. Given $m$ we do the
+same calculation and determine its row, i.e. $s_m=\lfloor{\sqrt{m}}\rfloor$. Now
+we would like to extend this $l_1$ distance so that it aligns with the first
+cell of the $s_m$ row. Notice that with each subsequent row it extends by a half
+again, so we can calculate this extension as $d=(s_m-s_n)/2$. 
+
+Now on row $s_m$ we calculate the distance to the target cell using the same
+calculation principle, i.e. $l_2=(m-s_m^2)/2$. Now if we add $x=l_2-l_1-d$
+we get the distance between $n$ and $m$ on horizontal axis.
+
+Let's determine the distance on vertical axis now. The height of the triangle
+is obviously $\sqrt{3}/2$. Thus the distance between rows is $y=(s_m-
+s_n)\sqrt{3}/2$. But we have been told the houses are located in the
+circumcenters of the triangles, so we need to make a little adjustment to this
+value $y$. Looking at the picture it's not difficult to notice that on the rows
+whose numbers are even and if the target's cell value is even, then the house
+location is elevated from the baseline by $\sqrt{3}/6$; and for the odd numbers
+it will be elevated by $\sqrt{3}/2-\sqrt{3}/6$. So for number $n$ we add this
+value, and for number $m$ we subtract it.
+
+We have effectively determined the sides of a right triangle. The distance 
+is simply $\sqrt{x^2+y^2}$. 
+
+<<Dermuba Triangle>>=
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.util.Scanner;
+
+public class DermubaTriangle {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    public static final double SQRT3 = Math.sqrt(3);
+    private static double D2 = SQRT3 / 6.0;
+    private static double D1 = SQRT3 / 2.0 - D2;
+
+    private static double adjust(int sn, int n) {
+        if (sn % 2 == 0) {
+            return n % 2 == 0 ? D2 : D1;
+        } else {
+            return n % 2 == 0 ? D1 : D2;
+        }
+    }
+
+    private static double calculate(int n, int m) {
+        int sn = (int) Math.floor(Math.sqrt((double) n));
+        int sm = (int) Math.floor(Math.sqrt((double) m));
+        double d = (sm - sn) / 2.0;
+
+        double l1 = -(n - sn * sn) / 2.0;
+        double ll = l1 - d;
+        double l2 = +(m - sm * sm) / 2.0;
+        double x = l2 + ll;
+
+        double y = (sm - sn) * SQRT3 / 2.0;
+        y += adjust(sn, n);
+        y -= adjust(sm, m);
+        return Math.sqrt(y * y + x * x);
+    }
+
+    public static void main(String[] args) throws IOException {
+        DecimalFormat df = new DecimalFormat("0.000");
+        df.setRoundingMode(RoundingMode.HALF_EVEN);
+        String currentLine;
+        while ((currentLine = reader.readLine()) != null &&
+                !currentLine.trim().isEmpty()) {
+            Scanner s = new Scanner(currentLine);
+            int n = s.nextInt();
+            int m = s.nextInt();
+            double distance = calculate(n, m);
+            System.out.println(df.format(distance));
+        }
+    }
+}
+
+@
+
 
 \section{Geometry}
 
