@@ -2,7 +2,7 @@
 
 A collection of my solutions to the problems from the "Programming Challenges" book by Steven Skiena. (Some of the problems were solved with help from the Internet. In such cases there will be links within the PDF file to the original sources.) The list of files below are the files produced by the noweb tool. 
 
-All of these solutions have been accepted by the [UVa Online Judge](https://uva.onlinejudge.org).
+These solutions have been accepted by the [UVa Online Judge](https://uva.onlinejudge.org). If not, it will be clearly marked.
 
 **Please read the [PDF](https://github.com/rvprg/pc/blob/master/pc.pdf) file to find the detailed explanation of the programs.**
 
@@ -128,3 +128,4 @@ NOTE: This is a work in progress.
 
 ## Geometry (Chapter 13)
 * [Dog and Gopher](https://github.com/rvprg/pc/blob/master/src/Chapter13/DogAndGopher.java)
+* [Rope Crisis In Ropeland!](https://github.com/rvprg/pc/blob/master/src/Chapter13/RopeCrisisInRopeland.java) (not accepted)
