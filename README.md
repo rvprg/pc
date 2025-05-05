@@ -1,6 +1,6 @@
 # Programming Challenges.
 
-A collection of my solutions to the problems from the "Programming Challenges" book by Steven Skiena. (Some of the problems were solved with help from the Internet. In such cases there will be links within the PDF file to the original sources.) The list of files below are the files produced by the noweb tool. 
+A collection of my solutions to the problems from the ["Programming Challenges" book by Steven Skiena](https://link.springer.com/book/10.1007/b97559). (Some of the problems were solved with help from the Internet. In such cases there will be links within the PDF file to the original sources.) The list of files below are the files produced by the noweb tool. 
 
 These solutions have been accepted by the [UVa Online Judge](https://uva.onlinejudge.org). If not, it will be clearly marked.
 
