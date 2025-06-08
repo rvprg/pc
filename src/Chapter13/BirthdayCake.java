@@ -2,7 +2,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class Main {
+public class BirthdayCake {
     private static final BufferedReader reader = new BufferedReader(
             new InputStreamReader(System.in));
     private static int X = 0;

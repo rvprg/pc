@@ -12534,7 +12534,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class Main {
+public class BirthdayCake {
     private static final BufferedReader reader = new BufferedReader(
             new InputStreamReader(System.in));
     private static int X = 0;
@@ -12617,6 +12617,49 @@ public class Main {
 
 @
 
+\subsection{The Largest/Smallest Box}
+
+Given $l$ and $w$ we can construct a function of $x$, i.e. $f(x)=(l-2x)(w-2x)x
+= l w x - 2 l x^2 - 2 w x^2 + 4 x^3$, that calculates volume for the given $x$.
+Now all we need to do is to find a derivative of $f(x)$ and find its roots,
+this will indicate extremums of the original $f(x)$. So $f'(x)=l (w - 4 x) + 4
+x (3 x - w)$, and its roots are $x_1 = 1/6(-\sqrt{l^2-lw+w^2} + l + w)$ and
+$x_2 = 1/6(\sqrt{l^2-lw+w^2} + l + w)$. Just note that $x_2$ should not exceed
+$l/2$ and $w/2$.
+
+<<The Largest/Smallest Box>>=
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
+public class TheLargestSmallestBox {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    public static void main(String[] args) throws IOException {
+        String line;
+        DecimalFormat up = new DecimalFormat("0.000");
+        up.setRoundingMode(RoundingMode.UP);
+        DecimalFormat halfDown = new DecimalFormat("0.000");
+        halfDown.setRoundingMode(RoundingMode.HALF_DOWN);
+        while ((line = reader.readLine()) != null) {
+            String[] s = line.trim().split(" ");
+            double l = Double.parseDouble(s[0]);
+            double w = Double.parseDouble(s[1]);
+            double m = Math.min(l / 2.0, w / 2.0);
+
+            double s1 = 1 / 6.0 * (-Math.sqrt(l * l - l * w + w * w) + l + w);
+            double s2 = 1 / 6.0 * (Math.sqrt(l * l - l * w + w * w) + l + w);
+
+            System.out.println(halfDown.format(s1) + " " 
+                + up.format(0) + " " + up.format(Math.min(m, s2)));
+        }
+    }
+}
+
+@
 
 \section{Computational Geometry}
 
