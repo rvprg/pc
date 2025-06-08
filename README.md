@@ -132,3 +132,4 @@ NOTE: This is a work in progress.
 * [The Knights Of The Round Table](https://github.com/rvprg/pc/blob/master/src/Chapter13/TheKnightsOfTheRoundTable.java)
 * [Chocolate Chip Cookies](https://github.com/rvprg/pc/blob/master/src/Chapter13/ChocolateChipCookies.java)
 * [Birthday Cake](https://github.com/rvprg/pc/blob/master/src/Chapter13/BirthdayCake.java)
+* [The Largest/Smallest Box](https://github.com/rvprg/pc/blob/master/src/Chapter13/TheLargestSmallestBox.java)
