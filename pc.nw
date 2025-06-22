@@ -12369,7 +12369,7 @@ public class RopeCrisisInRopeland {
 
 We are given the lengths of the triangle sides. To determine the radius $r$ we
 can use the $r=A/s$ relation, where $A$ is the area of the triangle and $s$ is
-the semi-perimiter $s=(a+b+c)/2$. To find the area of the triangle given its
+the semi-perimeter $s=(a+b+c)/2$. To find the area of the triangle given its
 sides we can use Heron's formula $A = \sqrt{s(s-a)(s-b)(s-c)}$.
 
 <<The Knights Of The Round Table>>=
@@ -12407,7 +12407,7 @@ public class TheKnightsOfTheRoundTable {
 
 We try every pair of points (chips) and check if the distance between these two
 is less or equal to the diameter. If so, then they lie on the edges of
-potentially two cookies whoch are centered at two different points
+potentially two cookies which are centered at two different points
 (simmetrically). Now we need to determine these points. We have the center of
 the circle $c$, we have two given points $p_1$ and $p_2$. We know the distance
 between the $p_1$ and $p_2$, let's call it $l$. And we know the middle point of
@@ -12659,6 +12659,76 @@ public class TheLargestSmallestBox {
     }
 }
 
+@
+
+\subsection{Is This Integration?}
+
+Let's label the areas $a$, $b$, $c$ and the side of the square as $r$. Easy to
+see that $r^2=4a+4b+c$. Thus we can express $c=r^2-4a-4b$. We also know that
+$1/4$ of a circle's area is simply $r^2\pi/4$, so then $a=r^2-r^2\pi/4-2b$. Now
+what's left is to find $b$. Let's take a triangle inside of the shape composed
+of $c$, $2a$ and $b$. Its sides are all equal are $r$. We can calculate its
+area. It is $r^2\sqrt{3}/4$. Let's take two overlapping quarters of circles
+from two adjacent corners of the square. Our square's area is $r^2$ and we
+remove $r^2\pi/4$ area from it twice. Note that these two circles will cross at
+a point, which is also a vertex of the triangle, for which we already know the
+area. The area of the segment of the circle from that point to one of the
+square's corcner is $r^2\pi/6$. So now we have everything to deduce
+$b=(r^2-2r^2\pi/4) + r^2\pi/6+r^2\pi/6-r^2\sqrt{3}/4$.
+
+\begin{pspicture}(-3.5,-3.5)(3.5,3.5) 
+  \psframe[linewidth=1pt](-3,-3)(3,3)
+
+  \psarc[linewidth=1pt](-3,-3){6}{0}{90}
+  \psarc[linewidth=1pt](3,3){6}{180}{270}
+  \psarc[linewidth=1pt](-3,3){6}{270}{360}
+  \psarc[linewidth=1pt](3,-3){6}{90}{180}
+
+  \rput{60}(-3,-3){\psline[linewidth=1pt](0,0)(6,0)}
+  \rput{-60}(3,-3){\psline[linewidth=1pt](0,0)(-6,0)}
+
+  \rput(1.5,1.5){\textbf{a}}
+  \rput(-1.5,1.5){\textbf{a}}
+  \rput(1.5,-1.5){\textbf{a}}
+  \rput(-1.5,-1.5){\textbf{a}}
+  
+  \rput(0,0){\textbf{c}}
+
+  \rput(0,2.6){\textbf{b}}
+  \rput(0,-2.6){\textbf{b}}
+  \rput(-2.6, 0){\textbf{b}}
+  \rput(2.6, 0){\textbf{b}}
+\end{pspicture}
+
+<<Is This Integration?>>=
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
+public class IsThisIntegration {
+    private static final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in));
+
+    public static void main(String[] args) throws IOException {
+        String line;
+        DecimalFormat format = new DecimalFormat("0.000");
+        format.setRoundingMode(RoundingMode.HALF_EVEN);
+        while ((line = reader.readLine()) != null) {
+            double r = Double.parseDouble(line);
+
+            double b = r * r - r * r * Math.PI / 2 + r * r * Math.PI 
+                / 6 + r * r * Math.PI / 6 - r * r * Math.sqrt(3) / 4;
+            double a = r * r - r * r * Math.PI / 4 - 2 * b;
+            double c = r * r - 4 * a - 4 * b;
+
+            System.out.println(format.format(c) + " " 
+                + format.format(a*4) + " " 
+                + format.format(b*4));
+        }
+    }
+}
 @
 
 \section{Computational Geometry}
